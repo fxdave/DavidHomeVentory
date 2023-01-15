@@ -88,8 +88,26 @@ export const useAuth = () => {
     }
   };
 
+  const logout = () => {
+    localStorage.removeItem("token")
+    setAuthInfo({
+      isLoggedIn: false
+    })
+  }
+
   return {
+    logout,
     login,
     ...authInfo,
   };
 };
+
+export function useLoggedInAuth() {
+  const auth = useAuth()
+
+  if (!auth.isLoggedIn) {
+    throw new Error("Not logged in")
+  }
+
+  return auth
+}

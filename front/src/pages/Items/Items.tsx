@@ -10,12 +10,12 @@ import { useApi } from "services/useApi";
 import { WarehouseEntry, WarehouseEntryInserted, WarehouseEntryInsertedWithPath } from "../../../../back/ts-warehouse-api/types";
 import SaveIcon from '@mui/icons-material/Save'
 import { useInvalidate } from "utils/useInvalidate";
-import { Add, AllInbox, Close, ContentCut, ContentPaste, DragIndicator, Edit, Inbox, Save, Search } from "@mui/icons-material";
+import { AllInbox, Close, ContentCut, ContentPaste, DragIndicator, Edit, Inbox, Save, Search } from "@mui/icons-material";
 import { Container } from "@mui/system";
 import { SafeDeleteButton } from "./SafeDelete";
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "Router";
+import { useLoggedInAuth } from "services/useAuth";
 
 const DEFAULT_PATH = [
   {
@@ -66,6 +66,7 @@ function useNavigation() {
 }
 
 export default function ItemsScreen() {
+  const auth = useLoggedInAuth();
   const { api } = useApi();
   const [keyword, setKeyword] = useState<string>("");
   const nav = useNavigation();
@@ -79,7 +80,8 @@ export default function ItemsScreen() {
 
     api.WarehouseRawClient.list(
       keyword ? keyword : null,
-      nav.parent.id
+      nav.parent.id,
+      auth.token
     )
       .then((res) => {
         if (res.type === 'Success') {
@@ -93,10 +95,11 @@ export default function ItemsScreen() {
     api?.WarehouseRawClient.create({
       name: newItemName,
       parent_id: nav.parent.id
-    }).then(() => {
-      listInvalidate.invalidate()
-      setNewItemName("")
-    })
+    },
+      auth.token).then(() => {
+        listInvalidate.invalidate()
+        setNewItemName("")
+      })
   }
 
   function paste() {
@@ -104,10 +107,11 @@ export default function ItemsScreen() {
       api?.WarehouseRawClient.put(cutting.item.id, {
         ...cutting.item.entry,
         parent_id: nav.parent.id
-      }).then(() => {
-        setCutting(null);
-        listInvalidate.invalidate()
-      })
+      },
+        auth.token).then(() => {
+          setCutting(null);
+          listInvalidate.invalidate()
+        })
   }
 
   return (
@@ -157,7 +161,7 @@ export default function ItemsScreen() {
             isSearch={!!keyword}
             item={item}
             onDelete={() => {
-              api?.WarehouseRawClient.delete(item.id).then(() => {
+              api?.WarehouseRawClient.delete(item.id, auth.token).then(() => {
                 listInvalidate.invalidate()
               })
             }}
@@ -165,7 +169,7 @@ export default function ItemsScreen() {
               nav.goForward(item.id, item.entry.name)
             }}
             onEdit={(newEntry) => {
-              api?.WarehouseRawClient.put(item.id, newEntry).then(() => {
+              api?.WarehouseRawClient.put(item.id, newEntry, auth.token).then(() => {
                 listInvalidate.invalidate()
               })
             }}
@@ -194,6 +198,7 @@ export default function ItemsScreen() {
         </ListItem>
       </List>
       <Divider>HomeVentory</Divider>
+      <Button onClick={() => { auth.logout() }} fullWidth>Logout</Button>
     </ Container >
   );
 }
