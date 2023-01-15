@@ -1,4 +1,4 @@
-# DavidHomeVentory
+# WIP: DavidHomeVentory
 
 An inventory management software for households.
 The software has an android client and a very lightweight server that runs on x86_64 and probably on ARM.
