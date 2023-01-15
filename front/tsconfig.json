@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "jsx": "react-jsx",
+    "target": "ESNext",
+    "module": "esnext",
+    "baseUrl": "./src",
+    "allowJs": false,
+    "esModuleInterop": true,
+    "strict": true,
+    "lib": ["DOM", "ES2021"],
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "moduleResolution": "Node",
+    "noEmit": true,
+    "rootDirs": ["src"],
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "paths": {
+      "shared/*": ["../../back/src/shared/*"]
+    }
+  },
+  "include": ["src", "tsconfig.node.json"],
+  "references": [{"path": "./tsconfig.node.json"}]
+}
