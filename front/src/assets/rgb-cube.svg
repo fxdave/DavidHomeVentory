@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="140" stroke-linecap="round">
+<linearGradient id="BR"><stop stop-color="#F0F" offset="0"/><stop stop-color="#00F" offset="1"/></linearGradient>
+<linearGradient id="BV"><stop stop-color="#00F" offset="0"/><stop stop-color="#000" offset="1"/></linearGradient>
+<linearGradient id="BG"><stop stop-color="#00F" offset="0"/><stop stop-color="#0FF" offset="1"/></linearGradient>
+<linearGradient id="RB"><stop stop-color="#F0F" offset="0"/><stop stop-color="#F00" offset="1"/></linearGradient>
+<linearGradient id="RV"><stop stop-color="#F00" offset="0"/><stop stop-color="#000" offset="1"/></linearGradient>
+<linearGradient id="RY"><stop stop-color="#F00" offset="0"/><stop stop-color="#FF0" offset="1"/></linearGradient>
+<linearGradient id="GY"><stop stop-color="#FF0" offset="0"/><stop stop-color="#0F0" offset="1"/></linearGradient>
+<linearGradient id="GV"><stop stop-color="#000" offset="0"/><stop stop-color="#0F0" offset="1"/></linearGradient>
+<linearGradient id="GB"><stop stop-color="#0FF" offset="0"/><stop stop-color="#0F0" offset="1"/></linearGradient>
+<linearGradient id="WB"><stop stop-color="#FFF" offset="0"/><stop stop-color="#0FF" offset="1"/></linearGradient>
+<linearGradient id="WY"><stop stop-color="#FFF" offset="0"/><stop stop-color="#FF0" offset="1"/></linearGradient>
+<linearGradient id="WR"><stop stop-color="#F0F" offset="0"/><stop stop-color="#FFF" offset="1"/></linearGradient>
+<path stroke="url(#WB)" d="m60,100 40-40"/>
+<path stroke="url(#WR)" d="m60,100-40-40"/>
+<path stroke="url(#WY)" d="m60,100 17,17" transform="rotate(45,60,100)"/>
+<path stroke="url(#BR)" d="m20,60 40-40"/>
+<path stroke="url(#BG)" d="m60,20 40,40"/>
+<path stroke="url(#BV)" d="m60,20 17,17" transform="rotate(45,60,20)"/>
+<path stroke="url(#RV)" d="m20,85 40-40"/>
+<path stroke="url(#RY)" d="m20,85 40,40"/>
+<path stroke="url(#RB)" d="m20,85-17-17" transform="rotate(45,20,85)"/>
+<path stroke="url(#GY)" d="m100,85-40,40"/>
+<path stroke="url(#GV)" d="m100,85-40-40"/>
+<path stroke="url(#GB)" d="m100,85-17-17" transform="rotate(45,100,85)"/>
+</svg>

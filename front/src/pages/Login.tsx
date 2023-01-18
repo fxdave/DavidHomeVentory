@@ -12,6 +12,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from 'Router';
 import { useAuth } from 'services/useAuth';
+import Logo from '../assets/rgb-cube.svg'
 
 type IFields = {
   target: string;
@@ -27,14 +28,14 @@ export default function LoginScreen() {
       console.log("hi", isSuccess);
 
       if (isSuccess) {
-        navigate(ROUTES.ITEMS)
+        navigate(ROUTES.ITEMS(''))
       }
     });
   });
   return (
     <Container maxWidth="xs">
       <img
-        src="https://upload.wikimedia.org/wikipedia/commons/7/7e/RGB_cube_example.svg"
+        src={Logo}
         alt=""
         style={{
           zIndex: -1,
