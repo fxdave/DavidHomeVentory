@@ -6,8 +6,10 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import manifest from '../manifest.json';
 
-// @ts-ignore title parameter is required for compatibility
-navigator.registerProtocolHandler("web+davidhomeventory", manifest.start_url.replace(/\/$/, '') + ROUTES.OPEN_ITEM("%s"), "HomeVentory")
+if (navigator) {
+  // @ts-ignore title parameter is required for compatibility
+  navigator.registerProtocolHandler("web+davidhomeventory", manifest.start_url.replace(/\/$/, '') + ROUTES.OPEN_ITEM("%s"), "HomeVentory")
+}
 
 const darkTheme = createTheme({
   palette: {
