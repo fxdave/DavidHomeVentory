@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { ROUTES } from 'Router';
 import { useAuth } from 'services/useAuth';
 import Logo from '../assets/rgb-cube.svg'
+import manifest from '../../manifest.json';
 
 type IFields = {
   target: string;
@@ -71,7 +72,7 @@ export default function LoginScreen() {
           label="Server hostname and port:"
           {...register('target')}
           name="target"
-          defaultValue="http://127.0.0.1:8080/api"
+          defaultValue={manifest.start_url.replace('3000', '8080') + 'api'}
           helperText="Usually something like: http://192.168.0.???:8080/api"
         />
         <TextField
