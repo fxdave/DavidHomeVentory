@@ -35,4 +35,9 @@ export class RawClient {
   }
 
 
+  public getOrCreate(id: string, token: string): Promise<T.GenericAuthedResponse<T.WarehouseEntryInsertedWithPath,T.GenericError>> {
+    return (this._transport.request('get_or_create', [id, token] as RPC.Params)) as Promise<T.GenericAuthedResponse<T.WarehouseEntryInsertedWithPath,T.GenericError>>;
+  }
+
+
 }

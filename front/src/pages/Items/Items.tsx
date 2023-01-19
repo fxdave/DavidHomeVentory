@@ -13,7 +13,7 @@ import { useInvalidate } from "utils/useInvalidate";
 import { AllInbox, Close, ContentCut, ContentPaste, DragIndicator, Edit, Inbox, Save, Search } from "@mui/icons-material";
 import { Container } from "@mui/system";
 import { SafeDeleteButton } from "./SafeDelete";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ROUTES } from "Router";
 import { useLoggedInAuth } from "services/useAuth";
 
@@ -32,7 +32,9 @@ function useNavigation() {
   const [path, setPath] = useState<{ name: string, id: string | null }[]>(DEFAULT_PATH)
 
   function rebuildPath(path: { name: string, id: string | null }[]) {
-    let newPath = path.map(segment => segment.name.replace(/[^a-zA-Z0-9\-\_]/g, '')).join('/')
+    let newPath = path.map(segment => segment.name.replace(/\*/, '_').replace(/[^a-zA-Z0-9\-\_]/g, '')).join('/')
+    console.log(path);
+
     navigate(ROUTES.ITEMS(newPath))
   }
 
@@ -51,6 +53,23 @@ function useNavigation() {
 
   function reset() {
     setPath(DEFAULT_PATH)
+    rebuildPath(DEFAULT_PATH)
+  }
+
+  function initFromParent(entry: WarehouseEntryInsertedWithPath) {
+    const newPath = [
+      // asterix
+      DEFAULT_PATH[0],
+      // parents
+      ...entry.path,
+      // the container
+      {
+        id: entry.id,
+        name: entry.entry.name
+      }
+    ];
+    setPath(newPath)
+    rebuildPath(newPath)
   }
 
   const parent = path[path.length - 1]
@@ -58,6 +77,7 @@ function useNavigation() {
   return {
     parent,
     path,
+    initFromParent,
     goForward,
     goBack,
     reset,
@@ -74,6 +94,18 @@ export default function ItemsScreen() {
   const [newItemName, setNewItemName] = useState("");
   const [cutting, setCutting] = useState<null | { item: WarehouseEntryInserted }>(null)
   const listInvalidate = useInvalidate();
+  const query = useParams()
+
+  useEffect(() => {
+    const initialItemId = query['id']
+    if (initialItemId) {
+      api?.WarehouseRawClient.getOrCreate(initialItemId, auth.token).then((res) => {
+        if (res.type === 'Success') {
+          nav.initFromParent(res)
+        }
+      })
+    }
+  }, [query])
 
   useEffect(() => {
     if (!api) throw new Error("API is not set");

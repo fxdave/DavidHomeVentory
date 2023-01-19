@@ -67,13 +67,16 @@ impl WarehouseController {
         if self.auth.parse_token(&token).is_err() {
             return GenericAuthedResponse::UnauthorizedError;
         }
-        let entry_inserted = self.repo.clone().insert(WarehouseEntry {
-            name: data.name,
-            parent_id: data
-                .parent_id
-                .unwrap_or_else(|| repo::ROOT_PARENT_ID.to_string()),
-            variant: repo::WarehouseEntryVariant::Item,
-        });
+        let entry_inserted = self.repo.clone().insert(
+            None,
+            WarehouseEntry {
+                name: data.name,
+                parent_id: data
+                    .parent_id
+                    .unwrap_or_else(|| repo::ROOT_PARENT_ID.to_string()),
+                variant: repo::WarehouseEntryVariant::Item,
+            },
+        );
         match entry_inserted {
             Ok(entry_inserted) => {
                 GenericAuthedResponse::Success(CreateSuccessResponse { entry_inserted })
@@ -97,6 +100,21 @@ impl WarehouseController {
                 GenericAuthedResponse::Success(CreateSuccessResponse { entry_inserted })
             }
             Err(error) => GenericAuthedResponse::Error(GenericError::from(error)),
+        }
+    }
+
+    pub async fn get_or_create(
+        &self,
+        id: String,
+        token: String,
+    ) -> GenericAuthedResponse<WarehouseEntryInsertedWithPath, GenericError> {
+        if self.auth.parse_token(&token).is_err() {
+            return GenericAuthedResponse::UnauthorizedError;
+        }
+
+        match self.repo.clone().get_or_create(&id) {
+            Ok(entry) => GenericAuthedResponse::Success(entry),
+            Err(err) => GenericAuthedResponse::Error(GenericError::from(err)),
         }
     }
 }

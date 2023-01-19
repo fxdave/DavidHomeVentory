@@ -5,6 +5,7 @@ import { useAuth } from 'services/useAuth';
 export const ROUTES = {
   LOGIN: '/login',
   ITEMS: (subPath?: string) => `/items${subPath ? '/' + subPath : ''}`,
+  OPEN_ITEM: (itemId: string) => `/open-item/${itemId}`,
 };
 
 const Login = React.lazy(() => import('./pages/Login'));
@@ -21,6 +22,7 @@ export default function Router() {
       <>
         <Routes>
           <Route path={ROUTES.ITEMS('*')} element={withLoader(<Items />)} />
+          <Route path={ROUTES.OPEN_ITEM(':id')} element={withLoader(<Items />)} />
           <Route path="*" element={<Navigate to={ROUTES.ITEMS()} replace />} />
         </Routes>
       </>

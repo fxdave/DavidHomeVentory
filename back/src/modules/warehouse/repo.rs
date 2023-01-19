@@ -18,10 +18,15 @@ impl WarehouseRepository {
 
     pub fn insert(
         &mut self,
+        id: Option<&str>,
         entry: WarehouseEntry,
     ) -> Result<WarehouseEntryInserted, Box<dyn Error>> {
         let result = self.db.transaction(move |tree| {
-            let id = tree.generate_id()?.to_string();
+            let id: String = if let Some(id) = id {
+                id.to_string()
+            } else {
+                tree.generate_id()?.to_string()
+            };
             tree.insert(&*id, &entry)?;
             let parent = tree.get(&entry.parent_id)?;
             if entry.parent_id != ROOT_PARENT_ID && parent.is_none() {
@@ -70,6 +75,39 @@ impl WarehouseRepository {
         }
 
         Ok(deleted)
+    }
+
+    pub fn get_or_create(
+        &mut self,
+        id: &str,
+    ) -> Result<WarehouseEntryInsertedWithPath, Box<dyn Error>> {
+        let entry: WarehouseEntryInserted = {
+            let raw_entry = self.db.get(id)?;
+            if let Some(entry) = raw_entry {
+                let entry: WarehouseEntry = entry.try_into()?;
+                WarehouseEntryInserted {
+                    entry,
+                    id: id.to_string(),
+                }
+            } else {
+                self.insert(
+                    Some(id),
+                    WarehouseEntry {
+                        name: "Unnamed Container".into(),
+                        parent_id: ROOT_PARENT_ID.to_string(),
+                        // it's not a container until it has items
+                        variant: WarehouseEntryVariant::Item,
+                    },
+                )?
+            }
+        };
+
+        let path = self.get_path(&entry.entry.parent_id)?;
+        Ok(WarehouseEntryInsertedWithPath {
+            entry: entry.entry,
+            id: entry.id,
+            path,
+        })
     }
 
     pub fn update(
@@ -136,13 +174,19 @@ impl WarehouseRepository {
             .collect()
     }
 
-    fn get_path(&self, id: &str) -> Result<Vec<String>, Box<dyn Error>> {
+    fn get_path(&self, id: &str) -> Result<Vec<PathSegment>, Box<dyn Error>> {
         let path = if id == ROOT_PARENT_ID {
-            vec!["ROOT".into()]
+            vec![PathSegment {
+                id: ROOT_PARENT_ID.into(),
+                name: "ROOT".into(),
+            }]
         } else {
             let entry: WarehouseEntry = self.db.get(id)?.try_into()?;
             let mut path = self.get_path(&entry.parent_id)?;
-            path.push(entry.name);
+            path.push(PathSegment {
+                id: id.to_string(),
+                name: entry.name,
+            });
             path
         };
 
@@ -176,10 +220,16 @@ pub struct WarehouseEntryInserted {
 }
 
 #[derive(Debug, Serialize, Deserialize, TypeDef)]
+pub struct PathSegment {
+    pub id: String,
+    pub name: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, TypeDef)]
 pub struct WarehouseEntryInsertedWithPath {
     pub id: String,
     pub entry: WarehouseEntry,
-    pub path: Vec<String>,
+    pub path: Vec<PathSegment>,
 }
 
 impl TryFrom<&[u8]> for WarehouseEntry {
