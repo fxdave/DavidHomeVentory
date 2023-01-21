@@ -1,9 +1,10 @@
 #![allow(clippy::unused_async)]
 
 use axum::{extract::State, routing::post, Json, Router};
+use axum_server::tls_rustls::RustlsConfig;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::net::SocketAddr;
+use std::{net::SocketAddr, path::PathBuf};
 use tower_http::cors::CorsLayer;
 use typescript_type_def::TypeDef;
 use yerpc::RpcServer;
@@ -34,10 +35,34 @@ async fn main() {
         .layer(CorsLayer::permissive());
     let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
     println!("listening on {addr}");
-    axum::Server::bind(&addr)
-        .serve(routes.into_make_service())
-        .await
-        .unwrap();
+
+    let tls_config = RustlsConfig::from_pem_file(
+        PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("..")
+            .join("cert.pem"),
+        PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("..")
+            .join("key.pem"),
+    )
+    .await
+    .ok();
+
+    match tls_config {
+        Some(tls_config) => axum_server::bind_rustls(addr, tls_config)
+            .serve(routes.into_make_service())
+            .await
+            .unwrap(),
+        None => {
+            println!(
+                "Please install certificates, because only HTTPS servers accessible from HTTPS"
+            );
+
+            axum::Server::bind(&addr)
+                .serve(routes.into_make_service())
+                .await
+                .unwrap()
+        }
+    };
 }
 
 #[derive(Serialize, Deserialize, TypeDef)]
