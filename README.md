@@ -14,3 +14,23 @@ Features:
 
 
 <a href="https://endsoftwarepatents.org/innovating-without-patents"><img style="height: 45px;" src="https://static.fsf.org/nosvn/esp/logos/patent-free.svg"></a>
+
+
+## Installation:
+
+### Step 1: Install Certificates
+
+Example:
+`mkcert homesrv 192.168.0.248 localhost ::1 127.0.0.1`
+Place them to the project root as `cert.pem` and `key.pem`.
+
+### Step 2: Edit front/manifest.json
+
+Make sure that start_url matches with your desired server. For using dev server, use this:
+"start_url": "https://127.0.0.1:3000/",
+
+### Step 3: Run
+
+./run.sh
+
+### Step 4: Install PWA from the browser
