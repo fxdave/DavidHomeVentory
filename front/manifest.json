@@ -1,7 +1,7 @@
 {
     "name": "HomeVentory",
     "short_name": "HomeVentory",
-    "start_url": "https://127.0.0.1:3000/",
+    "start_url": "http://localhost/",
     "display": "standalone",
     "description": "Home inventory management app",
     "lang": "en",
