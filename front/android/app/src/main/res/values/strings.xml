@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">DavidHomeVentory</string>
+    <string name="title_activity_main">DavidHomeVentory</string>
+    <string name="package_name">david.home.ventory</string>
+    <string name="custom_url_scheme">david.home.ventory</string>
+</resources>

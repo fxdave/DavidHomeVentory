@@ -1,3 +1,5 @@
+.ONESHELL: # keep cd -ed dirs
+
 run-dev:
 	docker-compose up -d --remove-orphans
 
@@ -19,3 +21,9 @@ build-back:
 	
 build-front:
 	docker-compose run front npm run build
+
+build-front-apk:
+	cd front
+	npx cap sync android
+	cd android
+	./gradlew assembleDebug
