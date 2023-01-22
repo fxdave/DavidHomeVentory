@@ -15,8 +15,8 @@ services:
     volumes:
       - ./front/dist:/usr/share/nginx/html:ro
       - ./front/nginx.conf:/etc/nginx/nginx.conf
-      - ./cert.pem:/etc/nginx/cert.pem
-      - ./key.pem:/etc/nginx/cert.key
+      # - ./cert.pem:/etc/nginx/cert.pem
+      # - ./key.pem:/etc/nginx/cert.key
     ports:
     - "3000:3000"
     environment:
