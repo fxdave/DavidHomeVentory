@@ -34,6 +34,7 @@ root.render(
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <HashRouter>
+        <AppUrlListener />
         <Router />
       </HashRouter>
     </ThemeProvider>
