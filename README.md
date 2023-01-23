@@ -1,4 +1,4 @@
-# WIP: DavidHomeVentory
+# DavidHomeVentory
 
 An inventory management software for households.
 The software has an android client and a very lightweight server that runs on x86_64 and probably on ARM.
@@ -18,19 +18,22 @@ Features:
 
 ## Installation:
 
-### Step 1: Install Certificates
+For android app:
+```
+make install build-front build-front-apk
+```
 
-Example:
-`mkcert homesrv 192.168.0.248 localhost ::1 127.0.0.1`
-Place them to the project root as `cert.pem` and `key.pem`.
+For server:
+```
+make install build-back run-prod
+```
 
-### Step 2: Edit front/manifest.json
+## Current state
 
-Make sure that start_url matches with your desired server. For using dev server, use this:
-"start_url": "https://127.0.0.1:3000/",
+I use it currently. It's feature complete, however, it's fresh. Expect bugs.
+The code is not good, as I had so many obsticles to overcome. It will be better some day.
 
-### Step 3: Run
-
-./run.sh
-
-### Step 4: Install PWA from the browser
+More about the refactor plans:
+ - I will need a `yerpc` alternative tailored for web apps.
+ - I will need a better DB. (I thought it would be fun to make it as lean as it could run on microcontrollers, but `sled` adds so much complexity)
+ - I will find a way to use HTTPS instead of cleartext, but android doesn't make it easy.
