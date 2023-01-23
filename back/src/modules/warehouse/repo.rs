@@ -211,6 +211,7 @@ pub struct WarehouseEntry {
 pub struct CreateWarehouseEntry {
     pub name: String,
     pub parent_id: Option<String>,
+    pub id: Option<String>
 }
 
 #[derive(Debug, Serialize, Deserialize, TypeDef)]

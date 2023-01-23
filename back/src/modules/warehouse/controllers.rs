@@ -68,7 +68,7 @@ impl WarehouseController {
             return GenericAuthedResponse::UnauthorizedError;
         }
         let entry_inserted = self.repo.clone().insert(
-            None,
+            data.id.as_deref(),
             WarehouseEntry {
                 name: data.name,
                 parent_id: data
