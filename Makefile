@@ -27,3 +27,8 @@ build-front-apk:
 	npx cap sync android
 	cd android
 	./gradlew assembleDebug
+install-front-apk:
+	cd front
+	npx cap sync android
+	cd android
+	./gradlew installDebug
