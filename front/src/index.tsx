@@ -1,15 +1,24 @@
 import { createRoot } from 'react-dom/client';
-import { StrictMode } from 'react';
+import { StrictMode, useEffect } from 'react';
 import Router, { ROUTES } from 'Router';
-import { BrowserRouter } from 'react-router-dom';
+import { HashRouter, useNavigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import manifest from '../manifest.json';
+import { App, URLOpenListenerEvent } from '@capacitor/app';
 
-if (navigator && navigator.registerProtocolHandler) {
-  // @ts-ignore title parameter is required for compatibility
-  navigator.registerProtocolHandler("web+davidhomeventory", manifest.start_url.replace(/\/$/, '') + ROUTES.OPEN_ITEM("%s"), "HomeVentory")
-}
+const AppUrlListener: React.FC<any> = () => {
+  let navigate = useNavigate();
+  useEffect(() => {
+    App.addListener('appUrlOpen', (event: URLOpenListenerEvent) => {
+      const itemId = event.url.split('://').pop();
+      if (itemId) {
+        navigate(ROUTES.OPEN_ITEM(itemId));
+      }
+    });
+  }, []);
+
+  return null;
+};
 
 const darkTheme = createTheme({
   palette: {
@@ -24,9 +33,9 @@ root.render(
   <StrictMode>
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      <BrowserRouter>
+      <HashRouter>
         <Router />
-      </BrowserRouter>
+      </HashRouter>
     </ThemeProvider>
   </StrictMode>,
 );
