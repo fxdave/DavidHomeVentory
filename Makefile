@@ -22,12 +22,12 @@ build-back:
 build-front:
 	docker-compose run front npm run build
 
-build-front-apk:
+build-front-apk: build-front
 	cd front
 	npx cap sync android
 	cd android
 	./gradlew assembleDebug
-install-front-apk:
+install-front-apk: build-front
 	cd front
 	npx cap sync android
 	cd android
