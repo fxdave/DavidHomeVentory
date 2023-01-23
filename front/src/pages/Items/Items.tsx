@@ -126,7 +126,8 @@ export default function ItemsScreen() {
   function createItem() {
     api?.WarehouseRawClient.create({
       name: newItemName,
-      parent_id: nav.parent.id
+      parent_id: nav.parent.id,
+      id: null
     },
       auth.token).then(() => {
         listInvalidate.invalidate()
@@ -281,7 +282,10 @@ function Item(props: ItemProps) {
       <ListItemButton disabled={props.cutting?.item.id == props.item.id}>
         <ListItemText
           onClick={() => props.onGoForward()}
-          primary={`${props.isSearch ? props.item.path.join(' / ') + " / " : ""} ${props.item.entry.name}`}
+          primary={`${props.isSearch
+            ? props.item.path.map(s => s.name).join(' / ') + " / "
+            : ""
+            } ${props.item.entry.name}`}
           secondary={props.item.id}
         />
       </ListItemButton>
