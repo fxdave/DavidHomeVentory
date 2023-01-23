@@ -93,7 +93,7 @@ impl WarehouseRepository {
                 self.insert(
                     Some(id),
                     WarehouseEntry {
-                        name: "Unnamed Container".into(),
+                        name: id.to_owned(),
                         parent_id: ROOT_PARENT_ID.to_string(),
                         // it's not a container until it has items
                         variant: WarehouseEntryVariant::Item,
