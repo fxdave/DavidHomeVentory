@@ -79,7 +79,6 @@ export default function LoginScreen() {
           label="Server hostname and port:"
           {...register('target')}
           name="target"
-          defaultValue={manifest.start_url.replace('3000', '8080') + 'api'}
           helperText="Usually something like: http://192.168.0.???:8080/api"
         />
         <TextField
@@ -89,7 +88,7 @@ export default function LoginScreen() {
           name="password"
           type="password"
         />
-        <Button onClick={onSubmit}>Connect</Button>
+        <Button onClick={onSubmit} type='submit'>Connect</Button>
       </Box>
     </Container>
   );

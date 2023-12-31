@@ -48,11 +48,13 @@ export const useAuth = () => {
   const login = async (url: string, password: string) => {
     try {
       const api = setBaseUrl(url);
-      const setResponse = await api.AuthRawClient.setPassword({
-        password
+      const setResponse = await api.auth.setPassword.post({
+        body: {
+          password
+        }
       });
 
-      if (setResponse.type === 'GenericError') {
+      if (['unexpected-error', 'validation-error'].includes(setResponse.result)) {
         setAuthInfo({
           isLoggedIn: false,
           error: `${setResponse.message}`,
@@ -61,16 +63,12 @@ export const useAuth = () => {
       }
 
 
-      let authResponse = await api.AuthRawClient.authenticate({
-        password
+      let authResponse = await api.auth.authenticate.post({
+        body: {
+          password
+        }
       });
-      if (authResponse.type === 'Error') {
-        setAuthInfo({
-          isLoggedIn: false,
-          error: `${authResponse.error}`,
-        });
-        return false
-      } else {
+      if (authResponse.result === 'success') {
         setCredentials(url, authResponse.token)
         setAuthInfo({
           isLoggedIn: true,
@@ -78,6 +76,12 @@ export const useAuth = () => {
           url,
         });
         return true
+      } else {
+        setAuthInfo({
+          isLoggedIn: false,
+          error: `${authResponse.message}`,
+        });
+        return false
       }
     } catch (e) {
       setAuthInfo({

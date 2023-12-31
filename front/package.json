@@ -10,6 +10,7 @@
     "@capacitor/app": "^4.1.1",
     "@capacitor/cli": "^4.6.2",
     "@capacitor/core": "^4.6.2",
+    "@cuple/client": "^1.0.7",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@mui/icons-material": "^5.11.0",

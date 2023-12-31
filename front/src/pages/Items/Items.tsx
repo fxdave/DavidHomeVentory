@@ -1,4 +1,4 @@
-import { AppBar, Box, Breadcrumbs, Button, Divider, Grid, InputAdornment, ListItemButton, TextField, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Breadcrumbs, Button, Divider, InputAdornment, ListItemButton, TextField, Toolbar, Typography } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
@@ -7,15 +7,16 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemText from "@mui/material/ListItemText";
 import { useEffect, useState } from "react";
 import { useApi } from "services/useApi";
-import { WarehouseEntry, WarehouseEntryInserted, WarehouseEntryInsertedWithPath } from "../../../../back/ts-warehouse-api/types";
 import SaveIcon from '@mui/icons-material/Save'
 import { useInvalidate } from "utils/useInvalidate";
-import { AllInbox, Close, ContentCut, ContentPaste, DragIndicator, Edit, Inbox, Save, Search } from "@mui/icons-material";
+import { AllInbox, Close, ContentCut, ContentPaste, Edit, Inbox, Save, Search } from "@mui/icons-material";
 import { Container } from "@mui/system";
 import { SafeDeleteButton } from "./SafeDelete";
 import { useNavigate, useParams } from "react-router-dom";
 import { ROUTES } from "Router";
 import { useLoggedInAuth } from "services/useAuth";
+import { WarehouseEntryWithPath } from "../../../../new-back/src/modules/warehouse";
+import { WarehouseEntryVariant } from "../../../../new-back/src/modules/warehouse/models";
 
 const DEFAULT_PATH = [
   {
@@ -56,7 +57,7 @@ function useNavigation() {
     rebuildPath(DEFAULT_PATH)
   }
 
-  function initFromParent(entry: WarehouseEntryInsertedWithPath) {
+  function initFromParent(entry: WarehouseEntryWithPath) {
     const newPath = [
       // asterix
       DEFAULT_PATH[0],
@@ -65,7 +66,7 @@ function useNavigation() {
       // the container
       {
         id: entry.id,
-        name: entry.entry.name
+        name: entry.name
       }
     ];
     setPath(newPath)
@@ -87,36 +88,40 @@ function useNavigation() {
 
 export default function ItemsScreen() {
   const auth = useLoggedInAuth();
-  const { api } = useApi();
+  const { authedApi } = useApi();
   const [keyword, setKeyword] = useState<string>("");
   const nav = useNavigation();
-  const [list, setList] = useState<WarehouseEntryInsertedWithPath[]>([]);
+  const [list, setList] = useState<WarehouseEntryWithPath[]>([]);
   const [newItemName, setNewItemName] = useState("");
-  const [cutting, setCutting] = useState<null | { item: WarehouseEntryInserted }>(null)
+  const [cutting, setCutting] = useState<null | { item: WarehouseEntryWithPath }>(null)
   const listInvalidate = useInvalidate();
   const query = useParams()
 
   useEffect(() => {
     const initialItemId = query['id']
     if (initialItemId) {
-      api?.WarehouseRawClient.getOrCreate(initialItemId, auth.token).then((res) => {
-        if (res.type === 'Success') {
-          nav.initFromParent(res)
+      authedApi().warehouse.getOrCreate.post({
+        query: {
+          id: initialItemId
+        }
+      }).then((response) => {
+        if (response.result === 'success') {
+          nav.initFromParent(response.entry)
         }
       })
     }
   }, [query])
 
   useEffect(() => {
-    if (!api) throw new Error("API is not set");
-
-    api.WarehouseRawClient.list(
-      keyword ? keyword : null,
-      nav.parent.id,
-      auth.token
+    authedApi().warehouse.list.get({
+      query: {
+        keyword: keyword,
+        parentId: nav.parent.id,
+      }
+    }
     )
       .then((res) => {
-        if (res.type === 'Success') {
+        if (res.result === 'success') {
           setList(res.list)
         }
       })
@@ -124,27 +129,31 @@ export default function ItemsScreen() {
   }, [keyword, parent, listInvalidate.id, nav.path]);
 
   function createItem() {
-    api?.WarehouseRawClient.create({
-      name: newItemName,
-      parent_id: nav.parent.id,
-      id: null
-    },
-      auth.token).then(() => {
-        listInvalidate.invalidate()
-        setNewItemName("")
-      })
+    authedApi().warehouse.create.post({
+      body: {
+        name: newItemName,
+        parentId: nav.parent.id,
+        id: null
+      }
+    }).then(() => {
+      listInvalidate.invalidate()
+      setNewItemName("")
+    })
   }
 
   function paste() {
     if (cutting && nav.parent.id)
-      api?.WarehouseRawClient.put(cutting.item.id, {
-        ...cutting.item.entry,
-        parent_id: nav.parent.id
-      },
-        auth.token).then(() => {
-          setCutting(null);
-          listInvalidate.invalidate()
-        })
+      authedApi().warehouse.update.put({
+        body: {
+          id: cutting.item.id,
+          name: cutting.item.name,
+          variant: cutting.item.variant,
+          parentId: nav.parent.id
+        }
+      }).then(() => {
+        setCutting(null);
+        listInvalidate.invalidate()
+      })
   }
 
   return (
@@ -152,7 +161,7 @@ export default function ItemsScreen() {
       <h1>Items</h1>
       {cutting && <AppBar position="fixed" sx={{ top: 'auto', bottom: 0 }}>
         <Toolbar>
-          <Typography>You cut <b>{cutting.item.entry.name}</b></Typography>
+          <Typography>You cut <b>{cutting.item.name}</b></Typography>
           <Box sx={{ flexGrow: 1 }} />
           <IconButton edge="end" onClick={() => paste()}>
             <ContentPaste />
@@ -194,15 +203,15 @@ export default function ItemsScreen() {
             isSearch={!!keyword}
             item={item}
             onDelete={() => {
-              api?.WarehouseRawClient.delete(item.id, auth.token).then(() => {
+              authedApi().warehouse.delete.delete({ query: { id: item.id } }).then(() => {
                 listInvalidate.invalidate()
               })
             }}
             onGoForward={() => {
-              nav.goForward(item.id, item.entry.name)
+              nav.goForward(item.id, item.name)
             }}
             onEdit={(newEntry) => {
-              api?.WarehouseRawClient.put(item.id, newEntry, auth.token).then(() => {
+              authedApi().warehouse.update.put({ body: newEntry }).then(() => {
                 listInvalidate.invalidate()
               })
             }}
@@ -239,12 +248,12 @@ export default function ItemsScreen() {
 
 type ItemProps = {
   isSearch: boolean,
-  item: WarehouseEntryInsertedWithPath,
+  item: WarehouseEntryWithPath,
   onDelete: () => void
   onGoForward: () => void,
   onCutStart: () => void,
-  onEdit: (entry: WarehouseEntry) => void,
-  cutting: null | { item: WarehouseEntryInserted }
+  onEdit: (entry: WarehouseEntryWithPath) => void,
+  cutting: null | { item: WarehouseEntryWithPath }
 }
 
 function Item(props: ItemProps) {
@@ -255,7 +264,7 @@ function Item(props: ItemProps) {
   function save() {
     if (editing)
       props.onEdit({
-        ...props.item.entry,
+        ...props.item,
         name: editing.title
       });
     setEditing(null)
@@ -264,7 +273,7 @@ function Item(props: ItemProps) {
   return <ListItem>
     <ListItemAvatar>
       <Avatar>
-        {props.item.entry.variant === 'Container' ? <AllInbox /> : <Inbox />}
+        {props.item.variant === WarehouseEntryVariant.Container ? <AllInbox /> : <Inbox />}
       </Avatar>
     </ListItemAvatar>
     {editing
@@ -285,7 +294,7 @@ function Item(props: ItemProps) {
           primary={`${props.isSearch
             ? props.item.path.map(s => s.name).join(' / ') + " / "
             : ""
-            } ${props.item.entry.name}`}
+            } ${props.item.name}`}
           secondary={props.item.id}
         />
       </ListItemButton>
@@ -294,7 +303,7 @@ function Item(props: ItemProps) {
       {editing && <IconButton edge="end" onClick={() => save()}>
         <Save />
       </IconButton>}
-      {!editing && <IconButton edge="end" onClick={() => setEditing({ title: props.item.entry.name })} disabled={!!props.cutting}>
+      {!editing && <IconButton edge="end" onClick={() => setEditing({ title: props.item.name })} disabled={!!props.cutting}>
         <Edit />
       </IconButton>}
       <IconButton edge="end" disabled={!!props.cutting} onClick={() => {
@@ -302,7 +311,7 @@ function Item(props: ItemProps) {
       }}>
         <ContentCut />
       </IconButton>
-      <SafeDeleteButton edge="end" disabled={props.item.entry.variant === "Container" || !!props.cutting} onClick={() => {
+      <SafeDeleteButton edge="end" disabled={props.item.variant === WarehouseEntryVariant.Container || !!props.cutting} onClick={() => {
         props.onDelete()
       }} />
     </>
