@@ -20,13 +20,20 @@ type IFields = {
   password: string;
 };
 
+const API_TARGET_KEY = "API_TARGET"
+
 export default function LoginScreen() {
-  const { handleSubmit, register } = useForm<IFields>();
+  const { handleSubmit, register } = useForm<IFields>({
+    defaultValues: async () => ({
+      target: localStorage.getItem(API_TARGET_KEY) || "",
+      password: ""
+    })
+  });
   const auth = useAuth();
   const navigate = useNavigate();
   const onSubmit = handleSubmit(data => {
     auth.login(data.target, data.password).then((isSuccess) => {
-      console.log("hi", isSuccess);
+      localStorage.setItem(API_TARGET_KEY, data.target)
 
       if (isSuccess) {
         navigate(ROUTES.ITEMS(''))
