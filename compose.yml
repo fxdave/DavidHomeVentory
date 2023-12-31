@@ -2,19 +2,26 @@ version: '3.8'
 
 services:
   back:
-    image: docker.io/library/rust:latest
+    image: node:latest
     ports:
-      - 8080:8080
+      - 3001:3001
     volumes:
       - ./:/app
-    working_dir: /app/back
-    command: ["cargo", "run"]
+    working_dir: /app/new-back
+    command: npm run dev
+    networks:
+      - mynet
 
   front:
-    image: docker.io/library/node:latest
+    image: node:latest
     ports:
       - 3000:3000
     volumes:
       - ./:/app
     working_dir: /app/front
     command: ["npm", start]
+    networks:
+      - mynet
+
+networks:
+  mynet:
