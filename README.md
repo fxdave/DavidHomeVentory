@@ -27,13 +27,3 @@ For server:
 ```
 make install build-back run-prod
 ```
-
-## Current state
-
-I use it currently. It's feature complete, however, it's fresh. Expect bugs.
-The code is not good, as I had so many obsticles to overcome. It will be better some day.
-
-More about the refactor plans:
- - I will need a `yerpc` alternative tailored for web apps.
- - I will need a better DB. (I thought it would be fun to make it as lean as it could run on microcontrollers, but `sled` adds so much complexity)
- - I will find a way to use HTTPS instead of cleartext, but android doesn't make it easy.
