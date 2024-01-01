@@ -1,7 +1,7 @@
 import { PrismaClient, WarehouseEntry } from "@prisma/client"
 import { PathCache, ROOT_ID, SearchNameCache, WarehouseEntryVariant } from "./models"
 
-export class WarehouseService {
+export class WarehouseRepository {
     constructor(private __db: PrismaClient) { }
 
     async find(keyword: string | null, parentId: string | null) {

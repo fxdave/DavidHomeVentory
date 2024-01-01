@@ -1,12 +1,12 @@
 import { apiResponse, success } from '@cuple/server'
 import { z } from 'zod'
-import { SearchNameCache, PathCache, ROOT_ID, WarehouseEntryVariant, PathSegment } from './models'
+import { WarehouseEntryVariant, PathSegment } from './models'
 import { type AuthedBuilder } from '../../index'
 import { WarehouseEntry, type PrismaClient } from '@prisma/client'
-import { WarehouseService } from './WarehouseService'
+import { WarehouseRepository } from './repo'
 
 export function initWarehouseModule(db: PrismaClient, builder: AuthedBuilder) {
-  const warehouseService = new WarehouseService(db);
+  const repo = new WarehouseRepository(db);
 
   return {
     list: builder
@@ -17,7 +17,7 @@ export function initWarehouseModule(db: PrismaClient, builder: AuthedBuilder) {
         })
       )
       .get(async ({ data }) => {
-        const list = await warehouseService.find(data.query.keyword, data.query.parentId)
+        const list = await repo.find(data.query.keyword, data.query.parentId)
         return success({ list })
       }),
     delete: builder
@@ -27,7 +27,7 @@ export function initWarehouseModule(db: PrismaClient, builder: AuthedBuilder) {
         })
       )
       .delete(async ({ data }) => {
-        await warehouseService.delete(data.query.id)
+        await repo.delete(data.query.id)
         return success({
           message: 'Entry is deleted successfully!'
         })
@@ -41,7 +41,7 @@ export function initWarehouseModule(db: PrismaClient, builder: AuthedBuilder) {
         })
       )
       .post(async ({ data }) => {
-        const entry = await warehouseService.create(data.body);
+        const entry = await repo.create(data.body);
         return success({ entry })
       }),
     update: builder
@@ -54,7 +54,7 @@ export function initWarehouseModule(db: PrismaClient, builder: AuthedBuilder) {
         })
       )
       .put(async ({ data }) => {
-        await warehouseService.update(data.body)
+        await repo.update(data.body)
         return success({
           message: "The item is updated successfully!"
         })
@@ -67,7 +67,7 @@ export function initWarehouseModule(db: PrismaClient, builder: AuthedBuilder) {
         })
       )
       .post(async ({ data }) => {
-        const entry = await warehouseService.getOrCreate(data.query.id)
+        const entry = await repo.getOrCreate(data.query.id)
         return success({ entry })
       })
   }
