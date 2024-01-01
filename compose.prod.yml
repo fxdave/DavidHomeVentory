@@ -4,7 +4,7 @@ services:
   back:
     image: docker.io/library/rust:latest
     ports:
-      - 8080:8080
+      - 3001:3001
     volumes:
       - ./:/app
     working_dir: /app/back
