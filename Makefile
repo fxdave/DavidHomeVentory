@@ -10,7 +10,12 @@ stop:
 	docker-compose down
 
 install:
+	cp back/.env.example back/.env
+	export REPLACE="\"$$(cat /dev/random | head -c 50 | base64)\""
+	export ESCAPED_REPLACE=$$(printf '%s\n' "$$REPLACE" | sed -e 's/[\/&]/\\&/g')
+	sed -i -e "s|JWT_SECRET=|JWT_SECRET=$${ESCAPED_REPLACE}|" back/.env
 	docker-compose run front npm i
+	docker-compose run back npm i
 
 build:
 	make build-back
