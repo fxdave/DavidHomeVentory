@@ -1,27 +1,27 @@
 module.exports = {
-    "env": {
-        "browser": true,
-        "es2021": true
+    root: true,
+    parser: "@typescript-eslint/parser",
+    parserOptions: {
+      ecmaVersion: 2020,
+      sourceType: "module",
+      ecmaFeatures: {
+        jsx: true,
+      },
     },
-    "extends": "standard-with-typescript",
-    "overrides": [
-        {
-            "env": {
-                "node": true
-            },
-            "files": [
-                ".eslintrc.{js,cjs}"
-            ],
-            "parserOptions": {
-                "sourceType": "script"
-            }
-        }
+    env: {
+      browser: true,
+      es2021: true,
+      node: true,
+    },
+    extends: [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended",
+      "plugin:sonarjs/recommended",
+      "plugin:promise/recommended",
+      "plugin:prettier/recommended",
     ],
-    "parserOptions": {
-        "ecmaVersion": "latest",
-        "sourceType": "module"
+    rules: {
+      "promise/always-return": "off",
     },
-    "rules": {
-        "@typescript-eslint/explicit-function-return-type": "off"
-    }
-}
+  };
+  

@@ -7,7 +7,7 @@ services:
       - 3001:3001
     volumes:
       - ./:/app
-    working_dir: /app/new-back
+    working_dir: /app/back
     command: npm run dev
     networks:
       - mynet
