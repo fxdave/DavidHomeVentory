@@ -1,15 +1,15 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
-import React, { ReactElement, Suspense } from 'react';
-import { useAuth } from 'services/useAuth';
+import {Navigate, Route, Routes} from "react-router-dom";
+import React, {ReactElement, Suspense} from "react";
+import {useAuth} from "services/useAuth";
 
 export const ROUTES = {
-  LOGIN: '/login',
-  ITEMS: (subPath?: string) => `/items${subPath ? '/' + subPath : ''}`,
+  LOGIN: "/login",
+  ITEMS: (subPath?: string) => `/items${subPath ? "/" + subPath : ""}`,
   OPEN_ITEM: (itemId: string) => `/open-item/${itemId}`,
 };
 
-const Login = React.lazy(() => import('./pages/Login'));
-const Items = React.lazy(() => import('./pages/Items/Items'));
+const Login = React.lazy(() => import("./pages/Login"));
+const Items = React.lazy(() => import("./pages/Items/Items"));
 
 const withLoader = (element: ReactElement) => (
   <Suspense fallback={<></>}>{element}</Suspense>
@@ -21,8 +21,11 @@ export default function Router() {
     return (
       <>
         <Routes>
-          <Route path={ROUTES.ITEMS('*')} element={withLoader(<Items />)} />
-          <Route path={ROUTES.OPEN_ITEM(':id')} element={withLoader(<Items />)} />
+          <Route path={ROUTES.ITEMS("*")} element={withLoader(<Items />)} />
+          <Route
+            path={ROUTES.OPEN_ITEM(":id")}
+            element={withLoader(<Items />)}
+          />
           <Route path="*" element={<Navigate to={ROUTES.ITEMS()} replace />} />
         </Routes>
       </>

@@ -1,16 +1,18 @@
-import { createRoot } from 'react-dom/client';
-import { StrictMode, useEffect } from 'react';
-import Router, { ROUTES } from 'Router';
-import { HashRouter, useNavigate } from 'react-router-dom';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import { App, URLOpenListenerEvent } from '@capacitor/app';
+import {createRoot} from "react-dom/client";
+import {StrictMode, useEffect} from "react";
+import Router, {ROUTES} from "Router";
+import {HashRouter, useNavigate} from "react-router-dom";
+import {ThemeProvider, createTheme} from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import {App, URLOpenListenerEvent} from "@capacitor/app";
+import "react-toastify/dist/ReactToastify.css";
+import {ToastContainer} from "react-toastify";
 
-const AppUrlListener: React.FC<any> = () => {
-  let navigate = useNavigate();
+const AppUrlListener = () => {
+  const navigate = useNavigate();
   useEffect(() => {
-    App.addListener('appUrlOpen', (event: URLOpenListenerEvent) => {
-      const itemId = event.url.split('://').pop();
+    App.addListener("appUrlOpen", (event: URLOpenListenerEvent) => {
+      const itemId = event.url.split("://").pop();
       if (itemId) {
         navigate(ROUTES.OPEN_ITEM(itemId));
       }
@@ -22,12 +24,12 @@ const AppUrlListener: React.FC<any> = () => {
 
 const darkTheme = createTheme({
   palette: {
-    mode: 'dark',
+    mode: "dark",
   },
 });
 
-const element = document.getElementById('root');
-if (!element) throw new Error('could not found the root element');
+const element = document.getElementById("root");
+if (!element) throw new Error("could not found the root element");
 const root = createRoot(element);
 root.render(
   <StrictMode>
@@ -38,5 +40,6 @@ root.render(
         <Router />
       </HashRouter>
     </ThemeProvider>
+    <ToastContainer />
   </StrictMode>,
 );

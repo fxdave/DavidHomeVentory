@@ -1,8 +1,8 @@
-import { useLayoutEffect } from "react";
-import { useState, useCallback } from "react";
+import {useLayoutEffect} from "react";
+import {useState, useCallback} from "react";
 
 export function useForceUpdate() {
-  const [, updateComponent] = useState<{}>({});
+  const [, updateComponent] = useState<unknown>({});
 
   return useCallback(() => {
     updateComponent({});
@@ -35,7 +35,7 @@ export function createStore<T>(defaultValue: T) {
   function updateStoreState(newStoreState: T) {
     const oldStoreState = storeState;
     storeState = newStoreState;
-    storeListeningComponents.forEach(({ update, options }) => {
+    storeListeningComponents.forEach(({update, options}) => {
       const shouldUpdate =
         !options ||
         !options.shouldUpdate ||

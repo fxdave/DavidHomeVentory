@@ -45,7 +45,10 @@ export class WarehouseRepository {
             throw new Error("The item didn't have a parent while deleting")
 
         await this.__resetVariant(deleteResult.parentId)
-        return deleteResult
+        return {
+            ...deleteResult,
+            path: PathCache.from(deleteResult.pathCache).path
+        }
     }
 
     async create(data: { id: string | null, parentId: string | null, name: string }) {
@@ -73,7 +76,10 @@ export class WarehouseRepository {
         if (data.parentId)
             await this.__resetVariant(data.parentId)
 
-        return entry
+        return {
+            ...entry,
+            path: PathCache.from(entry.pathCache).path
+        }
     }
 
     async update(data: {
@@ -133,7 +139,7 @@ export class WarehouseRepository {
 
         return {
             ...entry,
-            path: PathCache.from(entry.pathCache)
+            path: PathCache.from(entry.pathCache).path
         }
     }
 

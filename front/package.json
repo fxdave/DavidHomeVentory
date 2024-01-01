@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "scripts": {
     "start": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "lint": "eslint ./src",
+    "lint:fix": "eslint --fix ./src"
   },
   "dependencies": {
     "@capacitor/android": "^4.6.2",
@@ -15,10 +17,18 @@
     "@emotion/styled": "^11.10.5",
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.2",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-prettier": "^5.1.2",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-sonarjs": "^0.23.0",
+    "prettier": "^3.1.1",
     "react": "18.1.0",
     "react-dom": "18.1.0",
-    "react-hook-form": "^7.40.0",
-    "react-router-dom": "^6.6.1"
+    "react-hook-form": "^7.49.2",
+    "react-router-dom": "^6.6.1",
+    "react-toastify": "^9.1.3"
   },
   "devDependencies": {
     "@types/react": "~18.0.14",

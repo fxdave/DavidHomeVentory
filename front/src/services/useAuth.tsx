@@ -1,6 +1,5 @@
-import { useEffect } from "react";
-import { createStore } from "../utils/createStore";
-import { useApi } from "./useApi";
+import {createStore} from "../utils/createStore";
+import {useApi} from "./useApi";
 
 export enum AuthStatus {
   LoggedIn,
@@ -10,39 +9,41 @@ export enum AuthStatus {
 
 export type AuthInfo =
   | {
-    isLoggedIn: false;
-    error?: string;
-  }
+      isLoggedIn: false;
+      error?: string;
+    }
   | {
-    isLoggedIn: true;
-    token: string;
-    url: string;
-  };
+      isLoggedIn: true;
+      token: string;
+      url: string;
+    };
 
-const [useAuthStore] = createStore<AuthInfo>((() => {
-  const url = localStorage.getItem('url')
-  const token = localStorage.getItem('token')
+const [useAuthStore] = createStore<AuthInfo>(
+  (() => {
+    const url = localStorage.getItem("url");
+    const token = localStorage.getItem("token");
 
-  if (url && token) {
-    return {
-      isLoggedIn: true,
-      token,
-      url
+    if (url && token) {
+      return {
+        isLoggedIn: true,
+        token,
+        url,
+      };
+    } else {
+      return {
+        isLoggedIn: false,
+      };
     }
-  } else {
-    return {
-      isLoggedIn: false,
-    }
-  }
-})());
+  })(),
+);
 
 export const useAuth = () => {
-  const { setBaseUrl } = useApi();
+  const {setBaseUrl} = useApi();
   const [authInfo, setAuthInfo] = useAuthStore();
 
   function setCredentials(url: string, token: string) {
-    localStorage.setItem("url", url)
-    localStorage.setItem("token", token)
+    localStorage.setItem("url", url);
+    localStorage.setItem("token", token);
   }
 
   const login = async (url: string, password: string) => {
@@ -50,54 +51,55 @@ export const useAuth = () => {
       const api = setBaseUrl(url);
       const setResponse = await api.auth.setPassword.post({
         body: {
-          password
-        }
+          password,
+        },
       });
 
-      if (['unexpected-error', 'validation-error'].includes(setResponse.result)) {
+      if (
+        ["unexpected-error", "validation-error"].includes(setResponse.result)
+      ) {
         setAuthInfo({
           isLoggedIn: false,
           error: `${setResponse.message}`,
         });
-        return false
+        return false;
       }
 
-
-      let authResponse = await api.auth.authenticate.post({
+      const authResponse = await api.auth.authenticate.post({
         body: {
-          password
-        }
+          password,
+        },
       });
-      if (authResponse.result === 'success') {
-        setCredentials(url, authResponse.token)
+      if (authResponse.result === "success") {
+        setCredentials(url, authResponse.token);
         setAuthInfo({
           isLoggedIn: true,
           token: authResponse.token,
           url,
         });
-        return true
+        return true;
       } else {
         setAuthInfo({
           isLoggedIn: false,
           error: `${authResponse.message}`,
         });
-        return false
+        return false;
       }
     } catch (e) {
       setAuthInfo({
         isLoggedIn: false,
-        error: `${e}`
-      })
-      return false
+        error: `${e}`,
+      });
+      return false;
     }
   };
 
   const logout = () => {
-    localStorage.removeItem("token")
+    localStorage.removeItem("token");
     setAuthInfo({
-      isLoggedIn: false
-    })
-  }
+      isLoggedIn: false,
+    });
+  };
 
   return {
     logout,
@@ -107,11 +109,11 @@ export const useAuth = () => {
 };
 
 export function useLoggedInAuth() {
-  const auth = useAuth()
+  const auth = useAuth();
 
   if (!auth.isLoggedIn) {
-    throw new Error("Not logged in")
+    throw new Error("Not logged in");
   }
 
-  return auth
+  return auth;
 }
