@@ -10,7 +10,7 @@ async function main() {
     create: {
       id: "ROOT",
       name: "Root",
-      pathCache: PathCache.stringify([]),
+      pathCache: new PathCache([]).toString(),
       searchNameCache: "",
       variant: WarehouseEntryVariant.Container,
       parentId: null,

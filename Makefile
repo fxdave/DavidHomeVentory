@@ -16,6 +16,7 @@ install:
 	sed -i -e "s|JWT_SECRET=|JWT_SECRET=$${ESCAPED_REPLACE}|" back/.env
 	docker-compose run front npm i
 	docker-compose run back npm i
+	docker-compose run back npx prisma migrate dev
 
 build:
 	make build-back
