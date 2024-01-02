@@ -2,9 +2,8 @@ import jwt from "jsonwebtoken";
 import {CONFIG} from "../../config";
 
 export function createToken() {
-  const ONE_YEAR = 365 * 24 * 60 * 60;
   return jwt.sign({}, CONFIG.JWT_SECRET, {
-    expiresIn: ONE_YEAR,
+    expiresIn: "365 days",
   });
 }
 
