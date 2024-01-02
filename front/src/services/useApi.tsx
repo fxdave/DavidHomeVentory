@@ -24,7 +24,7 @@ export const useApi = () => {
     localStorage.setItem("url", basePath);
 
     const client = createClient<Routes>({
-      path: "/api/rpc",
+      path: `${basePath}/rpc`,
     });
     setApi(client);
     return client;
