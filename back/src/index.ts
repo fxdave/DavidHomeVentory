@@ -5,10 +5,12 @@ import {initWarehouseModule} from "./modules/warehouse";
 import {createAuthLink, initAuthModule} from "./modules/auth";
 import {PrismaClient} from "@prisma/client";
 import path from "path";
+import cors from "cors";
 
 dotenv.config();
 
 const app = express();
+app.options("*", cors());
 
 const db = new PrismaClient();
 
