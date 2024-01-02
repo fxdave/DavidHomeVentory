@@ -17,13 +17,14 @@ install:
 	docker-compose run front npm i
 	docker-compose run back npm i
 	docker-compose run back npx prisma migrate dev
+	make build
 
 build:
 	make build-back
 	make build-front
 
 build-back:
-	docker-compose run back cargo build --release
+	docker-compose run back npm run build
 	
 build-front:
 	docker-compose run front npm run build
