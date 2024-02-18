@@ -11,14 +11,6 @@ const [useApiStore] = createStore<Client<Routes, Record<string, never>> | null>(
 
 export const useApi = () => {
   const [api, setApi] = useApiStore();
-  const token = localStorage.getItem("token");
-  const authedApi = useMemo(() => {
-    return api?.with(() => ({
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }));
-  }, [api]);
 
   const setBaseUrl = (basePath: string) => {
     localStorage.setItem("url", basePath);
@@ -37,10 +29,27 @@ export const useApi = () => {
 
   return {
     api,
-    authedApi: () => {
-      if (authedApi) return authedApi;
-      throw new Error("You cannot use AuthedAPI because auth has not done yet");
-    },
     setBaseUrl,
+  };
+};
+
+export const useAuthedApi = () => {
+  const {api} = useApi();
+
+  if (!api) {
+    throw new Error("Api is null");
+  }
+
+  const authedApi = useMemo(() => {
+    const token = localStorage.getItem("token");
+    return api?.with(() => ({
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }));
+  }, [api]);
+
+  return {
+    api: authedApi,
   };
 };

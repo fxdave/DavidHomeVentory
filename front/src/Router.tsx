@@ -8,8 +8,8 @@ export const ROUTES = {
   OPEN_ITEM: (itemId: string) => `/open-item/${itemId}`,
 };
 
-const Login = React.lazy(() => import("./pages/Login"));
-const Items = React.lazy(() => import("./pages/Items/Items"));
+const Login = React.lazy(() => import("./modules/Auth/LoginPage"));
+const Items = React.lazy(() => import("./modules/Items/ItemsPage"));
 
 const withLoader = (element: ReactElement) => (
   <Suspense fallback={<></>}>{element}</Suspense>

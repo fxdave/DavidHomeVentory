@@ -11,7 +11,7 @@ import {useForm} from "react-hook-form";
 import {useNavigate} from "react-router-dom";
 import {ROUTES} from "Router";
 import {useAuth} from "services/useAuth";
-import Logo from "../assets/rgb-cube.svg";
+import Logo from "../../assets/rgb-cube.svg";
 
 type IFields = {
   target: string;
@@ -20,7 +20,7 @@ type IFields = {
 
 const API_TARGET_KEY = "API_TARGET";
 
-export default function LoginScreen() {
+export default function LoginPage() {
   const {handleSubmit, register, setError} = useForm<IFields>({
     defaultValues: async () => ({
       target: localStorage.getItem(API_TARGET_KEY) || "",
@@ -88,7 +88,7 @@ export default function LoginScreen() {
           label="Server hostname and port:"
           {...register("target")}
           name="target"
-          helperText="Usually something like: http://192.168.0.???:8080/api"
+          helperText="Usually something like: http://192.168.0.???:3000/api"
         />
         <TextField
           label="Password"
