@@ -10,7 +10,7 @@ import cors from "cors";
 dotenv.config();
 
 const app = express();
-app.options("*", cors());
+app.use(cors());
 
 const db = new PrismaClient();
 
