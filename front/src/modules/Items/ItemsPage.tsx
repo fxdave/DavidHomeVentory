@@ -8,7 +8,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import {useInvalidate} from "utils/useInvalidate";
 import {Search} from "@mui/icons-material";
 import {Container} from "@mui/system";
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {useLoggedInAuth} from "services/useAuth";
 import {WarehouseEntryWithPath} from "../../../../back/src/modules/warehouse";
 import {Item} from "./components/Item";
@@ -17,6 +17,7 @@ import {useAsyncEffect} from "utils/useAsyncEffect";
 import {asyncCallback} from "utils/useAsyncCallback";
 import {CuttingBar} from "./components/CuttingBar";
 import {BreadcrumbsBar} from "./components/BreadcrumbsBar";
+import {ROUTES} from "Router";
 
 export default function ItemsScreen() {
   const auth = useLoggedInAuth();
@@ -166,6 +167,9 @@ export default function ItemsScreen() {
       <Button onClick={() => auth.logout()} fullWidth>
         Logout
       </Button>
+      <Link to={ROUTES.STICKERS}>
+        <Button fullWidth>Box Sticker Generator</Button>
+      </Link>
     </Container>
   );
 }

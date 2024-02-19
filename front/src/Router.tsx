@@ -4,12 +4,14 @@ import {useAuth} from "services/useAuth";
 
 export const ROUTES = {
   LOGIN: "/login",
+  STICKERS: "/stickers",
   ITEMS: (subPath?: string) => `/items${subPath ? "/" + subPath : ""}`,
   OPEN_ITEM: (itemId: string) => `/open-item/${itemId}`,
 };
 
 const Login = React.lazy(() => import("./modules/Auth/LoginPage"));
 const Items = React.lazy(() => import("./modules/Items/ItemsPage"));
+const StickerPage = React.lazy(() => import("./modules/Sticker/StickerPage"));
 
 const withLoader = (element: ReactElement) => (
   <Suspense fallback={<></>}>{element}</Suspense>
@@ -26,6 +28,7 @@ export default function Router() {
             path={ROUTES.OPEN_ITEM(":id")}
             element={withLoader(<Items />)}
           />
+          <Route path={ROUTES.STICKERS} element={withLoader(<StickerPage />)} />
           <Route path="*" element={<Navigate to={ROUTES.ITEMS()} replace />} />
         </Routes>
       </>
