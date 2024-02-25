@@ -5,13 +5,13 @@ import {toast} from "react-toastify";
 type AnyFn = (...args: any[]) => any;
 
 export function asyncCallback<T extends AnyFn>(cb: T) {
-  return (...args: unknown[]) =>
+  return ((...args: unknown[]) =>
     cb(args).catch((e: unknown) => {
       if (e instanceof Error) {
         toast(e.message, {type: "error"});
       }
       console.error(e);
-    }) as T;
+    })) as T;
 }
 
 export function useAsyncCallback<T extends AnyFn>(

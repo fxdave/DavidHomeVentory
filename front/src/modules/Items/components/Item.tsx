@@ -8,7 +8,17 @@ import {useState} from "react";
 import {AllInbox, ContentCut, Edit, Inbox, Save} from "@mui/icons-material";
 import {SafeDeleteButton} from "./SafeDelete";
 import {WarehouseEntryVariant} from "../../../../../back/src/modules/warehouse/models";
-import {ItemProps} from "../ItemsPage";
+import {WarehouseEntryWithPath} from "../../../../../back/src/modules/warehouse";
+
+type ItemProps = {
+  isSearch: boolean;
+  item: WarehouseEntryWithPath;
+  onDelete: () => void;
+  onGoForward: () => void;
+  onCutStart: () => void;
+  onEdit: (entry: WarehouseEntryWithPath) => void;
+  cutting: null | {item: WarehouseEntryWithPath};
+};
 
 export function Item(props: ItemProps) {
   const [editing, setEditing] = useState<null | {

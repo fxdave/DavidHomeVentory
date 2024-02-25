@@ -1,23 +1,19 @@
 import {Button, Divider, InputAdornment, TextField} from "@mui/material";
-import IconButton from "@mui/material/IconButton";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
 import {useState} from "react";
 import {useAuthedApi} from "services/useApi";
-import SaveIcon from "@mui/icons-material/Save";
 import {useInvalidate} from "utils/useInvalidate";
 import {Search} from "@mui/icons-material";
 import {Container} from "@mui/system";
 import {Link, useParams} from "react-router-dom";
 import {useLoggedInAuth} from "services/useAuth";
 import {WarehouseEntryWithPath} from "../../../../back/src/modules/warehouse";
-import {Item} from "./components/Item";
 import {useNavigation} from "./useNavigation";
 import {useAsyncEffect} from "utils/useAsyncEffect";
 import {asyncCallback} from "utils/useAsyncCallback";
 import {CuttingBar} from "./components/CuttingBar";
 import {BreadcrumbsBar} from "./components/BreadcrumbsBar";
 import {ROUTES} from "Router";
+import {ItemList} from "./ItemList";
 
 export default function ItemsScreen() {
   const auth = useLoggedInAuth();
@@ -25,7 +21,6 @@ export default function ItemsScreen() {
   const [keyword, setKeyword] = useState<string>("");
   const nav = useNavigation();
   const [list, setList] = useState<WarehouseEntryWithPath[]>([]);
-  const [newItemName, setNewItemName] = useState("");
   const [cutting, setCutting] = useState<null | {item: WarehouseEntryWithPath}>(
     null,
   );
@@ -58,17 +53,16 @@ export default function ItemsScreen() {
     }
   }, [keyword, parent, listInvalidate.id, nav.path]);
 
-  const handleCreateItem = asyncCallback(async () => {
+  const handleCreateItem = asyncCallback(async (item: {name: string}) => {
     await api.warehouse.create.post({
       body: {
-        name: newItemName,
+        name: item.name,
         parentId: nav.parent.id,
         id: null,
       },
     });
 
     listInvalidate.invalidate();
-    setNewItemName("");
   });
 
   const handlePaste = asyncCallback(async () => {
@@ -126,43 +120,16 @@ export default function ItemsScreen() {
 
       <BreadcrumbsBar nav={nav} />
 
-      <List>
-        {list.map(item => (
-          <Item
-            key={item.id}
-            isSearch={!!keyword}
-            item={item}
-            onDelete={() => handleDeleteItem(item.id)}
-            onGoForward={() => {
-              nav.goForward(item.id, item.name);
-            }}
-            onEdit={handleUpdateItem}
-            onCutStart={() => {
-              setCutting({item});
-            }}
-            cutting={cutting}
-          />
-        ))}
-        <ListItem
-          secondaryAction={
-            <IconButton
-              edge="end"
-              onClick={handleCreateItem}
-              disabled={!!cutting}>
-              <SaveIcon />
-            </IconButton>
-          }>
-          <TextField
-            disabled={!!cutting}
-            label="Name of the new Item or Box"
-            onChange={e => setNewItemName(e.target.value)}
-            onKeyUp={e => {
-              if (e.code === "Enter") handleCreateItem();
-            }}
-            value={newItemName}
-          />
-        </ListItem>
-      </List>
+      <ItemList
+        list={list}
+        cutting={cutting}
+        isSearch={!!keyword}
+        onCreateItem={item => handleCreateItem(item)}
+        onDeleteItem={item => handleDeleteItem(item.id)}
+        onUpdateItem={item => handleUpdateItem(item)}
+        onOpenItem={item => nav.goForward(item.id, item.name)}
+        onStartCutting={item => setCutting({item})}
+      />
       <Divider>HomeVentory</Divider>
       <Button onClick={() => auth.logout()} fullWidth>
         Logout
@@ -173,13 +140,3 @@ export default function ItemsScreen() {
     </Container>
   );
 }
-
-export type ItemProps = {
-  isSearch: boolean;
-  item: WarehouseEntryWithPath;
-  onDelete: () => void;
-  onGoForward: () => void;
-  onCutStart: () => void;
-  onEdit: (entry: WarehouseEntryWithPath) => void;
-  cutting: null | {item: WarehouseEntryWithPath};
-};
