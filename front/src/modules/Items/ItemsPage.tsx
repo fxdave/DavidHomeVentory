@@ -1,22 +1,20 @@
-import {Button, Divider, InputAdornment, TextField} from "@mui/material";
+import {InputAdornment, TextField} from "@mui/material";
 import {useState} from "react";
 import {useAuthedApi} from "services/useApi";
 import {useInvalidate} from "utils/useInvalidate";
 import {Search} from "@mui/icons-material";
 import {Container} from "@mui/system";
-import {Link, useParams} from "react-router-dom";
-import {useLoggedInAuth} from "services/useAuth";
+import {useParams} from "react-router-dom";
 import {WarehouseEntryWithPath} from "../../../../back/src/modules/warehouse";
 import {useNavigation} from "./useNavigation";
 import {useAsyncEffect} from "utils/useAsyncEffect";
 import {asyncCallback} from "utils/useAsyncCallback";
 import {CuttingBar} from "./components/CuttingBar";
 import {BreadcrumbsBar} from "./components/BreadcrumbsBar";
-import {ROUTES} from "Router";
 import {ItemList} from "./ItemList";
+import {Navigation} from "modules/Common/Navigation";
 
 export default function ItemsScreen() {
-  const auth = useLoggedInAuth();
   const {api} = useAuthedApi();
   const [keyword, setKeyword] = useState<string>("");
   const nav = useNavigation();
@@ -130,13 +128,7 @@ export default function ItemsScreen() {
         onOpenItem={item => nav.goForward(item.id, item.name)}
         onStartCutting={item => setCutting({item})}
       />
-      <Divider>HomeVentory</Divider>
-      <Button onClick={() => auth.logout()} fullWidth>
-        Logout
-      </Button>
-      <Link to={ROUTES.STICKERS}>
-        <Button fullWidth>Box Sticker Generator</Button>
-      </Link>
+      <Navigation />
     </Container>
   );
 }

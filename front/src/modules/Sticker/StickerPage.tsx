@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import {Add, Delete, Print} from "@mui/icons-material";
 import {useNavigate} from "react-router-dom";
+import {Navigation} from "modules/Common/Navigation";
 
 const genName = () =>
   uniqueNamesGenerator({
@@ -223,9 +224,19 @@ export default function StickerPage() {
           ))}
         </Page>
       </PageContainer>
+      <NavigationContainer>
+        <Navigation />
+      </NavigationContainer>
     </Container>
   );
 }
+
+const NavigationContainer = styled("div")({
+  width: "100%",
+  "@media print": {
+    display: "none",
+  },
+});
 
 const Separator = styled("div")({
   width: "100%",
