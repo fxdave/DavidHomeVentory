@@ -8,10 +8,10 @@
     "lint:fix": "eslint --fix ./src"
   },
   "dependencies": {
-    "@capacitor/android": "^4.6.2",
-    "@capacitor/app": "^4.1.1",
-    "@capacitor/cli": "^4.6.2",
-    "@capacitor/core": "^4.6.2",
+    "@bcyesil/capacitor-plugin-printer": "^0.0.3",
+    "@capacitor/android": "^5.0.0",
+    "@capacitor/app": "^5.0.0",
+    "@capacitor/core": "^5.0.0",
     "@cuple/client": "^1.0.7",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
@@ -33,6 +33,7 @@
     "unique-names-generator": "^4.7.1"
   },
   "devDependencies": {
+    "@capacitor/cli": "^5.0.0",
     "@types/react": "~18.0.14",
     "@types/react-dom": "^18.0.10",
     "@typescript-eslint/eslint-plugin": "^5.47.0",

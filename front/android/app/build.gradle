@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
+    namespace "david.home.ventory"
     compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "david.home.ventory"

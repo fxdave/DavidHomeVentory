@@ -19,6 +19,7 @@ import {
 import {Add, Delete, Print} from "@mui/icons-material";
 import {useNavigate} from "react-router-dom";
 import {Navigation} from "modules/Common/Navigation";
+import {Printer} from "@bcyesil/capacitor-plugin-printer";
 
 const genName = () =>
   uniqueNamesGenerator({
@@ -68,6 +69,46 @@ export default function StickerPage() {
     };
   }, []);
 
+  function print() {
+    const page = pageRef.current;
+    if (!page) return;
+
+    // For browsers:
+    window.print();
+
+    // For phone:
+    Printer.print({
+      name: "HomveVentory Stickers",
+      orientation: "landscape",
+      content: `<!DOCTYPE html>
+      <html>
+      <head>
+      <style>
+      @page {
+        size: a4 landscape;
+        margin: 0;
+        font-family: SourceCodePro;
+      },
+      html, body {
+        width: ${size[0]},
+        height: ${size[1]},
+      }
+      </style>
+      </head>
+      <body>
+        ${page.outerHTML}
+      </body>
+      </html>
+      `,
+    })
+      .then(() => {
+        console.log("all fine");
+      })
+      .catch(e => {
+        console.error(e);
+      });
+  }
+
   return (
     <Container>
       <Global
@@ -83,8 +124,8 @@ export default function StickerPage() {
               fontFamily: "SourceCodePro",
             },
             "html, body": {
-              width: "297mm",
-              height: "210mm",
+              width: size[0],
+              height: size[1],
             },
             form: {
               display: "none !important",
@@ -192,23 +233,51 @@ export default function StickerPage() {
 
           <Button
             variant="contained"
-            onClick={() => window.print()}
+            onClick={() => print()}
             sx={{marginLeft: "auto"}}>
             <Print />
           </Button>
         </PreviewHeader>
       </Form>
       <PageContainer>
+        {/** Inline styles are required for printing on mobile */}
         <Page
           ref={pageRef}
-          stickersPerRow={settings.stickersPerRow}
-          numRows={settings.numRows}
-          margin={margins}
-          size={size}
-          previewScaleRatio={previewScaleRatio}>
+          previewScaleRatio={previewScaleRatio}
+          style={{
+            boxSizing: "border-box",
+            display: "grid",
+            gridTemplateColumns: `repeat(${stickersPerRow}, 1fr)`,
+            gridTemplateRows: `repeat(${numRows}, 1fr)`,
+            gridColumnGap: "0px",
+            gridRowGap: "0px",
+            width: size[0],
+            height: size[1],
+            overflow: "hidden",
+            paddingTop: margins[0],
+            paddingRight: margins[1],
+            paddingBottom: margins[2],
+            paddingLeft: margins[3],
+            color: "black",
+          }}>
           {list.map(item => (
-            <StickerContainer key={item}>
-              <QrCodeContainer>
+            <StickerContainer
+              key={item}
+              style={{
+                containerType: "inline-size",
+                contain: "strict",
+                display: "flex",
+                flexFlow: "column",
+                alignItems: "center",
+                boxShadow: "inset 0 0 0 0.5px #535353, 0 0 0 0.5px #535353",
+                overflow: "hidden",
+              }}>
+              <QrCodeContainer
+                style={{
+                  marginTop: "10cqw",
+                  width: "80cqw",
+                  height: "80cqw",
+                }}>
                 <QRCode
                   value={`davidhomeventory://${item}`}
                   style={{
@@ -217,8 +286,27 @@ export default function StickerPage() {
                   }}
                 />
               </QrCodeContainer>
-              <StickerNameContainer>
-                <StickerName>{item}</StickerName>
+              <StickerNameContainer
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}>
+                <StickerName
+                  style={{
+                    fontFamily: "SourceCodePro",
+                    fontSize: "10cqw",
+                    padding: "5cqw 10cqw",
+                    textAlign: "center",
+                    wordBreak: "break-word",
+                    hyphens: "auto",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}>
+                  {item}
+                </StickerName>
               </StickerNameContainer>
             </StickerContainer>
           ))}
@@ -259,79 +347,31 @@ const Form = styled("form")({
 });
 
 const QrCodeContainer = styled("div")({
-  marginTop: "10cqw",
-  width: "80cqw",
-  height: "80cqw",
-  filter: "invert(1)",
   "@media print": {
     filter: "none",
+  },
+  "@media not print": {
+    filter: "invert(1)",
   },
 });
 
 // 2100x1510
-const StickerContainer = styled("div")({
-  containerType: "inline-size",
-  contain: "strict",
-  display: "flex",
-  flexFlow: "column",
-  alignItems: "center",
-  boxShadow: "inset 0 0 0 0.5px #535353, 0 0 0 0.5px #535353",
-  overflow: "hidden",
+const StickerContainer = styled("div")({});
 
-  "@media print": {
-    border: "none",
-  },
-});
-
-const StickerNameContainer = styled("div")({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-});
-const StickerName = styled("div")({
-  fontFamily: "SourceCodePro",
-  fontSize: "10cqw",
-  padding: "5cqw 10cqw",
-  textAlign: "center",
-  wordBreak: "break-word",
-  hyphens: "auto",
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-});
+const StickerNameContainer = styled("div")({});
+const StickerName = styled("div")({});
 
 // 6300x8910
 const Page = styled("div")<{
-  stickersPerRow: number;
-  numRows: number;
-  margin: string[];
-  size: string[];
   previewScaleRatio: number;
 }>(props => ({
-  background: "#CFCFCF",
-  boxSizing: "border-box",
-  display: "grid",
-  gridTemplateColumns: `repeat(${props.stickersPerRow}, 1fr)`,
-  gridTemplateRows: `repeat(${props.numRows}, 1fr)`,
-  gridColumnGap: "0px",
-  gridRowGap: "0px",
-  width: props.size[0],
-  height: props.size[1],
-  overflow: "hidden",
-  paddingTop: props.margin[0],
-  paddingRight: props.margin[1],
-  paddingBottom: props.margin[2],
-  paddingLeft: props.margin[3],
-  filter: "invert(100%)",
-  color: "black",
-
   "@media print": {
     filter: "none",
     background: "none",
-    border: "none",
   },
   "@media not print": {
+    filter: "invert(100%)",
+    background: "#CFCFCF",
     transformOrigin: "top left",
     transform: `scale(${props.previewScaleRatio})`,
   },
