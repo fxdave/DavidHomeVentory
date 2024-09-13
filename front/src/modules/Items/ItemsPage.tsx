@@ -16,7 +16,6 @@ import {Navigation} from "modules/Common/Navigation";
 
 export default function ItemsScreen() {
   const {api} = useAuthedApi();
-  //const [keyword, nav.setKeyword] = useState<string>("");
   const nav = useNavigation();
   const [list, setList] = useState<WarehouseEntryWithPath[]>([]);
   const [cutting, setCutting] = useState<null | {item: WarehouseEntryWithPath}>(
