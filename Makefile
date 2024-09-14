@@ -6,6 +6,15 @@ run-dev:
 run-prod:
 	docker-compose -f compose.prod.yml up -d --remove-orphans
 
+update-prod:
+	git pull
+	docker-compose -f compose.prod.yml stop
+	docker-compose run front npm i
+	docker-compose run back npm i
+	docker-compose run back npx prisma migrate dev
+	make build
+	make run-prod
+
 stop:
 	docker-compose down
 
