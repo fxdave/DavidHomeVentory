@@ -75,7 +75,7 @@ export function useNavigation() {
     goForward,
     goBack,
     reset,
-    isDirty: path.length !== DEFAULT_PATH.length,
+    isDirty: path.length !== DEFAULT_PATH.length || keyword,
     keyword,
     setKeyword,
   };
