@@ -5,8 +5,8 @@ import {toast} from "react-toastify";
 type AnyFn = (...args: any[]) => any;
 
 export function asyncCallback<T extends AnyFn>(cb: T) {
-  return ((...args: unknown[]) =>
-    cb(args).catch((e: unknown) => {
+  return ((...args: Parameters<T>) =>
+    cb(...args).catch((e: unknown) => {
       if (e instanceof Error) {
         toast(e.message, {type: "error"});
       }

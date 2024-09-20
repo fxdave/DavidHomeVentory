@@ -44,7 +44,7 @@ export const useAuthedApi = () => {
     const token = localStorage.getItem("token");
     return api?.with(() => ({
       headers: {
-        Authorization: `Bearer ${token}`,
+        authorization: `Bearer ${token}`,
       },
     }));
   }, [api]);

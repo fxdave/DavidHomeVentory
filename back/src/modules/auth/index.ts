@@ -13,11 +13,11 @@ export function createAuthLink(builder: Builder) {
   return builder
     .headersSchema(
       z.object({
-        Authorization: z.string(),
+        authorization: z.string(),
       }),
     )
     .middleware(async ({data}) => {
-      const sections = data.headers.Authorization.split(" ");
+      const sections = data.headers.authorization.split(" ");
       if (isTokenValid(sections[1])) {
         return {next: true};
       }

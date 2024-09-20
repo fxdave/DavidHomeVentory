@@ -51,6 +51,8 @@ export default function ItemsScreen() {
   }, [nav.keyword, parent, listInvalidate.id, nav.path]);
 
   const handleCreateItem = asyncCallback(async (item: {name: string}) => {
+    console.log(item);
+
     await api.warehouse.create.post({
       body: {
         name: item.name,
