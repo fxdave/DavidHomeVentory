@@ -46,7 +46,7 @@ export default function ItemsScreen() {
       },
     });
     if (response.result === "success") {
-      setList(response.list.slice(0, 20));
+      setList(response.list);
     }
   }, [nav.keyword, parent, listInvalidate.id, nav.path]);
 
