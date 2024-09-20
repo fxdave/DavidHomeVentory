@@ -13,7 +13,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@cuple/server": "^1.0.7",
+        "@cuple/server": "^1.0.10",
         "@prisma/client": "^5.7.1",
         "@types/jsonwebtoken": "^9.0.5",
         "@types/sha256": "^0.2.2",
