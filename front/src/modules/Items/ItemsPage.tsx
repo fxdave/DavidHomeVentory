@@ -16,7 +16,6 @@ import {Navigation} from "modules/Common/Navigation";
 
 export default function ItemsScreen() {
   const {api} = useAuthedApi();
-  const [keyword, setKeyword] = useState<string>("");
   const nav = useNavigation();
   const [list, setList] = useState<WarehouseEntryWithPath[]>([]);
   const [cutting, setCutting] = useState<null | {item: WarehouseEntryWithPath}>(
@@ -42,14 +41,14 @@ export default function ItemsScreen() {
   useAsyncEffect(async () => {
     const response = await api.warehouse.list.get({
       query: {
-        keyword: keyword,
+        keyword: nav.keyword,
         parentId: nav.parent.id,
       },
     });
     if (response.result === "success") {
       setList(response.list);
     }
-  }, [keyword, parent, listInvalidate.id, nav.path]);
+  }, [nav.keyword, parent, listInvalidate.id, nav.path]);
 
   const handleCreateItem = asyncCallback(async (item: {name: string}) => {
     await api.warehouse.create.post({
@@ -103,8 +102,8 @@ export default function ItemsScreen() {
       )}
 
       <TextField
-        value={keyword}
-        onChange={e => setKeyword(e.target.value)}
+        value={nav.keyword}
+        onChange={e => nav.setKeyword(e.target.value)}
         fullWidth
         label="Find something"
         InputProps={{
@@ -121,7 +120,7 @@ export default function ItemsScreen() {
       <ItemList
         list={list}
         cutting={cutting}
-        isSearch={!!keyword}
+        isSearch={!!nav.keyword}
         onCreateItem={item => handleCreateItem(item)}
         onDeleteItem={item => handleDeleteItem(item.id)}
         onUpdateItem={item => handleUpdateItem(item)}

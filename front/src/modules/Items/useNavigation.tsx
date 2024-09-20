@@ -18,6 +18,7 @@ export function useNavigation() {
   const navigate = useNavigate();
   const [path, setPath] =
     useState<{name: string; id: string | null}[]>(DEFAULT_PATH);
+  const [keyword, setKeyword] = useState<string>("");
 
   function rebuildPath(path: {name: string; id: string | null}[]) {
     const newPath = path
@@ -46,6 +47,7 @@ export function useNavigation() {
   function reset() {
     setPath(DEFAULT_PATH);
     rebuildPath(DEFAULT_PATH);
+    setKeyword("");
   }
 
   function initFromParent(entry: WarehouseEntryWithPath) {
@@ -73,7 +75,9 @@ export function useNavigation() {
     goForward,
     goBack,
     reset,
-    isDirty: path.length !== DEFAULT_PATH.length,
+    isDirty: path.length !== DEFAULT_PATH.length || keyword,
+    keyword,
+    setKeyword,
   };
 }
 
