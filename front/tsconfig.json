@@ -9,6 +9,7 @@
     "esModuleInterop": true,
     "strict": true,
     "lib": ["DOM", "ES2021"],
+    "noErrorTruncation": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
     "strictNullChecks": true,
