@@ -1,11 +1,11 @@
 import {TextField} from "@mui/material";
 import IconButton from "@mui/material/IconButton";
+import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import {useState} from "react";
 import SaveIcon from "@mui/icons-material/Save";
 import {WarehouseEntryWithPath} from "../../../../back/src/modules/warehouse";
 import {Item} from "./components/Item";
-import {FixedSizeList as List} from "react-window";
 
 export function ItemList(props: {
   list: WarehouseEntryWithPath[];
@@ -24,10 +24,9 @@ export function ItemList(props: {
     setNewItemName("");
   }
 
-  const Row = ({index, style}: {index: number; style: React.CSSProperties}) => {
-    const item = props.list[index];
-    return (
-      <div style={style}>
+  return (
+    <List>
+      {props.list.map(item => (
         <Item
           key={item.id}
           isSearch={props.isSearch}
@@ -38,20 +37,7 @@ export function ItemList(props: {
           onCutStart={() => props.onStartCutting(item)}
           cutting={props.cutting}
         />
-      </div>
-    );
-  };
-
-  return (
-    <div>
-      <List
-        height={window.innerHeight / 1.85}
-        itemCount={props.list.length}
-        itemSize={90}
-        width={"100%"}
-        itemData={props.list}>
-        {Row}
-      </List>
+      ))}
       <ListItem
         secondaryAction={
           <IconButton
@@ -71,8 +57,6 @@ export function ItemList(props: {
           value={newItemName}
         />
       </ListItem>
-    </div>
+    </List>
   );
 }
-/*
- */
