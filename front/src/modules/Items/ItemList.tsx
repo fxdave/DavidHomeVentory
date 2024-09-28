@@ -54,9 +54,6 @@ export function ItemList(props: {
     }
   }, [listLength, refState, props.list, slicedArray]);
 
-  console.log("origi meret: " + props.list.length + " Sliced meret: " + slicedArray.length)
-  // eslint-disable-next-line sonarjs/cognitive-complexity
-
   function handleCreateItem() {
     props.onCreateItem({ name: newItemName });
     setNewItemName("");
