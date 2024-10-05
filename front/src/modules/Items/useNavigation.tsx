@@ -26,7 +26,6 @@ export function useNavigation() {
         segment.name.replace(/\*/, "_").replace(/[^a-zA-Z0-9\-_]/g, ""),
       )
       .join("/");
-    console.log(path);
 
     navigate(ROUTES.ITEMS(newPath));
   }

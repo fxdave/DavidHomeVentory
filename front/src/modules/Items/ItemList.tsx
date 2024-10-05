@@ -1,13 +1,14 @@
 import {TextField} from "@mui/material";
 import IconButton from "@mui/material/IconButton";
+import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
-import {useState} from "react";
+import {memo, useRef, useState} from "react";
 import SaveIcon from "@mui/icons-material/Save";
 import {WarehouseEntryWithPath} from "../../../../back/src/modules/warehouse";
 import {Item} from "./components/Item";
-import {FixedSizeList as List} from "react-window";
+import {useInfinityScroll} from "./useInfinityScroll";
 
-export function ItemList(props: {
+function ItemListRaw(props: {
   list: WarehouseEntryWithPath[];
   onDeleteItem: (item: WarehouseEntryWithPath) => void;
   onUpdateItem: (item: WarehouseEntryWithPath) => void;
@@ -18,16 +19,17 @@ export function ItemList(props: {
   isSearch: boolean;
 }) {
   const [newItemName, setNewItemName] = useState("");
+  const watchedDivRef = useRef<HTMLDivElement>(null);
+  const slicedList = useInfinityScroll(props.list, watchedDivRef);
 
   function handleCreateItem() {
     props.onCreateItem({name: newItemName});
     setNewItemName("");
   }
 
-  const Row = ({index, style}: {index: number; style: React.CSSProperties}) => {
-    const item = props.list[index];
-    return (
-      <div style={style}>
+  return (
+    <List>
+      {slicedList.map(item => (
         <Item
           key={item.id}
           isSearch={props.isSearch}
@@ -38,20 +40,7 @@ export function ItemList(props: {
           onCutStart={() => props.onStartCutting(item)}
           cutting={props.cutting}
         />
-      </div>
-    );
-  };
-
-  return (
-    <div>
-      <List
-        height={window.innerHeight / 1.85}
-        itemCount={props.list.length}
-        itemSize={90}
-        width={"100%"}
-        itemData={props.list}>
-        {Row}
-      </List>
+      ))}
       <ListItem
         secondaryAction={
           <IconButton
@@ -70,9 +59,14 @@ export function ItemList(props: {
           }}
           value={newItemName}
         />
+        <div ref={watchedDivRef} />
       </ListItem>
-    </div>
+    </List>
   );
 }
-/*
- */
+
+export const ItemList = memo(
+  ItemListRaw,
+  (prev, next) =>
+    prev.list == next.list && prev.cutting?.item?.id == next.cutting?.item?.id,
+);

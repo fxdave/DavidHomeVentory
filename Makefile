@@ -15,6 +15,15 @@ update-prod:
 	make build
 	make run-prod
 
+update-dev:
+	git pull
+	docker-compose stop
+	docker-compose run front npm i
+	docker-compose run back npm i
+	docker-compose run back npx prisma migrate dev
+	make build
+	make run-dev
+
 stop:
 	docker-compose down
 

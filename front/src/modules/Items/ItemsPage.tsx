@@ -17,7 +17,10 @@ import {Navigation} from "modules/Common/Navigation";
 export default function ItemsScreen() {
   const {api} = useAuthedApi();
   const nav = useNavigation();
-  const [list, setList] = useState<WarehouseEntryWithPath[]>([]);
+  const [list, setList] = useState<{
+    arr: WarehouseEntryWithPath[];
+    key: number;
+  }>({arr: [], key: 0});
   const [cutting, setCutting] = useState<null | {item: WarehouseEntryWithPath}>(
     null,
   );
@@ -46,7 +49,7 @@ export default function ItemsScreen() {
       },
     });
     if (response.result === "success") {
-      setList(response.list);
+      setList(old => ({arr: response.list, key: old.key + 1}));
     }
   }, [nav.keyword, parent, listInvalidate.id, nav.path]);
 
@@ -91,7 +94,6 @@ export default function ItemsScreen() {
     await api.warehouse.delete.delete({query: {id: itemId}});
     listInvalidate.invalidate();
   });
-
   return (
     <Container style={{overflow: "auto", height: "100vh"}}>
       <h1>Items</h1>
@@ -120,7 +122,8 @@ export default function ItemsScreen() {
       <BreadcrumbsBar nav={nav} />
 
       <ItemList
-        list={list}
+        key={list.key}
+        list={list.arr}
         cutting={cutting}
         isSearch={!!nav.keyword}
         onCreateItem={item => handleCreateItem(item)}

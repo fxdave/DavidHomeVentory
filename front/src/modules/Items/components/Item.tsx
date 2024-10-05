@@ -4,7 +4,7 @@ import IconButton from "@mui/material/IconButton";
 import ListItem from "@mui/material/ListItem";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemText from "@mui/material/ListItemText";
-import {useState} from "react";
+import {memo, useState} from "react";
 import {AllInbox, ContentCut, Edit, Inbox, Save} from "@mui/icons-material";
 import {SafeDeleteButton} from "./SafeDelete";
 import {WarehouseEntryVariant} from "../../../../../back/src/modules/warehouse/models";
@@ -19,8 +19,7 @@ type ItemProps = {
   onEdit: (entry: WarehouseEntryWithPath) => void;
   cutting: null | {item: WarehouseEntryWithPath};
 };
-
-export function Item(props: ItemProps) {
+function ItemRaw(props: ItemProps) {
   const [editing, setEditing] = useState<null | {
     title: string;
   }>(null);
@@ -33,7 +32,6 @@ export function Item(props: ItemProps) {
       });
     setEditing(null);
   }
-
   return (
     <ListItem>
       <ListItemAvatar>
@@ -106,3 +104,10 @@ export function Item(props: ItemProps) {
     </ListItem>
   );
 }
+export const Item = memo(
+  ItemRaw,
+  (prev, next) =>
+    prev.item.id == next.item.id &&
+    prev.isSearch == next.isSearch &&
+    prev.cutting?.item?.id == next.cutting?.item?.id,
+);
