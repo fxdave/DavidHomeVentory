@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { ROUTES } from "Router";
-import { WarehouseEntryWithPath } from "../../../../back/src/modules/warehouse";
+import {useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {ROUTES} from "Router";
+import {WarehouseEntryWithPath} from "../../../../back/src/modules/warehouse";
 
 export const DEFAULT_PATH = [
   {
@@ -17,22 +17,21 @@ export const DEFAULT_PATH = [
 export function useNavigation() {
   const navigate = useNavigate();
   const [path, setPath] =
-    useState<{ name: string; id: string | null }[]>(DEFAULT_PATH);
+    useState<{name: string; id: string | null}[]>(DEFAULT_PATH);
   const [keyword, setKeyword] = useState<string>("");
 
-  function rebuildPath(path: { name: string; id: string | null }[]) {
+  function rebuildPath(path: {name: string; id: string | null}[]) {
     const newPath = path
       .map(segment =>
         segment.name.replace(/\*/, "_").replace(/[^a-zA-Z0-9\-_]/g, ""),
       )
       .join("/");
-    console.log(path);
 
     navigate(ROUTES.ITEMS(newPath));
   }
 
   function goForward(id: string | null, name: string) {
-    const newPath = [...path, { id, name }];
+    const newPath = [...path, {id, name}];
     setPath(newPath);
     rebuildPath(newPath);
   }

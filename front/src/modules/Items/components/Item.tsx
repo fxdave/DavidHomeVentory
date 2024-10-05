@@ -1,15 +1,14 @@
-/* eslint-disable prettier/prettier */
-import { ListItemButton, TextField } from "@mui/material";
+import {ListItemButton, TextField} from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import IconButton from "@mui/material/IconButton";
 import ListItem from "@mui/material/ListItem";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import ListItemText from "@mui/material/ListItemText";
-import { useState } from "react";
-import { AllInbox, ContentCut, Edit, Inbox, Save } from "@mui/icons-material";
-import { SafeDeleteButton } from "./SafeDelete";
-import { WarehouseEntryVariant } from "../../../../../back/src/modules/warehouse/models";
-import { WarehouseEntryWithPath } from "../../../../../back/src/modules/warehouse";
+import {memo, useState} from "react";
+import {AllInbox, ContentCut, Edit, Inbox, Save} from "@mui/icons-material";
+import {SafeDeleteButton} from "./SafeDelete";
+import {WarehouseEntryVariant} from "../../../../../back/src/modules/warehouse/models";
+import {WarehouseEntryWithPath} from "../../../../../back/src/modules/warehouse";
 
 type ItemProps = {
   isSearch: boolean;
@@ -18,10 +17,9 @@ type ItemProps = {
   onGoForward: () => void;
   onCutStart: () => void;
   onEdit: (entry: WarehouseEntryWithPath) => void;
-  cutting: null | { item: WarehouseEntryWithPath };
+  cutting: null | {item: WarehouseEntryWithPath};
 };
-
-export function Item(props: ItemProps) {
+function ItemRaw(props: ItemProps) {
   const [editing, setEditing] = useState<null | {
     title: string;
   }>(null);
@@ -34,7 +32,6 @@ export function Item(props: ItemProps) {
       });
     setEditing(null);
   }
-
   return (
     <ListItem>
       <ListItemAvatar>
@@ -52,7 +49,7 @@ export function Item(props: ItemProps) {
             fullWidth
             label="Name"
             value={editing.title}
-            onChange={e => setEditing({ title: e.target.value })}
+            onChange={e => setEditing({title: e.target.value})}
             onKeyUp={e => {
               if (e.code === "Enter") save();
             }}
@@ -62,10 +59,11 @@ export function Item(props: ItemProps) {
         <ListItemButton disabled={props.cutting?.item.id == props.item.id}>
           <ListItemText
             onClick={() => props.onGoForward()}
-            primary={`${props.isSearch
-              ? props.item.path.map(s => s.name).join(" / ") + " / "
-              : ""
-              } ${props.item.name}`}
+            primary={`${
+              props.isSearch
+                ? props.item.path.map(s => s.name).join(" / ") + " / "
+                : ""
+            } ${props.item.name}`}
             secondary={props.item.id}
           />
         </ListItemButton>
@@ -79,7 +77,7 @@ export function Item(props: ItemProps) {
         {!editing && (
           <IconButton
             edge="end"
-            onClick={() => setEditing({ title: props.item.name })}
+            onClick={() => setEditing({title: props.item.name})}
             disabled={!!props.cutting}>
             <Edit />
           </IconButton>
@@ -106,3 +104,10 @@ export function Item(props: ItemProps) {
     </ListItem>
   );
 }
+export const Item = memo(
+  ItemRaw,
+  (prev, next) =>
+    prev.item.id == next.item.id &&
+    prev.isSearch == next.isSearch &&
+    prev.cutting?.item?.id == next.cutting?.item?.id,
+);
