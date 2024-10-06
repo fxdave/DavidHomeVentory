@@ -34,6 +34,7 @@ export function useNavigation() {
     const newPath = [...path, {id, name}];
     setPath(newPath);
     rebuildPath(newPath);
+    setKeyword("");
   }
 
   function goBack(id: string | null) {
