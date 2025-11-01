@@ -12,6 +12,7 @@ import {useNavigate} from "react-router-dom";
 import {ROUTES} from "Router";
 import {useAuth} from "services/useAuth";
 import Logo from "../../assets/rgb-cube.svg";
+import {useEffect} from "react";
 
 type IFields = {
   target: string;
@@ -21,12 +22,18 @@ type IFields = {
 const API_TARGET_KEY = "API_TARGET";
 
 export default function LoginPage() {
-  const {handleSubmit, register, setError} = useForm<IFields>({
+  const {handleSubmit, register, setError, setValue} = useForm<IFields>({
     defaultValues: async () => ({
       target: localStorage.getItem(API_TARGET_KEY) || "",
       password: "",
     }),
   });
+
+  useEffect(() => {
+    if (window.location.href.includes("localhost:3000"))
+      setValue("target", "http://localhost:3001/api");
+  }, []);
+
   const auth = useAuth();
   const navigate = useNavigate();
   const onSubmit = handleSubmit(data => {
