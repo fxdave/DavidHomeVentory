@@ -28,6 +28,11 @@ const NavigationContainer = styled("div", {
   base: {
     width: "100%",
     padding: "1rem",
+    "@media": {
+      "(max-width: 600px)": {
+        padding: "0.5rem",
+      },
+    },
   },
 });
 
@@ -47,6 +52,12 @@ const StyledLink = styled(Link, {
 const StyledButton = styled(Button, {
   base: {
     width: "100%",
+    "@media": {
+      "(max-width: 600px)": {
+        fontSize: "12px",
+        padding: "6px 12px",
+      },
+    },
   },
 });
 
@@ -54,7 +65,7 @@ const LogoutButton = styled(Button, {
   base: {
     width: "100%",
     backgroundColor: "#ff9800",
-    ":hover": {
+    "&:hover": {
       backgroundColor: "#f57c00",
     },
   },

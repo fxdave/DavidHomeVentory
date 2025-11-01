@@ -175,7 +175,8 @@ export default function StickerPage() {
             }}
             endAdornment={
               <IconButton
-                onClick={() => setList(list.filter((_, idx) => idx !== index))}>
+                onClick={() => setList(list.filter((_, idx) => idx !== index))}
+                aria-label="Remove sticker">
                 <Trash2 size={20} />
               </IconButton>
             }
@@ -183,14 +184,15 @@ export default function StickerPage() {
         ))}
         <IconButton
           disabled={settings.numRows * settings.stickersPerRow === list.length}
-          onClick={() => setList([...list, genName()])}>
+          onClick={() => setList([...list, genName()])}
+          aria-label="Add new sticker">
           <Plus size={20} />
         </IconButton>
 
         <PreviewHeader>
           <SectionTitle>Preview:</SectionTitle>
 
-          <PrintButton onClick={() => print()}>
+          <PrintButton onClick={() => print()} aria-label="Print stickers">
             <PrinterIcon size={20} />
           </PrintButton>
         </PreviewHeader>
@@ -299,6 +301,11 @@ const Container = styled("div", {
     padding: "0.5rem",
     alignItems: "flex-start",
     alignContent: "flex-start",
+    "@media": {
+      "(max-width: 600px)": {
+        padding: "0.25rem",
+      },
+    },
   },
 });
 
@@ -309,6 +316,12 @@ const Form = styled("form", {
     gap: "0.5rem",
     alignItems: "center",
     justifyContent: "stretch",
+    width: "100%",
+    "@media": {
+      "(max-width: 600px)": {
+        gap: "0.25rem",
+      },
+    },
   },
 });
 

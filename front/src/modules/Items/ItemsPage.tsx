@@ -96,7 +96,6 @@ export default function ItemsScreen() {
   });
   return (
     <Container>
-      <h1>Items</h1>
       {cutting && (
         <CuttingBar
           item={cutting.item}
@@ -105,14 +104,14 @@ export default function ItemsScreen() {
         />
       )}
 
+      <BreadcrumbsBar nav={nav} />
+
       <TextField
         value={nav.keyword}
         onChange={e => nav.setKeyword(e.target.value)}
         label="Find something"
         startAdornment={<Search size={20} />}
       />
-
-      <BreadcrumbsBar nav={nav} />
 
       <ItemList
         key={list.key}
@@ -137,5 +136,11 @@ const Container = styled("div", {
     maxWidth: "1200px",
     margin: "0 auto",
     padding: "16px",
+    width: "100%",
+    "@media": {
+      "(max-width: 600px)": {
+        padding: "8px",
+      },
+    },
   },
 });

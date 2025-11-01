@@ -100,6 +100,12 @@ const Container = styled("div", {
     maxWidth: "444px",
     margin: "0 auto",
     padding: "16px",
+    width: "100%",
+    "@media": {
+      "(max-width: 600px)": {
+        padding: "8px",
+      },
+    },
   },
 });
 

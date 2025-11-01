@@ -11,10 +11,14 @@ export function CuttingBar(props: CuttingAppBarProps) {
           You cut <b>{props.item.name}</b>
         </Text>
         <Spacer />
-        <IconButton onClick={() => props.onPaste()}>
+        <IconButton
+          onClick={() => props.onPaste()}
+          aria-label="Paste item here">
           <ClipboardPaste size={20} />
         </IconButton>
-        <IconButton onClick={() => props.onCancel()}>
+        <IconButton
+          onClick={() => props.onCancel()}
+          aria-label="Cancel cut operation">
           <X size={20} />
         </IconButton>
       </Toolbar>

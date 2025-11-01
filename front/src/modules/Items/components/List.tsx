@@ -8,6 +8,8 @@ type ListProps = {
 type ListItemProps = {
   children: ReactNode;
   className?: string;
+  onClick?: () => void;
+  disabled?: boolean;
 } & HTMLAttributes<HTMLLIElement>;
 
 type ListItemButtonProps = {
@@ -19,7 +21,6 @@ type ListItemButtonProps = {
 type ListItemTextProps = {
   primary: ReactNode;
   secondary?: ReactNode;
-  onClick?: () => void;
 };
 
 type ListItemAvatarProps = {
@@ -34,8 +35,19 @@ export const List = ({children}: ListProps) => (
   <StyledList>{children}</StyledList>
 );
 
-export const ListItem = ({children, className, ...props}: ListItemProps) => (
-  <StyledListItem className={className} {...props}>
+export const ListItem = ({
+  children,
+  className,
+  onClick,
+  disabled,
+  ...props
+}: ListItemProps) => (
+  <StyledListItem
+    className={className}
+    onClick={onClick}
+    data-clickable={!!onClick}
+    data-disabled={disabled}
+    {...props}>
     {children}
   </StyledListItem>
 );
@@ -50,19 +62,15 @@ export const ListItemButton = ({
   </StyledListItemButton>
 );
 
-export const ListItemText = ({
-  primary,
-  secondary,
-  onClick,
-}: ListItemTextProps) => (
-  <TextWrapper onClick={onClick}>
+export const ListItemText = ({primary, secondary}: ListItemTextProps) => (
+  <TextWrapper>
     <Primary>{primary}</Primary>
     {secondary && <Secondary>{secondary}</Secondary>}
   </TextWrapper>
 );
 
 export const ListItemAvatar = ({children}: ListItemAvatarProps) => (
-  <div>{children}</div>
+  <AvatarWrapper>{children}</AvatarWrapper>
 );
 
 export const Avatar = ({children}: AvatarProps) => (
@@ -80,9 +88,29 @@ const StyledList = styled("ul", {
 const StyledListItem = styled("li", {
   base: {
     display: "flex",
-    alignItems: "center",
+    alignItems: "stretch",
     padding: "8px 16px",
     borderBottom: "1px solid #333",
+    transition: "background-color 0.2s",
+    selectors: {
+      '&[data-clickable="true"]': {
+        cursor: "pointer",
+      },
+      '&[data-clickable="true"]:hover:not([data-disabled="true"])': {
+        backgroundColor: "#2a2a2a",
+      },
+      '&[data-disabled="true"]': {
+        opacity: 0.5,
+        cursor: "not-allowed",
+      },
+    },
+  },
+});
+
+const AvatarWrapper = styled("div", {
+  base: {
+    display: "flex",
+    alignItems: "center",
   },
 });
 
@@ -98,10 +126,10 @@ const StyledListItemButton = styled("button", {
     cursor: "pointer",
     textAlign: "left",
     transition: "background-color 0.2s",
-    ":hover": {
+    "&:hover": {
       backgroundColor: "#333",
     },
-    ":disabled": {
+    "&:disabled": {
       opacity: 0.5,
       cursor: "not-allowed",
     },
@@ -111,6 +139,9 @@ const StyledListItemButton = styled("button", {
 const TextWrapper = styled("div", {
   base: {
     flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
   },
 });
 
@@ -129,14 +160,15 @@ const Secondary = styled("div", {
 
 const StyledAvatar = styled("div", {
   base: {
-    width: "40px",
-    height: "40px",
+    width: "32px",
+    height: "32px",
     borderRadius: "50%",
     backgroundColor: "#90caf9",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    marginRight: "16px",
+    marginRight: "8px",
     color: "#000",
+    flexShrink: 0,
   },
 });
