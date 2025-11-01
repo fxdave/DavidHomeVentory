@@ -15,6 +15,9 @@ export const Navigation = () => {
       <Link to={ROUTES.STICKERS}>
         <Button fullWidth>Box Sticker Generator</Button>
       </Link>
+      <Link to={ROUTES.QR_SCANNER}>
+        <Button fullWidth>QR Code Scanner</Button>
+      </Link>
       <Button onClick={() => auth.logout()} fullWidth color="warning">
         Logout
       </Button>

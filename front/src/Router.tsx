@@ -5,6 +5,7 @@ import {useAuth} from "services/useAuth";
 export const ROUTES = {
   LOGIN: "/login",
   STICKERS: "/stickers",
+  QR_SCANNER: "/qr-scanner",
   ITEMS: (subPath?: string) => `/items${subPath ? "/" + subPath : ""}`,
   OPEN_ITEM: (itemId: string) => `/open-item/${itemId}`,
 };
@@ -12,6 +13,9 @@ export const ROUTES = {
 const Login = React.lazy(() => import("./modules/Auth/LoginPage"));
 const Items = React.lazy(() => import("./modules/Items/ItemsPage"));
 const StickerPage = React.lazy(() => import("./modules/Sticker/StickerPage"));
+const QRScannerPage = React.lazy(
+  () => import("./modules/QRScanner/QRScannerPage"),
+);
 
 const withLoader = (element: ReactElement) => (
   <Suspense fallback={<></>}>{element}</Suspense>
@@ -29,6 +33,10 @@ export default function Router() {
             element={withLoader(<Items />)}
           />
           <Route path={ROUTES.STICKERS} element={withLoader(<StickerPage />)} />
+          <Route
+            path={ROUTES.QR_SCANNER}
+            element={withLoader(<QRScannerPage />)}
+          />
           <Route path="*" element={<Navigate to={ROUTES.ITEMS()} replace />} />
         </Routes>
       </>
