@@ -1,14 +1,17 @@
-import {ListItemButton, TextField} from "@mui/material";
-import Avatar from "@mui/material/Avatar";
-import IconButton from "@mui/material/IconButton";
-import ListItem from "@mui/material/ListItem";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
-import ListItemText from "@mui/material/ListItemText";
 import {memo, useState} from "react";
-import {AllInbox, ContentCut, Edit, Inbox, Save} from "@mui/icons-material";
+import {Archive, Scissors, Pencil, Inbox, Save} from "lucide-react";
 import {SafeDeleteButton} from "./SafeDelete";
 import {WarehouseEntryVariant} from "../../../../../back/src/modules/warehouse/models";
 import {WarehouseEntryWithPath} from "../../../../../back/src/modules/warehouse";
+import {TextField} from "@ui/Input";
+import {IconButton} from "@ui/Button";
+import {
+  ListItem,
+  ListItemButton,
+  ListItemAvatar,
+  Avatar,
+  ListItemText,
+} from "./List";
 
 type ItemProps = {
   isSearch: boolean;
@@ -37,24 +40,21 @@ function ItemRaw(props: ItemProps) {
       <ListItemAvatar>
         <Avatar>
           {props.item.variant === WarehouseEntryVariant.Container ? (
-            <AllInbox />
+            <Archive size={20} />
           ) : (
-            <Inbox />
+            <Inbox size={20} />
           )}
         </Avatar>
       </ListItemAvatar>
       {editing ? (
-        <ListItemText>
-          <TextField
-            fullWidth
-            label="Name"
-            value={editing.title}
-            onChange={e => setEditing({title: e.target.value})}
-            onKeyUp={e => {
-              if (e.code === "Enter") save();
-            }}
-          />
-        </ListItemText>
+        <TextField
+          label="Name"
+          value={editing.title}
+          onChange={e => setEditing({title: e.target.value})}
+          onKeyUp={e => {
+            if (e.code === "Enter") save();
+          }}
+        />
       ) : (
         <ListItemButton disabled={props.cutting?.item.id == props.item.id}>
           <ListItemText
@@ -70,28 +70,25 @@ function ItemRaw(props: ItemProps) {
       )}
       <>
         {editing && (
-          <IconButton edge="end" onClick={() => save()}>
-            <Save />
+          <IconButton onClick={() => save()}>
+            <Save size={20} />
           </IconButton>
         )}
         {!editing && (
           <IconButton
-            edge="end"
             onClick={() => setEditing({title: props.item.name})}
             disabled={!!props.cutting}>
-            <Edit />
+            <Pencil size={20} />
           </IconButton>
         )}
         <IconButton
-          edge="end"
           disabled={!!props.cutting}
           onClick={() => {
             props.onCutStart();
           }}>
-          <ContentCut />
+          <Scissors size={20} />
         </IconButton>
         <SafeDeleteButton
-          edge="end"
           disabled={
             props.item.variant === WarehouseEntryVariant.Container ||
             !!props.cutting

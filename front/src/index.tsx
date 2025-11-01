@@ -2,8 +2,6 @@ import {createRoot} from "react-dom/client";
 import {StrictMode, useEffect} from "react";
 import Router, {ROUTES} from "Router";
 import {HashRouter, useNavigate} from "react-router-dom";
-import {ThemeProvider, createTheme} from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
 import {App, URLOpenListenerEvent} from "@capacitor/app";
 import "react-toastify/dist/ReactToastify.css";
 import {ToastContainer} from "react-toastify";
@@ -22,24 +20,36 @@ const AppUrlListener = () => {
   return null;
 };
 
-const darkTheme = createTheme({
-  palette: {
-    mode: "dark",
-  },
-});
-
 const element = document.getElementById("root");
 if (!element) throw new Error("could not found the root element");
 const root = createRoot(element);
 root.render(
   <StrictMode>
-    <ThemeProvider theme={darkTheme}>
-      <CssBaseline />
-      <HashRouter>
-        <AppUrlListener />
-        <Router />
-      </HashRouter>
-    </ThemeProvider>
+    <GlobalStyles />
+    <HashRouter>
+      <AppUrlListener />
+      <Router />
+    </HashRouter>
     <ToastContainer />
   </StrictMode>,
 );
+
+function GlobalStyles() {
+  return (
+    <style>
+      {`
+        body {
+          margin: 0;
+          background-color: #121212;
+          color: #fff;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+            'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+            sans-serif;
+        }
+        * {
+          box-sizing: border-box;
+        }
+      `}
+    </style>
+  );
+}

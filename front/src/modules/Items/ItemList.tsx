@@ -1,12 +1,11 @@
-import {TextField} from "@mui/material";
-import IconButton from "@mui/material/IconButton";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
 import {memo, useRef, useState} from "react";
-import SaveIcon from "@mui/icons-material/Save";
+import {Save} from "lucide-react";
 import {WarehouseEntryWithPath} from "../../../../back/src/modules/warehouse";
 import {Item} from "./components/Item";
 import {useInfinityScroll} from "./useInfinityScroll";
+import {TextField} from "@ui/Input";
+import {IconButton} from "@ui/Button";
+import {List, ListItem} from "./components/List";
 
 function ItemListRaw(props: {
   list: WarehouseEntryWithPath[];
@@ -41,15 +40,7 @@ function ItemListRaw(props: {
           cutting={props.cutting}
         />
       ))}
-      <ListItem
-        secondaryAction={
-          <IconButton
-            edge="end"
-            onClick={() => handleCreateItem()}
-            disabled={!!props.cutting}>
-            <SaveIcon />
-          </IconButton>
-        }>
+      <ListItem>
         <TextField
           disabled={!!props.cutting}
           label="Name of the new Item or Box"
@@ -59,6 +50,11 @@ function ItemListRaw(props: {
           }}
           value={newItemName}
         />
+        <IconButton
+          onClick={() => handleCreateItem()}
+          disabled={!!props.cutting}>
+          <Save size={20} />
+        </IconButton>
         <div ref={watchedDivRef} />
       </ListItem>
     </List>

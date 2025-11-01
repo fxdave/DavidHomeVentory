@@ -1,10 +1,12 @@
-import {Breadcrumbs, Button} from "@mui/material";
+import {styled} from "@macaron-css/react";
 import {Navigation} from "../useNavigation";
+import {Button} from "@ui/Button";
+import {Breadcrumbs} from "@ui/Breadcrumbs";
 
 export function BreadcrumbsBar({nav}: {nav: Navigation}) {
   return (
-    <div style={{display: "flex"}}>
-      <Breadcrumbs style={{flex: 1}}>
+    <Container>
+      <StyledBreadcrumbs>
         {nav.path.map(segment => (
           <Button
             key={segment.id}
@@ -14,16 +16,33 @@ export function BreadcrumbsBar({nav}: {nav: Navigation}) {
             {segment.name}
           </Button>
         ))}
-      </Breadcrumbs>
+      </StyledBreadcrumbs>
       {nav.isDirty && (
-        <Button
-          style={{flex: 0}}
+        <ResetButton
           onClick={() => {
             nav.reset();
           }}>
           RESET
-        </Button>
+        </ResetButton>
       )}
-    </div>
+    </Container>
   );
 }
+
+const Container = styled("div", {
+  base: {
+    display: "flex",
+  },
+});
+
+const StyledBreadcrumbs = styled(Breadcrumbs, {
+  base: {
+    flex: 1,
+  },
+});
+
+const ResetButton = styled(Button, {
+  base: {
+    flex: 0,
+  },
+});

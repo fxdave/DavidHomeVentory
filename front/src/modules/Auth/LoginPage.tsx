@@ -1,18 +1,14 @@
-import {
-  Alert,
-  Box,
-  Button,
-  Container,
-  Divider,
-  TextField,
-  Typography,
-} from "@mui/material";
+import {styled} from "@macaron-css/react";
 import {useForm} from "react-hook-form";
 import {useNavigate} from "react-router-dom";
 import {ROUTES} from "Router";
 import {useAuth} from "services/useAuth";
 import Logo from "../../assets/rgb-cube.svg";
 import {useEffect} from "react";
+import {Alert} from "@ui/Alert";
+import {Button} from "@ui/Button";
+import {Divider} from "@ui/Divider";
+import {TextField} from "@ui/Input";
 
 type IFields = {
   target: string;
@@ -57,7 +53,7 @@ export default function LoginPage() {
       });
   });
   return (
-    <Container maxWidth="xs">
+    <Container>
       <img
         src={Logo}
         alt=""
@@ -72,22 +68,9 @@ export default function LoginPage() {
           opacity: "0.1",
         }}
       />
-      <Typography
-        variant="h3"
-        component="h1"
-        align="center"
-        sx={{mt: 3, mb: 3}}
-        fontWeight="bold"
-        noWrap>
-        HomeVentory
-      </Typography>
-      <Divider variant="middle" sx={{m: 3}}>
-        Login
-      </Divider>
-      <Box
-        component="form"
-        onSubmit={onSubmit}
-        sx={{flexDirection: "column", display: "flex", gap: 2}}>
+      <Title>HomeVentory</Title>
+      <Divider>Login</Divider>
+      <Form onSubmit={onSubmit}>
         {!auth.isLoggedIn && auth.error && (
           <Alert severity="error">{auth.error}</Alert>
         )}
@@ -107,7 +90,33 @@ export default function LoginPage() {
         <Button onClick={onSubmit} type="submit">
           Connect
         </Button>
-      </Box>
+      </Form>
     </Container>
   );
 }
+
+const Container = styled("div", {
+  base: {
+    maxWidth: "444px",
+    margin: "0 auto",
+    padding: "16px",
+  },
+});
+
+const Title = styled("h1", {
+  base: {
+    fontSize: "3rem",
+    fontWeight: "bold",
+    margin: "24px 0",
+    textAlign: "center",
+    color: "#fff",
+  },
+});
+
+const Form = styled("form", {
+  base: {
+    flexDirection: "column",
+    display: "flex",
+    gap: "16px",
+  },
+});

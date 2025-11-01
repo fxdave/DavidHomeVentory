@@ -1,9 +1,8 @@
-import {InputAdornment, TextField} from "@mui/material";
+import {styled} from "@macaron-css/react";
 import {useState} from "react";
 import {useAuthedApi} from "services/useApi";
 import {useInvalidate} from "utils/useInvalidate";
-import {Search} from "@mui/icons-material";
-import {Container} from "@mui/system";
+import {Search} from "lucide-react";
 import {useParams} from "react-router-dom";
 import {WarehouseEntryWithPath} from "../../../../back/src/modules/warehouse";
 import {useNavigation} from "./useNavigation";
@@ -13,6 +12,7 @@ import {CuttingBar} from "./components/CuttingBar";
 import {BreadcrumbsBar} from "./components/BreadcrumbsBar";
 import {ItemList} from "./ItemList";
 import {Navigation} from "modules/Common/Navigation";
+import {TextField} from "@ui/Input";
 
 export default function ItemsScreen() {
   const {api} = useAuthedApi();
@@ -95,7 +95,7 @@ export default function ItemsScreen() {
     listInvalidate.invalidate();
   });
   return (
-    <Container style={{overflow: "auto", height: "100vh"}}>
+    <Container>
       <h1>Items</h1>
       {cutting && (
         <CuttingBar
@@ -108,15 +108,8 @@ export default function ItemsScreen() {
       <TextField
         value={nav.keyword}
         onChange={e => nav.setKeyword(e.target.value)}
-        fullWidth
         label="Find something"
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <Search />
-            </InputAdornment>
-          ),
-        }}
+        startAdornment={<Search size={20} />}
       />
 
       <BreadcrumbsBar nav={nav} />
@@ -136,3 +129,13 @@ export default function ItemsScreen() {
     </Container>
   );
 }
+
+const Container = styled("div", {
+  base: {
+    overflow: "auto",
+    height: "100vh",
+    maxWidth: "1200px",
+    margin: "0 auto",
+    padding: "16px",
+  },
+});

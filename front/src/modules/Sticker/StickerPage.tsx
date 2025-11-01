@@ -1,5 +1,4 @@
-import {Global, css} from "@emotion/react";
-import styled from "@emotion/styled";
+import {styled} from "@macaron-css/react";
 import {useEffect, useRef, useState} from "react";
 import QRCode from "react-qr-code";
 import {
@@ -9,17 +8,12 @@ import {
   animals,
 } from "unique-names-generator";
 import SourceCodeProBold from "../../assets/SourceCodePro-Bold.ttf?url";
-import {
-  Button,
-  IconButton,
-  InputAdornment,
-  TextField,
-  Typography,
-} from "@mui/material";
-import {Add, Delete, Print} from "@mui/icons-material";
+import {Plus, Trash2, Printer as PrinterIcon} from "lucide-react";
 import {useNavigate} from "react-router-dom";
 import {Navigation} from "modules/Common/Navigation";
 import {Printer} from "@bcyesil/capacitor-plugin-printer";
+import {Button, IconButton} from "@ui/Button";
+import {TextField} from "@ui/Input";
 
 const genName = () =>
   uniqueNamesGenerator({
@@ -30,14 +24,6 @@ const genName = () =>
   });
 
 const MARGIN_DIRECTIONS = ["top", "right", "bottom", "left"];
-
-function formatAbsoluteLength(value: string): string | undefined {
-  const pattern = new RegExp(/^\s*([0-9.])+\s*(cm|mm|Q|in|pt|pc|px)\s*/);
-  const match = value.match(pattern);
-  if (match) {
-    return match[1] + match[2];
-  }
-}
 
 export default function StickerPage() {
   const [stickersPerRow, setStickersPerRow] = useState("5");
@@ -111,64 +97,50 @@ export default function StickerPage() {
 
   return (
     <Container>
-      <Global
-        styles={css({
-          body: {
-            color: "white",
-            overflow: "auto",
-          },
-          "@media print": {
-            "@page": {
-              size: "a4 landscape",
-              margin: 0,
-              fontFamily: "SourceCodePro",
-            },
-            "html, body": {
-              width: size[0],
-              height: size[1],
-            },
-            form: {
-              display: "none !important",
-            },
-          },
-          "@font-face": {
-            fontFamily: "SourceCodePro",
-            src: `url("${SourceCodeProBold}")`,
-          },
-        })}
-      />
+      <style>
+        {`
+          @font-face {
+            font-family: "SourceCodePro";
+            src: url("${SourceCodeProBold}");
+          }
+          @media print {
+            @page {
+              size: a4 landscape;
+              margin: 0;
+              font-family: SourceCodePro;
+            }
+            html, body {
+              width: ${size[0]};
+              height: ${size[1]};
+            }
+            form {
+              display: none !important;
+            }
+          }
+        `}
+      </style>
       <Form>
-        <Button variant="outlined" onClick={() => navigate("/")}>
-          Dashboard
-        </Button>
+        <Button onClick={() => navigate("/")}>Dashboard</Button>
 
-        <Typography variant="h5" width="100%">
-          Page Settings:
-        </Typography>
+        <SectionTitle>Page Settings:</SectionTitle>
 
         <TextField
-          size="small"
           value={size[0]}
           label="Page width"
-          error={formatAbsoluteLength(size[0]) === undefined}
           onChange={e => setSize([e.target.value, size[1]])}
         />
         <TextField
-          size="small"
           value={size[1]}
           label="Page height"
-          error={formatAbsoluteLength(size[1]) === undefined}
           onChange={e => setSize([size[0], e.target.value])}
         />
         <Separator />
         <TextField
-          size="small"
           value={stickersPerRow}
           label="Stickers per row"
           onChange={e => setStickersPerRow(e.target.value)}
         />
         <TextField
-          size="small"
           value={numRows}
           label="Number of rows"
           onChange={e => setNumRows(e.target.value)}
@@ -176,11 +148,9 @@ export default function StickerPage() {
         <Separator />
         {margins.map((margin, index) => (
           <TextField
-            size="small"
             key={index}
             value={margin}
             label={`Margin ${MARGIN_DIRECTIONS[index]}`}
-            error={formatAbsoluteLength(margin) === undefined}
             onChange={e => {
               setMargins([
                 ...margins.slice(0, index),
@@ -190,12 +160,9 @@ export default function StickerPage() {
             }}
           />
         ))}
-        <Typography variant="h5" width="100%">
-          Stickers:
-        </Typography>
+        <SectionTitle>Stickers:</SectionTitle>
         {list.map((item, index) => (
           <TextField
-            size="small"
             key={index}
             placeholder="Something"
             value={item}
@@ -206,44 +173,32 @@ export default function StickerPage() {
                 ...list.slice(index + 1, list.length),
               ]);
             }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={() =>
-                      setList(list.filter((_, idx) => idx !== index))
-                    }>
-                    <Delete />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
+            endAdornment={
+              <IconButton
+                onClick={() => setList(list.filter((_, idx) => idx !== index))}>
+                <Trash2 size={20} />
+              </IconButton>
+            }
           />
         ))}
         <IconButton
           disabled={settings.numRows * settings.stickersPerRow === list.length}
           onClick={() => setList([...list, genName()])}>
-          <Add />
+          <Plus size={20} />
         </IconButton>
 
         <PreviewHeader>
-          <Typography align="left" variant="h5" width="100%">
-            Preview:
-          </Typography>
+          <SectionTitle>Preview:</SectionTitle>
 
-          <Button
-            variant="contained"
-            onClick={() => print()}
-            sx={{marginLeft: "auto"}}>
-            <Print />
-          </Button>
+          <PrintButton onClick={() => print()}>
+            <PrinterIcon size={20} />
+          </PrintButton>
         </PreviewHeader>
       </Form>
       <PageContainer>
         {/** Inline styles are required for printing on mobile */}
         <Page
           ref={pageRef}
-          previewScaleRatio={previewScaleRatio}
           style={{
             boxSizing: "border-box",
             display: "grid",
@@ -259,6 +214,7 @@ export default function StickerPage() {
             paddingBottom: margins[2],
             paddingLeft: margins[3],
             color: "black",
+            transform: `scale(${previewScaleRatio})`,
           }}>
           {list.map(item => (
             <StickerContainer
@@ -319,74 +275,121 @@ export default function StickerPage() {
   );
 }
 
-const NavigationContainer = styled("div")({
-  width: "100%",
-  "@media print": {
-    display: "none",
+const NavigationContainer = styled("div", {
+  base: {
+    width: "100%",
+    "@media": {
+      print: {
+        display: "none",
+      },
+    },
   },
 });
 
-const Separator = styled("div")({
-  width: "100%",
-});
-
-const Container = styled("div")({
-  display: "flex",
-  flexWrap: "wrap",
-  padding: "0.5rem",
-  alignItems: "flex-start",
-  alignContent: "flex-start",
-});
-
-const Form = styled("form")({
-  display: "flex",
-  flexWrap: "wrap",
-  gap: "0.5rem",
-  alignItems: "center",
-  justifyContent: "stretch",
-});
-
-const QrCodeContainer = styled("div")({
-  "@media print": {
-    filter: "none",
-  },
-  "@media not print": {
-    filter: "invert(1)",
+const Separator = styled("div", {
+  base: {
+    width: "100%",
   },
 });
 
-// 2100x1510
-const StickerContainer = styled("div")({});
-
-const StickerNameContainer = styled("div")({});
-const StickerName = styled("div")({});
-
-// 6300x8910
-const Page = styled("div")<{
-  previewScaleRatio: number;
-}>(props => ({
-  "@media print": {
-    filter: "none",
-    background: "none",
-  },
-  "@media not print": {
-    filter: "invert(100%)",
-    background: "#CFCFCF",
-    transformOrigin: "top left",
-    transform: `scale(${props.previewScaleRatio})`,
-  },
-}));
-const PageContainer = styled("div")({
-  "@media not print": {
-    marginTop: "0.5rem",
-    borderRadius: "0.5rem",
-    border: "2px solid white",
-    maxWidth: "calc(100vw - 1rem)",
-    overflow: "auto",
+const Container = styled("div", {
+  base: {
+    display: "flex",
+    flexWrap: "wrap",
+    padding: "0.5rem",
+    alignItems: "flex-start",
+    alignContent: "flex-start",
   },
 });
 
-const PreviewHeader = styled("div")({
-  display: "flex",
-  width: "100%",
+const Form = styled("form", {
+  base: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "0.5rem",
+    alignItems: "center",
+    justifyContent: "stretch",
+  },
+});
+
+const SectionTitle = styled("h5", {
+  base: {
+    fontSize: "1.5rem",
+    width: "100%",
+    margin: 0,
+    color: "#fff",
+  },
+});
+
+const PrintButton = styled(Button, {
+  base: {
+    marginLeft: "auto",
+  },
+});
+
+const QrCodeContainer = styled("div", {
+  base: {
+    "@media": {
+      print: {
+        filter: "none",
+      },
+      "not print": {
+        filter: "invert(1)",
+      },
+    },
+  },
+});
+
+const StickerContainer = styled("div", {
+  base: {},
+});
+
+const StickerNameContainer = styled("div", {
+  base: {},
+});
+
+const StickerName = styled("div", {
+  base: {},
+});
+
+const Page = styled("div", {
+  base: {
+    "@media": {
+      print: {
+        filter: "none",
+        background: "none",
+      },
+      "not print": {
+        filter: "invert(100%)",
+        background: "#CFCFCF",
+        transformOrigin: "top left",
+      },
+    },
+  },
+  variants: {
+    scale: {
+      true: {},
+    },
+  },
+});
+
+const PageContainer = styled("div", {
+  base: {
+    "@media": {
+      "not print": {
+        marginTop: "0.5rem",
+        borderRadius: "0.5rem",
+        border: "2px solid white",
+        maxWidth: "calc(100vw - 1rem)",
+        overflow: "auto",
+      },
+    },
+  },
+});
+
+const PreviewHeader = styled("div", {
+  base: {
+    display: "flex",
+    width: "100%",
+  },
 });

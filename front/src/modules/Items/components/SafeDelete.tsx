@@ -1,34 +1,21 @@
-import DeleteIcon from "@mui/icons-material/Delete";
-import {Typography} from "@mui/material";
-import IconButton from "@mui/material/IconButton";
-import {ComponentProps, useState} from "react";
+import {Trash2} from "lucide-react";
+import {useState} from "react";
+import {IconButton} from "@ui/Button";
 
 type SafeDeleteButtonProps = {
   disabled: boolean;
-  edge: ComponentProps<typeof IconButton>["edge"];
   onClick: () => void;
 };
 
-export function SafeDeleteButton({
-  edge,
-  onClick,
-  disabled,
-}: SafeDeleteButtonProps) {
+export function SafeDeleteButton({onClick, disabled}: SafeDeleteButtonProps) {
   const [clicked, setClicked] = useState(false);
 
   if (clicked) {
-    return (
-      <IconButton edge={edge} onClick={onClick}>
-        <Typography>Ok</Typography>
-      </IconButton>
-    );
+    return <IconButton onClick={onClick}>Ok</IconButton>;
   } else {
     return (
-      <IconButton
-        edge={edge}
-        disabled={disabled}
-        onClick={() => setClicked(true)}>
-        <DeleteIcon />
+      <IconButton disabled={disabled} onClick={() => setClicked(true)}>
+        <Trash2 size={20} />
       </IconButton>
     );
   }

@@ -1,21 +1,21 @@
-import {AppBar, Box, Toolbar, Typography} from "@mui/material";
-import IconButton from "@mui/material/IconButton";
-import {Close, ContentPaste} from "@mui/icons-material";
+import {styled} from "@macaron-css/react";
+import {X, ClipboardPaste} from "lucide-react";
 import {WarehouseEntryWithPath} from "../../../../../back/src/modules/warehouse";
+import {IconButton} from "@ui/Button";
 
 export function CuttingBar(props: CuttingAppBarProps) {
   return (
-    <AppBar position="fixed" sx={{top: "auto", bottom: 0}}>
+    <AppBar>
       <Toolbar>
-        <Typography>
+        <Text>
           You cut <b>{props.item.name}</b>
-        </Typography>
-        <Box sx={{flexGrow: 1}} />
-        <IconButton edge="end" onClick={() => props.onPaste()}>
-          <ContentPaste />
+        </Text>
+        <Spacer />
+        <IconButton onClick={() => props.onPaste()}>
+          <ClipboardPaste size={20} />
         </IconButton>
-        <IconButton edge="end" onClick={() => props.onCancel()}>
-          <Close />
+        <IconButton onClick={() => props.onCancel()}>
+          <X size={20} />
         </IconButton>
       </Toolbar>
     </AppBar>
@@ -26,3 +26,36 @@ type CuttingAppBarProps = {
   onPaste: () => void;
   onCancel: () => void;
 };
+
+const AppBar = styled("div", {
+  base: {
+    position: "fixed",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "#1e1e1e",
+    borderTop: "1px solid #333",
+  },
+});
+
+const Toolbar = styled("div", {
+  base: {
+    padding: "8px 16px",
+    display: "flex",
+    alignItems: "center",
+    gap: "16px",
+  },
+});
+
+const Text = styled("p", {
+  base: {
+    margin: 0,
+    color: "#fff",
+  },
+});
+
+const Spacer = styled("div", {
+  base: {
+    flexGrow: 1,
+  },
+});
