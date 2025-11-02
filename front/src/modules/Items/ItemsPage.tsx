@@ -96,6 +96,7 @@ export default function ItemsScreen() {
   });
   return (
     <Container>
+      <Navigation />
       {cutting && (
         <CuttingBar
           item={cutting.item}
@@ -124,7 +125,6 @@ export default function ItemsScreen() {
         onOpenItem={item => nav.goForward(item.id, item.name)}
         onStartCutting={item => setCutting({item})}
       />
-      <Navigation />
     </Container>
   );
 }

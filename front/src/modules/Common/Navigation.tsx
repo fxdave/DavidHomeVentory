@@ -1,72 +1,192 @@
 import {styled} from "@macaron-css/react";
+import {useState} from "react";
+import {Menu, X} from "lucide-react";
 import {ROUTES} from "Router";
 import {Link} from "react-router-dom";
 import {useLoggedInAuth} from "services/useAuth";
-import {Button} from "@ui/Button";
-import {Divider} from "@ui/Divider";
+import {colors} from "@ui/theme";
 
 export const Navigation = () => {
   const auth = useLoggedInAuth();
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <NavigationContainer>
-      <StyledDivider>HomeVentory</StyledDivider>
-      <StyledLink to={ROUTES.ITEMS()}>
-        <StyledButton>Items</StyledButton>
-      </StyledLink>
-      <StyledLink to={ROUTES.STICKERS}>
-        <StyledButton>Box Sticker Generator</StyledButton>
-      </StyledLink>
-      <StyledLink to={ROUTES.QR_SCANNER}>
-        <StyledButton>QR Code Scanner</StyledButton>
-      </StyledLink>
-      <LogoutButton onClick={() => auth.logout()}>Logout</LogoutButton>
-    </NavigationContainer>
+    <>
+      <Header>
+        <AppTitle>HomeVentory</AppTitle>
+        <ToggleButton
+          onClick={() => setIsOpen(!isOpen)}
+          open={isOpen}
+          aria-label={isOpen ? "Close navigation" : "Open navigation"}>
+          {isOpen ? <X size={24} /> : <Menu size={24} />}
+        </ToggleButton>
+      </Header>
+      <Backdrop open={isOpen} onClick={() => setIsOpen(false)} />
+      <NavigationContainer open={isOpen}>
+        <NavItem to={ROUTES.ITEMS()}>Items</NavItem>
+        <NavItem to={ROUTES.STICKERS}>Box Sticker Generator</NavItem>
+        <NavItem to={ROUTES.QR_SCANNER}>QR Code Scanner</NavItem>
+        <NavButton onClick={() => auth.logout()}>Logout</NavButton>
+      </NavigationContainer>
+    </>
   );
 };
 
+const Header = styled("header", {
+  base: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "12px 16px",
+    margin: "-16px -16px 16px -16px",
+    backgroundColor: colors.paper,
+    borderBottom: `1px solid ${colors.border}`,
+    "@media": {
+      "(max-width: 600px)": {
+        padding: "8px 12px",
+        margin: "-8px -8px 8px -8px",
+      },
+    },
+  },
+});
+
+const AppTitle = styled("h1", {
+  base: {
+    margin: 0,
+    fontSize: "20px",
+    fontWeight: 600,
+    color: colors.text.primary,
+    "@media": {
+      "(max-width: 600px)": {
+        fontSize: "18px",
+      },
+    },
+  },
+});
+
+const Backdrop = styled("div", {
+  base: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    zIndex: 999,
+    transition: "opacity 0.3s ease",
+    opacity: 0,
+    pointerEvents: "none",
+  },
+  variants: {
+    open: {
+      true: {
+        opacity: 1,
+        pointerEvents: "auto",
+      },
+      false: {},
+    },
+  },
+});
+
+const ToggleButton = styled("button", {
+  base: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "8px",
+    backgroundColor: "transparent",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
+    transition: "background-color 0.2s",
+    color: colors.text.primary,
+    "&:hover": {
+      backgroundColor: colors.hover,
+    },
+  },
+  variants: {
+    open: {
+      true: {},
+      false: {},
+    },
+  },
+});
+
 const NavigationContainer = styled("div", {
   base: {
-    width: "100%",
-    padding: "1rem",
+    position: "fixed",
+    top: 0,
+    left: 0,
+    bottom: 0,
+    width: "280px",
+    padding: "24px 1rem",
+    backgroundColor: colors.paper,
+    borderRight: `1px solid ${colors.border}`,
+    boxShadow: "4px 0 12px rgba(0, 0, 0, 0.3)",
+    transition: "transform 0.3s ease",
+    zIndex: 1000,
+    overflowY: "auto",
     "@media": {
       "(max-width: 600px)": {
-        padding: "0.5rem",
+        width: "calc(100% - 72px)",
+        padding: "16px 0.5rem",
+      },
+    },
+  },
+  variants: {
+    open: {
+      true: {
+        transform: "translateX(0)",
+      },
+      false: {
+        transform: "translateX(-100%)",
       },
     },
   },
 });
 
-const StyledDivider = styled(Divider, {
+const NavItem = styled(Link, {
   base: {
-    marginBottom: "0.5rem",
-  },
-});
-
-const StyledLink = styled(Link, {
-  base: {
-    textDecoration: "none",
     display: "block",
-  },
-});
-
-const StyledButton = styled(Button, {
-  base: {
-    width: "100%",
+    padding: "12px 16px",
+    textDecoration: "none",
+    color: colors.text.primary,
+    fontSize: "14px",
+    borderRadius: "4px",
+    transition: "background-color 0.2s",
+    "&:hover": {
+      backgroundColor: colors.hover,
+    },
     "@media": {
       "(max-width: 600px)": {
-        fontSize: "12px",
-        padding: "6px 12px",
+        padding: "10px 12px",
+        fontSize: "13px",
       },
     },
   },
 });
 
-const LogoutButton = styled(Button, {
+const NavButton = styled("button", {
   base: {
+    display: "block",
     width: "100%",
-    backgroundColor: "#ff9800",
+    padding: "12px 16px",
+    textAlign: "left",
+    border: "none",
+    backgroundColor: "transparent",
+    color: colors.text.primary,
+    fontSize: "14px",
+    borderRadius: "4px",
+    cursor: "pointer",
+    transition: "background-color 0.2s",
     "&:hover": {
-      backgroundColor: "#f57c00",
+      backgroundColor: colors.hover,
+    },
+    "@media": {
+      "(max-width: 600px)": {
+        padding: "10px 12px",
+        fontSize: "13px",
+      },
     },
   },
 });
