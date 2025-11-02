@@ -4,9 +4,16 @@ import {Button} from "@ui/Button";
 import {Breadcrumbs} from "@ui/Breadcrumbs";
 import {colors} from "@ui/theme";
 
+const MAX_BREADCRUMB_LENGTH = 20;
+
+function truncateName(name: string, maxLength: number = MAX_BREADCRUMB_LENGTH) {
+  if (name.length <= maxLength) return name;
+  return name.slice(0, maxLength) + "...";
+}
+
 export function BreadcrumbsBar({nav}: {nav: Navigation}) {
   const breadcrumbItems = nav.path.map(segment => ({
-    label: segment.name,
+    label: truncateName(segment.name),
     onClick: () => nav.goBack(segment.id),
   }));
 

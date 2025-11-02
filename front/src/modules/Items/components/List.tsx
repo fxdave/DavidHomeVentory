@@ -126,9 +126,6 @@ const StyledListItemButton = styled("button", {
     cursor: "pointer",
     textAlign: "left",
     transition: "background-color 0.2s",
-    "&:hover": {
-      backgroundColor: "#333",
-    },
     "&:disabled": {
       opacity: 0.5,
       cursor: "not-allowed",

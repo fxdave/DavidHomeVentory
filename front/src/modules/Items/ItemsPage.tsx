@@ -107,7 +107,7 @@ export default function ItemsScreen() {
 
       <BreadcrumbsBar nav={nav} />
 
-      <TextField
+      <SearchField
         value={nav.keyword}
         onChange={e => nav.setKeyword(e.target.value)}
         label="Filter the current list"
@@ -142,5 +142,11 @@ const Container = styled("div", {
         padding: "8px",
       },
     },
+  },
+});
+
+const SearchField = styled(TextField, {
+  base: {
+    marginBottom: "16px",
   },
 });

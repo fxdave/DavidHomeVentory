@@ -1,5 +1,6 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 import {memo, useState} from "react";
-import {Archive, Scissors, Pencil, Inbox, Save} from "lucide-react";
+import {Scissors, Pencil, Save, QrCode} from "lucide-react";
 import {styled} from "@macaron-css/react";
 import {SafeDeleteButton} from "./SafeDelete";
 import {WarehouseEntryVariant} from "../../../../../back/src/modules/warehouse/models";
@@ -7,13 +8,7 @@ import {WarehouseEntryWithPath} from "../../../../../back/src/modules/warehouse"
 import {TextField, InputContainer} from "@ui/Input";
 import {IconButton} from "@ui/Button";
 import {colors} from "@ui/theme";
-import {
-  ListItem,
-  ListItemButton,
-  ListItemAvatar,
-  Avatar,
-  ListItemText,
-} from "./List";
+import {ListItem, ListItemButton, ListItemText} from "./List";
 
 type ItemProps = {
   isSearch: boolean;
@@ -37,19 +32,19 @@ function ItemRaw(props: ItemProps) {
       });
     setEditing(null);
   }
+  const isContainer = props.item.variant === WarehouseEntryVariant.Container;
+
   return (
-    <ListItem
+    <StyledListItem
+      isContainer={isContainer}
       onClick={editing ? undefined : () => props.onGoForward()}
-      disabled={props.cutting?.item.id == props.item.id}>
-      <ListItemAvatar>
-        <Avatar>
-          {props.item.variant === WarehouseEntryVariant.Container ? (
-            <Archive size={20} />
-          ) : (
-            <Inbox size={20} />
-          )}
-        </Avatar>
-      </ListItemAvatar>
+      disabled={props.cutting?.item.id == props.item.id}
+      data-editing={!!editing}>
+      {isContainer && (
+        <QrIconWrapper>
+          <QrCode size={24} />
+        </QrIconWrapper>
+      )}
       {editing ? (
         <EditGroup>
           <EditTextField
@@ -113,7 +108,7 @@ function ItemRaw(props: ItemProps) {
           }}
         />
       </>
-    </ListItem>
+    </StyledListItem>
   );
 }
 export const Item = memo(
@@ -123,6 +118,79 @@ export const Item = memo(
     prev.isSearch == next.isSearch &&
     prev.cutting?.item?.id == next.cutting?.item?.id,
 );
+
+const QrIconWrapper = styled("div", {
+  base: {
+    display: "flex",
+    alignItems: "center",
+    marginRight: "12px",
+    color: colors.primary,
+    flexShrink: 0,
+  },
+});
+
+const StyledListItem = styled(ListItem, {
+  variants: {
+    isContainer: {
+      true: {
+        position: "relative",
+        marginTop: "12px",
+        border: `1px solid ${colors.border}`,
+        borderLeft: `3px solid ${colors.border}`,
+        borderRight: `1px solid rgba(255, 255, 255, 0.1)`,
+        borderRadius: "0 0 4px 4px",
+        backgroundColor: "rgba(144, 202, 249, 0.04)",
+        marginBottom: "16px",
+        boxShadow: `
+          2px 2px 0 rgba(0, 0, 0, 0.2),
+          inset -1px 0 0 rgba(0, 0, 0, 0.1)
+        `,
+        selectors: {
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            top: "-10px",
+            left: "-4px",
+            right: "-4px",
+            height: "14px",
+            backgroundColor: colors.paper,
+            border: `1px solid ${colors.border}`,
+            borderBottom: "none",
+            boxShadow: `
+              inset 0 1px 0 rgba(255, 255, 255, 0.1),
+              1px -1px 0 rgba(0, 0, 0, 0.1)
+            `,
+            transition: "transform 0.2s ease-out",
+            transformOrigin: "bottom center",
+            borderRadius: "4px 4px 0 0",
+          },
+          "&:hover::before": {
+            transform: "translateY(-4px) rotate(0.3deg)",
+          },
+          "&:focus-within::before": {
+            transform: "translateY(-4px) rotate(0.3deg)",
+          },
+          '&[data-editing="true"]::before': {
+            transform: "translateY(-4px) rotate(0.3deg)",
+          },
+          "&::after": {
+            content: '""',
+            position: "absolute",
+            bottom: "0",
+            left: "0",
+            right: "0",
+            height: "1px",
+            background: `linear-gradient(to right,
+              ${colors.border} 0%,
+              transparent 50%,
+              ${colors.border} 100%
+            )`,
+          },
+        },
+      },
+    },
+  },
+});
 
 const EditGroup = styled("div", {
   base: {
