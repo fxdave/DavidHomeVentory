@@ -36,9 +36,9 @@ export default function QRScannerPage() {
 
   return (
     <Container>
+      <Navigation />
       <ContentWrapper>
         <Header>
-          <StyledButton onClick={() => navigate("/")}>Dashboard</StyledButton>
           <Title>QR Code Scanner</Title>
         </Header>
 
@@ -78,24 +78,21 @@ export default function QRScannerPage() {
           </InstructionText>
         </InstructionsBox>
       </ContentWrapper>
-
-      <NavigationContainer>
-        <Navigation />
-      </NavigationContainer>
     </Container>
   );
 }
 
 const Container = styled("div", {
   base: {
-    display: "flex",
-    flexDirection: "column",
-    minHeight: "100vh",
-    padding: "0.5rem",
-    color: "white",
+    overflow: "auto",
+    height: "100vh",
+    maxWidth: "1200px",
+    margin: "0 auto",
+    padding: "16px",
+    width: "100%",
     "@media": {
       "(max-width: 600px)": {
-        padding: "0.25rem",
+        padding: "8px",
       },
     },
   },
@@ -277,18 +274,6 @@ const InstructionText = styled("p", {
     "@media": {
       "(max-width: 600px)": {
         fontSize: "0.75rem",
-      },
-    },
-  },
-});
-
-const NavigationContainer = styled("div", {
-  base: {
-    width: "100%",
-    marginTop: "2rem",
-    "@media": {
-      "(max-width: 600px)": {
-        marginTop: "1rem",
       },
     },
   },

@@ -12,7 +12,18 @@ type InputProps = InputHTMLAttributes<HTMLInputElement> & {
 };
 
 export const TextField = forwardRef<HTMLInputElement, InputProps>(
-  ({label, helperText, startAdornment, endAdornment, error, className, ...props}, ref) => {
+  (
+    {
+      label,
+      helperText,
+      startAdornment,
+      endAdornment,
+      error,
+      className,
+      ...props
+    },
+    ref,
+  ) => {
     const [isFocused, setIsFocused] = useState(false);
     const hasValue = props.value !== undefined && props.value !== "";
     const isFloating = isFocused || hasValue;

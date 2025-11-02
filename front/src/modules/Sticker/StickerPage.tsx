@@ -97,6 +97,9 @@ export default function StickerPage() {
 
   return (
     <Container>
+      <NavigationContainer>
+        <Navigation />
+      </NavigationContainer>
       <style>
         {`
           @font-face {
@@ -270,9 +273,6 @@ export default function StickerPage() {
           ))}
         </Page>
       </PageContainer>
-      <NavigationContainer>
-        <Navigation />
-      </NavigationContainer>
     </Container>
   );
 }

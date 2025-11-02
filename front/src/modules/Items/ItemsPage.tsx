@@ -110,7 +110,7 @@ export default function ItemsScreen() {
       <TextField
         value={nav.keyword}
         onChange={e => nav.setKeyword(e.target.value)}
-        label="Find something"
+        label="Filter the current list"
         startAdornment={<Search size={20} />}
       />
 
