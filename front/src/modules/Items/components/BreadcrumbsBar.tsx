@@ -1,8 +1,7 @@
-import {styled} from "@macaron-css/react";
+import {styled} from "styled-system/jsx";
 import {Navigation} from "../useNavigation";
 import {Button} from "@ui/Button";
 import {Breadcrumbs} from "@ui/Breadcrumbs";
-import {colors} from "@ui/theme";
 
 const MAX_BREADCRUMB_LENGTH = 20;
 
@@ -43,13 +42,13 @@ const ResetButton = styled(Button, {
     right: 0,
     top: "50%",
     transform: "translateY(-50%)",
-    backgroundColor: colors.paper,
+    backgroundColor: "paper",
     boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
-    borderColor: colors.error,
-    color: colors.error,
-    "&:hover:not(:disabled)": {
-      backgroundColor: `${colors.error}11`,
-      borderColor: colors.errorHover,
+    borderColor: "error",
+    color: "error",
+    _hover: {
+      backgroundColor: "token(colors.error / 0.067)",
+      borderColor: "errorHover",
     },
   },
 });

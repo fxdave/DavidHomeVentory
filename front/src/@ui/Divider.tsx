@@ -1,5 +1,5 @@
 /* eslint-disable sonarjs/no-duplicate-string */
-import {styled} from "@macaron-css/react";
+import {styled} from "styled-system/jsx";
 import {ReactNode} from "react";
 
 type DividerProps = {
@@ -28,13 +28,13 @@ const StyledDividerWithText = styled("div", {
     textAlign: "center",
     margin: "24px 0",
     color: "#b0b0b0",
-    "::before": {
+    "&::before": {
       content: '""',
       flex: 1,
       borderBottom: "1px solid #333",
       marginRight: "8px",
     },
-    "::after": {
+    "&::after": {
       content: '""',
       flex: 1,
       borderBottom: "1px solid #333",

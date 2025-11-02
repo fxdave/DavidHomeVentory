@@ -20,7 +20,8 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "paths": {
-      "shared/*": ["../../back/src/shared/*"]
+      "shared/*": ["../../back/src/shared/*"],
+      "styled-system/*": ["../styled-system/*"]
     }
   },
   "include": ["src", "tsconfig.node.json"],

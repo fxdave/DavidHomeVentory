@@ -2,9 +2,9 @@
   "compilerOptions": {
     "target": "esnext",
     "composite": true,
-    "module": "esnext",
-    "moduleResolution": "node",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "allowSyntheticDefaultImports": true
   },
-  "include": ["vite.config.ts"]
+  "include": ["vite.config.mts"]
 }

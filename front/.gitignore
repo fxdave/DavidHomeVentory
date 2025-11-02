@@ -67,3 +67,6 @@ buck-out/
 
 dist
 dev-dist
+## Panda
+styled-system
+styled-system-studio

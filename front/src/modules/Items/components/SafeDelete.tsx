@@ -1,8 +1,7 @@
 import {Trash2, Check} from "lucide-react";
 import {useState, MouseEvent} from "react";
-import {styled} from "@macaron-css/react";
+import {styled} from "styled-system/jsx";
 import {IconButton} from "@ui/Button";
-import {colors} from "@ui/theme";
 
 type SafeDeleteButtonProps = {
   disabled: boolean;
@@ -39,9 +38,9 @@ export function SafeDeleteButton({onClick, disabled}: SafeDeleteButtonProps) {
 
 const ConfirmButton = styled(IconButton, {
   base: {
-    color: colors.error,
-    "&:hover:not(:disabled)": {
-      backgroundColor: `${colors.error}22`,
+    color: "error",
+    _hover: {
+      backgroundColor: "token(colors.error / 0.133)",
     },
   },
 });

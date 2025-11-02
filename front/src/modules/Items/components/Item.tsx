@@ -1,14 +1,13 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 import {memo, useState} from "react";
 import {Scissors, Pencil, Save, QrCode} from "lucide-react";
-import {styled} from "@macaron-css/react";
+import {styled} from "styled-system/jsx";
 import {SafeDeleteButton} from "./SafeDelete";
 import {WarehouseEntryVariant} from "../../../../../back/src/modules/warehouse/models";
 import {WarehouseEntryWithPath} from "../../../../../back/src/modules/warehouse";
-import {TextField, InputContainer} from "@ui/Input";
+import {TextField} from "@ui/Input";
 import {IconButton} from "@ui/Button";
-import {colors} from "@ui/theme";
-import {ListItem, ListItemButton, ListItemText} from "./List";
+import {ListItem, ListItemText} from "./List";
 
 type ItemProps = {
   isSearch: boolean;
@@ -36,7 +35,7 @@ function ItemRaw(props: ItemProps) {
 
   return (
     <StyledListItem
-      isContainer={isContainer}
+      data-isContainer={isContainer}
       onClick={editing ? undefined : () => props.onGoForward()}
       disabled={props.cutting?.item.id == props.item.id}
       data-editing={!!editing}>
@@ -65,16 +64,14 @@ function ItemRaw(props: ItemProps) {
           </EditSaveButton>
         </EditGroup>
       ) : (
-        <ListItemButton disabled={props.cutting?.item.id == props.item.id}>
-          <ListItemText
-            primary={`${
-              props.isSearch
-                ? props.item.path.map(s => s.name).join(" / ") + " / "
-                : ""
-            } ${props.item.name}`}
-            secondary={props.item.id}
-          />
-        </ListItemButton>
+        <ListItemText
+          primary={`${
+            props.isSearch
+              ? props.item.path.map(s => s.name).join(" / ") + " / "
+              : ""
+          } ${props.item.name}`}
+          secondary={props.item.id}
+        />
       )}
       <>
         {!editing && (
@@ -124,69 +121,58 @@ const QrIconWrapper = styled("div", {
     display: "flex",
     alignItems: "center",
     marginRight: "12px",
-    color: colors.primary,
+    color: "primary",
     flexShrink: 0,
   },
 });
 
 const StyledListItem = styled(ListItem, {
-  variants: {
-    isContainer: {
-      true: {
-        position: "relative",
-        marginTop: "12px",
-        border: `1px solid ${colors.border}`,
-        borderLeft: `3px solid ${colors.border}`,
-        borderRight: `1px solid rgba(255, 255, 255, 0.1)`,
-        borderRadius: "0 0 4px 4px",
-        backgroundColor: "rgba(144, 202, 249, 0.04)",
-        marginBottom: "16px",
-        boxShadow: `
-          2px 2px 0 rgba(0, 0, 0, 0.2),
-          inset -1px 0 0 rgba(0, 0, 0, 0.1)
-        `,
-        selectors: {
-          "&::before": {
-            content: '""',
-            position: "absolute",
-            top: "-10px",
-            left: "-4px",
-            right: "-4px",
-            height: "14px",
-            backgroundColor: colors.paper,
-            border: `1px solid ${colors.border}`,
-            borderBottom: "none",
-            boxShadow: `
-              inset 0 1px 0 rgba(255, 255, 255, 0.1),
-              1px -1px 0 rgba(0, 0, 0, 0.1)
-            `,
-            transition: "transform 0.2s ease-out",
-            transformOrigin: "bottom center",
-            borderRadius: "4px 4px 0 0",
-          },
-          "&:hover::before": {
-            transform: "translateY(-4px) rotate(0.3deg)",
-          },
-          "&:focus-within::before": {
-            transform: "translateY(-4px) rotate(0.3deg)",
-          },
-          '&[data-editing="true"]::before': {
-            transform: "translateY(-4px) rotate(0.3deg)",
-          },
-          "&::after": {
-            content: '""',
-            position: "absolute",
-            bottom: "0",
-            left: "0",
-            right: "0",
-            height: "1px",
-            background: `linear-gradient(to right,
-              ${colors.border} 0%,
-              transparent 50%,
-              ${colors.border} 100%
-            )`,
-          },
-        },
+  base: {
+    "&[data-isContainer='true']": {
+      position: "relative",
+      marginTop: "16px",
+      border: "1px solid token(colors.border)",
+      borderLeft: "3px solid token(colors.border)",
+      borderRight: "1px solid rgba(255, 255, 255, 0.1)",
+      borderRadius: "0 0 4px 4px",
+      backgroundColor: "rgba(144, 202, 249, 0.04)",
+      marginBottom: "7px",
+      boxShadow:
+        "2px 2px 0 rgba(0, 0, 0, 0.2), inset -1px 0 0 rgba(0, 0, 0, 0.1)",
+      "&::before": {
+        content: '""',
+        position: "absolute",
+        top: "-10px",
+        left: "-4px",
+        right: "-4px",
+        height: "14px",
+        backgroundColor: "paper",
+        border: "1px solid token(colors.border)",
+        borderBottom: "none",
+        boxShadow:
+          "inset 0 1px 0 rgba(255, 255, 255, 0.1), 1px -1px 0 rgba(0, 0, 0, 0.1)",
+        transition: "transform 0.2s ease-out",
+        transformOrigin: "bottom center",
+        borderRadius: "4px 4px 0 0",
+      },
+      "&:hover::before": {
+        transform: "translateY(-4px) rotate(0.3deg)",
+      },
+      "&:focus-within::before": {
+        transform: "translateY(-4px) rotate(0.3deg)",
+      },
+      "&[data-editing='true']::before": {
+        transform: "translateY(-4px) rotate(0.3deg)",
+      },
+      "&::after": {
+        content: '""',
+        position: "absolute",
+        bottom: "0",
+        left: "0",
+        right: "0",
+        height: "1px",
+        background:
+          "linear-gradient(to right, token(colors.border) 0%, transparent 50%, token(colors.border) 100%)",
       },
     },
   },
@@ -203,24 +189,19 @@ const EditGroup = styled("div", {
 const EditTextField = styled(TextField, {
   base: {
     flex: 1,
-    [`& ${InputContainer}`]: {
-      borderTopRightRadius: "0",
-      borderBottomRightRadius: "0",
-      borderRight: "none",
-    },
   },
 });
 
 const EditSaveButton = styled(IconButton, {
   base: {
     borderRadius: "0 4px 4px 0",
-    backgroundColor: colors.paper,
-    border: `1px solid ${colors.border}`,
+    backgroundColor: "paper",
+    border: "1px solid token(colors.border)",
     borderLeft: "none",
     minWidth: "48px",
     "&:hover:not(:disabled)": {
-      backgroundColor: colors.hover,
-      borderColor: colors.primary,
+      backgroundColor: "hover",
+      borderColor: "primary",
     },
   },
 });

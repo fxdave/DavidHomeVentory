@@ -2,7 +2,6 @@ import {defineConfig} from "vite";
 import react from "@vitejs/plugin-react";
 import viteTsConfigPaths from "vite-tsconfig-paths";
 import {VitePWA} from "vite-plugin-pwa";
-import {macaronVitePlugin} from "@macaron-css/vite";
 
 export default defineConfig({
   server: {
@@ -16,8 +15,7 @@ export default defineConfig({
     },
   },
   plugins: [
-    macaronVitePlugin(),
-    react(),
+    react({}),
     viteTsConfigPaths({
       root: "./",
     }),
@@ -36,4 +34,7 @@ export default defineConfig({
       },
     }),
   ],
+  optimizeDeps: {
+    include: ["react-is", "prop-types"],
+  },
 });

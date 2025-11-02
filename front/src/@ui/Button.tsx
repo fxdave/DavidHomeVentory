@@ -1,6 +1,5 @@
-import {styled} from "@macaron-css/react";
+import {styled} from "styled-system/jsx";
 import {forwardRef, ButtonHTMLAttributes} from "react";
-import {colors} from "./theme";
 
 type ButtonVariant = "primary" | "secondary" | "outlined";
 
@@ -33,40 +32,40 @@ const StyledButton = styled("button", {
     cursor: "pointer",
     transition: "all 0.2s",
     minHeight: "36px",
-    "&:disabled": {
+    _disabled: {
       opacity: 0.5,
       cursor: "not-allowed",
     },
-  },
-  variants: {
-    variant: {
-      primary: {
-        backgroundColor: colors.primary,
-        color: "#000",
-        "&:hover:not(:disabled)": {
-          backgroundColor: colors.primaryHover,
-        },
-        "&:active:not(:disabled)": {
-          backgroundColor: colors.primaryDark,
-        },
+    "&[data-variant='primary']": {
+      backgroundColor: "primary",
+      color: "#000",
+      _hover: {
+        _disabled: {},
+        backgroundColor: "primaryHover",
       },
-      secondary: {
-        backgroundColor: colors.paper,
-        color: colors.text.primary,
-        border: `1px solid ${colors.border}`,
-        "&:hover:not(:disabled)": {
-          backgroundColor: colors.hover,
-          borderColor: colors.secondary,
-        },
+      _active: {
+        _disabled: {},
+        backgroundColor: "primaryDark",
       },
-      outlined: {
-        backgroundColor: "transparent",
-        color: colors.primary,
-        border: `1px solid ${colors.primary}`,
-        "&:hover:not(:disabled)": {
-          backgroundColor: `${colors.primary}22`,
-          borderColor: colors.primaryHover,
-        },
+    },
+    "&[data-variant='secondary']": {
+      backgroundColor: "paper",
+      color: "text.primary",
+      border: "1px solid token(colors.border)",
+      _hover: {
+        _disabled: {},
+        backgroundColor: "hover",
+        borderColor: "secondary",
+      },
+    },
+    "&[data-variant='outlined']": {
+      backgroundColor: "transparent",
+      color: "primary",
+      border: "1px solid token(colors.primary)",
+      _hover: {
+        _disabled: {},
+        backgroundColor: "rgba(144, 202, 249, 0.13)",
+        borderColor: "primaryHover",
       },
     },
   },
@@ -81,21 +80,23 @@ const StyledIconButton = styled("button", {
     borderRadius: "10%",
     cursor: "pointer",
     backgroundColor: "transparent",
-    color: colors.text.primary,
+    color: "text.primary",
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
     transition: "background-color 0.2s",
-    "&:hover:not(:disabled)": {
-      backgroundColor: colors.hover,
+    _hover: {
+      _disabled: {},
+      backgroundColor: "hover",
     },
-    "&:active:not(:disabled)": {
-      backgroundColor: colors.border,
+    _active: {
+      _disabled: {},
+      backgroundColor: "border",
     },
-    "&:disabled": {
+    _disabled: {
       opacity: 0.5,
       cursor: "not-allowed",
-      color: colors.text.disabled,
+      color: "text.disabled",
     },
   },
 });

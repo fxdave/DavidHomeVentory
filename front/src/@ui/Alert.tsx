@@ -1,4 +1,4 @@
-import {styled} from "@macaron-css/react";
+import {styled} from "styled-system/jsx";
 import {ReactNode} from "react";
 
 type AlertProps = {
@@ -15,29 +15,25 @@ const StyledAlert = styled("div", {
     padding: "12px 16px",
     borderRadius: "4px",
     border: "1px solid",
-  },
-  variants: {
-    severity: {
-      error: {
-        backgroundColor: "#d32f2f33",
-        color: "#f44336",
-        borderColor: "#f44336",
-      },
-      warning: {
-        backgroundColor: "#ff980033",
-        color: "#ff9800",
-        borderColor: "#ff9800",
-      },
-      info: {
-        backgroundColor: "#2196f333",
-        color: "#2196f3",
-        borderColor: "#2196f3",
-      },
-      success: {
-        backgroundColor: "#4caf5033",
-        color: "#4caf50",
-        borderColor: "#4caf50",
-      },
+    "&[data-severity='error']": {
+      backgroundColor: "#d32f2f33",
+      color: "#f44336",
+      borderColor: "#f44336",
+    },
+    "&[data-severity='warning']": {
+      backgroundColor: "#ff980033",
+      color: "#ff9800",
+      borderColor: "#ff9800",
+    },
+    "&[data-severity='info']": {
+      backgroundColor: "#2196f333",
+      color: "#2196f3",
+      borderColor: "#2196f3",
+    },
+    "&[data-severity='success']": {
+      backgroundColor: "#4caf5033",
+      color: "#4caf50",
+      borderColor: "#4caf50",
     },
   },
 });

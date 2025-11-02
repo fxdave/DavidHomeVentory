@@ -1,5 +1,4 @@
-import {styled, keyframes} from "@macaron-css/react";
-import {colors} from "./theme";
+import {styled} from "styled-system/jsx";
 
 type SpinnerProps = {
   size?: "small" | "medium" | "large";
@@ -11,29 +10,20 @@ export const Spinner = ({size = "medium"}: SpinnerProps) => (
   </StyledSpinner>
 );
 
-const spin = keyframes({
-  "0%": {transform: "rotate(0deg)"},
-  "100%": {transform: "rotate(360deg)"},
-});
-
 const StyledSpinner = styled("div", {
   base: {
     display: "inline-block",
-  },
-  variants: {
-    size: {
-      small: {
-        width: "16px",
-        height: "16px",
-      },
-      medium: {
-        width: "24px",
-        height: "24px",
-      },
-      large: {
-        width: "40px",
-        height: "40px",
-      },
+    "&[data-size='small']": {
+      width: "16px",
+      height: "16px",
+    },
+    "&[data-size='medium']": {
+      width: "24px",
+      height: "24px",
+    },
+    "&[data-size='large']": {
+      width: "40px",
+      height: "40px",
     },
   },
 });
@@ -42,9 +32,9 @@ const Circle = styled("div", {
   base: {
     width: "100%",
     height: "100%",
-    border: `2px solid ${colors.border}`,
-    borderTopColor: colors.primary,
+    border: "2px solid token(colors.border)",
+    borderTopColor: "primary",
     borderRadius: "50%",
-    animation: `${spin} 0.6s linear infinite`,
+    animation: "spin 0.6s linear infinite",
   },
 });

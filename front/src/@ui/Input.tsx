@@ -1,6 +1,6 @@
-import {styled} from "@macaron-css/react";
+/* eslint-disable sonarjs/no-duplicate-string */
 import {forwardRef, InputHTMLAttributes, ReactNode, useState} from "react";
-import {colors} from "./theme";
+import {styled} from "styled-system/jsx";
 
 type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
@@ -78,23 +78,19 @@ export const InputContainer = styled("div", {
     position: "relative",
     display: "flex",
     alignItems: "center",
-    backgroundColor: colors.paper,
-    border: `1px solid ${colors.border}`,
+    backgroundColor: "paper",
+    border: "1px solid token(colors.border)",
     borderRadius: "4px",
     transition: "border-color 0.2s, box-shadow 0.2s",
     "&:focus-within": {
-      borderColor: colors.primary,
-      boxShadow: `0 0 0 2px ${colors.primary}22`,
+      borderColor: "primary",
+      boxShadow: "0 0 0 2px rgba(144, 202, 249, 0.13)",
     },
-  },
-  variants: {
-    error: {
-      true: {
-        borderColor: colors.error,
-        "&:focus-within": {
-          borderColor: colors.error,
-          boxShadow: `0 0 0 2px ${colors.error}22`,
-        },
+    "&[data-error='true']": {
+      borderColor: "error",
+      "&:focus-within": {
+        borderColor: "error",
+        boxShadow: "0 0 0 2px rgba(244, 67, 54, 0.13)",
       },
     },
   },
@@ -107,26 +103,24 @@ const FloatingLabel = styled("label", {
     top: "50%",
     transform: "translateY(-50%)",
     fontSize: "14px",
-    color: colors.text.disabled,
+    color: "text.disabled",
     pointerEvents: "none",
     transition: "all 0.2s ease-out",
-    backgroundColor: colors.paper,
+    backgroundColor: "paper",
     padding: "0 4px",
-    selectors: {
-      '&[data-floating="true"]': {
-        top: "0",
-        fontSize: "12px",
-        color: colors.text.secondary,
-      },
-      '&[data-floating="true"][data-error="true"]': {
-        color: colors.error,
-      },
-      '&[data-has-adornment="true"]': {
-        left: "44px",
-      },
-      '&[data-has-adornment="true"][data-floating="true"]': {
-        left: "12px",
-      },
+    "&[data-floating='true']": {
+      top: "0",
+      fontSize: "12px",
+      color: "text.secondary",
+    },
+    "&[data-floating='true'][data-error='true']": {
+      color: "error",
+    },
+    "&[data-has-adornment='true']": {
+      left: "44px",
+    },
+    "&[data-has-adornment='true'][data-floating='true']": {
+      left: "12px",
     },
   },
 });
@@ -137,10 +131,10 @@ const StyledInput = styled("input", {
     padding: "20px 12px 8px 12px",
     fontSize: "14px",
     backgroundColor: "transparent",
-    color: colors.text.primary,
+    color: "text.primary",
     border: "none",
     outline: "none",
-    "::placeholder": {
+    "&::placeholder": {
       color: "transparent",
     },
   },
@@ -149,13 +143,9 @@ const StyledInput = styled("input", {
 const HelperText = styled("span", {
   base: {
     fontSize: "12px",
-    color: colors.text.secondary,
-  },
-  variants: {
-    error: {
-      true: {
-        color: colors.error,
-      },
+    color: "text.secondary",
+    "&[data-error='true']": {
+      color: "error",
     },
   },
 });
@@ -165,6 +155,6 @@ const Adornment = styled("div", {
     display: "flex",
     alignItems: "center",
     padding: "0 8px",
-    color: colors.text.secondary,
+    color: "text.secondary",
   },
 });

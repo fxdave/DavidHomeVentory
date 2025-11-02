@@ -1,4 +1,4 @@
-import {styled} from "@macaron-css/react";
+import {styled} from "styled-system/jsx";
 import {useEffect, useRef, useState} from "react";
 import QRCode from "react-qr-code";
 import {
@@ -280,10 +280,8 @@ export default function StickerPage() {
 const NavigationContainer = styled("div", {
   base: {
     width: "100%",
-    "@media": {
-      print: {
-        display: "none",
-      },
+    "@media print": {
+      display: "none",
     },
   },
 });
@@ -301,10 +299,8 @@ const Container = styled("div", {
     padding: "0.5rem",
     alignItems: "flex-start",
     alignContent: "flex-start",
-    "@media": {
-      "(max-width: 600px)": {
-        padding: "0.25rem",
-      },
+    "@media (max-width: 600px)": {
+      padding: "0.25rem",
     },
   },
 });
@@ -317,10 +313,8 @@ const Form = styled("form", {
     alignItems: "center",
     justifyContent: "stretch",
     width: "100%",
-    "@media": {
-      "(max-width: 600px)": {
-        gap: "0.25rem",
-      },
+    "@media (max-width: 600px)": {
+      gap: "0.25rem",
     },
   },
 });
@@ -342,13 +336,11 @@ const PrintButton = styled(Button, {
 
 const QrCodeContainer = styled("div", {
   base: {
-    "@media": {
-      print: {
-        filter: "none",
-      },
-      "not print": {
-        filter: "invert(1)",
-      },
+    "@media print": {
+      filter: "none",
+    },
+    "@media not print": {
+      filter: "invert(1)",
     },
   },
 });
@@ -367,35 +359,26 @@ const StickerName = styled("div", {
 
 const Page = styled("div", {
   base: {
-    "@media": {
-      print: {
-        filter: "none",
-        background: "none",
-      },
-      "not print": {
-        filter: "invert(100%)",
-        background: "#CFCFCF",
-        transformOrigin: "top left",
-      },
+    "@media print": {
+      filter: "none",
+      background: "none",
     },
-  },
-  variants: {
-    scale: {
-      true: {},
+    "@media not print": {
+      filter: "invert(100%)",
+      background: "#CFCFCF",
+      transformOrigin: "top left",
     },
   },
 });
 
 const PageContainer = styled("div", {
   base: {
-    "@media": {
-      "not print": {
-        marginTop: "0.5rem",
-        borderRadius: "0.5rem",
-        border: "2px solid white",
-        maxWidth: "calc(100vw - 1rem)",
-        overflow: "auto",
-      },
+    "@media not print": {
+      marginTop: "0.5rem",
+      borderRadius: "0.5rem",
+      border: "2px solid white",
+      maxWidth: "calc(100vw - 1rem)",
+      overflow: "auto",
     },
   },
 });

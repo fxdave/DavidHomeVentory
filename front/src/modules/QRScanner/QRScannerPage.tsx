@@ -1,10 +1,9 @@
 /* eslint-disable sonarjs/no-duplicate-string */
-import {styled} from "@macaron-css/react";
+import {styled} from "styled-system/jsx";
 import {useNavigate} from "react-router-dom";
 import {Navigation} from "modules/Common/Navigation";
 import {Scanner} from "@yudiel/react-qr-scanner";
 import {useState} from "react";
-import {Button} from "@ui/Button";
 import {Alert} from "@ui/Alert";
 
 export default function QRScannerPage() {
@@ -90,10 +89,8 @@ const Container = styled("div", {
     margin: "0 auto",
     padding: "16px",
     width: "100%",
-    "@media": {
-      "(max-width: 600px)": {
-        padding: "8px",
-      },
+    "@media (max-width: 600px)": {
+      padding: "8px",
     },
   },
 });
@@ -105,11 +102,9 @@ const ContentWrapper = styled("div", {
     alignItems: "center",
     gap: "1rem",
     paddingBottom: "2rem",
-    "@media": {
-      "(max-width: 600px)": {
-        gap: "0.5rem",
-        paddingBottom: "1rem",
-      },
+    "@media (max-width: 600px)": {
+      gap: "0.5rem",
+      paddingBottom: "1rem",
     },
   },
 });
@@ -121,23 +116,8 @@ const Header = styled("div", {
     display: "flex",
     flexDirection: "column",
     alignItems: "flex-start",
-    "@media": {
-      "(max-width: 600px)": {
-        padding: "0 0.25rem",
-      },
-    },
-  },
-});
-
-const StyledButton = styled(Button, {
-  base: {
-    fontSize: "0.875rem",
-    padding: "0.5rem 1rem",
-    "@media": {
-      "(max-width: 600px)": {
-        fontSize: "0.75rem",
-        padding: "0.4rem 0.8rem",
-      },
+    "@media (max-width: 600px)": {
+      padding: "0 0.25rem",
     },
   },
 });
@@ -148,11 +128,9 @@ const Title = styled("h4", {
     margin: "1rem 0",
     color: "#fff",
     fontWeight: 400,
-    "@media": {
-      "(max-width: 600px)": {
-        fontSize: "1.5rem",
-        margin: "0.5rem 0",
-      },
+    "@media (max-width: 600px)": {
+      fontSize: "1.5rem",
+      margin: "0.5rem 0",
     },
   },
 });
@@ -164,11 +142,9 @@ const ScannerWrapper = styled("div", {
     borderRadius: "8px",
     overflow: "hidden",
     boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-    "@media": {
-      "(max-width: 600px)": {
-        maxWidth: "95vw",
-        borderRadius: "4px",
-      },
+    "@media (max-width: 600px)": {
+      maxWidth: "95vw",
+      borderRadius: "4px",
     },
   },
 });
@@ -179,12 +155,10 @@ const StyledAlert = styled(Alert, {
     maxWidth: "500px",
     width: "100%",
     fontSize: "1rem",
-    "@media": {
-      "(max-width: 600px)": {
-        marginTop: "0.5rem",
-        maxWidth: "95vw",
-        fontSize: "0.875rem",
-      },
+    "@media (max-width: 600px)": {
+      marginTop: "0.5rem",
+      maxWidth: "95vw",
+      fontSize: "0.875rem",
     },
   },
 });
@@ -199,12 +173,10 @@ const ResultPaper = styled("div", {
     color: "white",
     borderRadius: "4px",
     border: "1px solid #333",
-    "@media": {
-      "(max-width: 600px)": {
-        maxWidth: "95vw",
-        padding: "0.75rem",
-        marginTop: "0.5rem",
-      },
+    "@media (max-width: 600px)": {
+      maxWidth: "95vw",
+      padding: "0.75rem",
+      marginTop: "0.5rem",
     },
   },
 });
@@ -214,10 +186,8 @@ const ResultTitle = styled("h6", {
     fontSize: "1.25rem",
     margin: "0 0 8px 0",
     fontWeight: 500,
-    "@media": {
-      "(max-width: 600px)": {
-        fontSize: "1rem",
-      },
+    "@media (max-width: 600px)": {
+      fontSize: "1rem",
     },
   },
 });
@@ -227,10 +197,8 @@ const ResultText = styled("p", {
     fontSize: "1rem",
     margin: 0,
     wordBreak: "break-all",
-    "@media": {
-      "(max-width: 600px)": {
-        fontSize: "0.875rem",
-      },
+    "@media (max-width: 600px)": {
+      fontSize: "0.875rem",
     },
   },
 });
@@ -240,11 +208,9 @@ const ItemInfo = styled("p", {
     fontSize: "0.875rem",
     margin: "1rem 0 0 0",
     color: "#90caf9",
-    "@media": {
-      "(max-width: 600px)": {
-        fontSize: "0.75rem",
-        marginTop: "0.5rem",
-      },
+    "@media (max-width: 600px)": {
+      fontSize: "0.75rem",
+      marginTop: "0.5rem",
     },
   },
 });
@@ -256,12 +222,10 @@ const InstructionsBox = styled("div", {
     width: "100%",
     maxWidth: "500px",
     textAlign: "center",
-    "@media": {
-      "(max-width: 600px)": {
-        maxWidth: "95vw",
-        padding: "0.75rem",
-        marginTop: "0.5rem",
-      },
+    "@media (max-width: 600px)": {
+      maxWidth: "95vw",
+      padding: "0.75rem",
+      marginTop: "0.5rem",
     },
   },
 });
@@ -271,10 +235,8 @@ const InstructionText = styled("p", {
     fontSize: "0.875rem",
     margin: 0,
     color: "#b0b0b0",
-    "@media": {
-      "(max-width: 600px)": {
-        fontSize: "0.75rem",
-      },
+    "@media (max-width: 600px)": {
+      fontSize: "0.75rem",
     },
   },
 });

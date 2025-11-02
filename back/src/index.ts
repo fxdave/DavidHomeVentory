@@ -22,7 +22,7 @@ export type AuthedBuilder = typeof authedBuilder;
 
 const routes = {
   auth: initAuthModule(db, builder),
-  warehouse: initWarehouseModule(db, builder.chain(authLink)),
+  warehouse: initWarehouseModule(db, authedBuilder),
 };
 
 initRpc(app, {

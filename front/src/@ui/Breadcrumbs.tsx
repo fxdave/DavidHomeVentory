@@ -1,6 +1,5 @@
-import {styled} from "@macaron-css/react";
+import {styled} from "styled-system/jsx";
 import {ChevronRight} from "lucide-react";
-import {colors} from "./theme";
 
 type BreadcrumbItem = {
   label: string;
@@ -35,7 +34,7 @@ const StyledBreadcrumbs = styled("nav", {
     display: "flex",
     alignItems: "center",
     padding: "8px 0",
-    color: colors.text.secondary,
+    color: "text.secondary",
     flexWrap: "wrap",
   },
 });
@@ -52,15 +51,15 @@ const BreadcrumbButton = styled("button", {
   base: {
     background: "transparent",
     border: "none",
-    color: colors.text.secondary,
+    color: "text.secondary",
     cursor: "pointer",
     padding: "4px 8px",
     fontSize: "14px",
     borderRadius: "4px",
     transition: "background-color 0.2s, color 0.2s",
-    "&:hover": {
-      backgroundColor: colors.hover,
-      color: colors.text.primary,
+    _hover: {
+      backgroundColor: "hover",
+      color: "text.primary",
     },
   },
 });
@@ -69,6 +68,6 @@ const Separator = styled("span", {
   base: {
     display: "flex",
     alignItems: "center",
-    color: colors.text.disabled,
+    color: "text.disabled",
   },
 });

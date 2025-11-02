@@ -11,7 +11,7 @@ export function isTokenValid(token: string) {
   try {
     jwt.verify(token, CONFIG.JWT_SECRET);
     return true;
-  } catch (e) {
+  } catch {
     return false;
   }
 }

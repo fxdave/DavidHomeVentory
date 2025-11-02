@@ -1,4 +1,4 @@
-import {styled} from "@macaron-css/react";
+import {styled} from "styled-system/jsx";
 import {useState} from "react";
 import {useAuthedApi} from "services/useApi";
 import {useInvalidate} from "utils/useInvalidate";
@@ -137,10 +137,8 @@ const Container = styled("div", {
     margin: "0 auto",
     padding: "16px",
     width: "100%",
-    "@media": {
-      "(max-width: 600px)": {
-        padding: "8px",
-      },
+    "@media (max-width: 600px)": {
+      padding: "8px",
     },
   },
 });

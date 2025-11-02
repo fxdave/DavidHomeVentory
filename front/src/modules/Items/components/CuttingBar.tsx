@@ -1,4 +1,4 @@
-import {styled} from "@macaron-css/react";
+import {styled} from "styled-system/jsx";
 import {X, ClipboardPaste} from "lucide-react";
 import {WarehouseEntryWithPath} from "../../../../../back/src/modules/warehouse";
 import {IconButton} from "@ui/Button";
@@ -39,6 +39,7 @@ const AppBar = styled("div", {
     right: 0,
     backgroundColor: "#1e1e1e",
     borderTop: "1px solid #333",
+    zIndex: 9,
   },
 });
 

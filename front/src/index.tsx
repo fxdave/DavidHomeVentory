@@ -5,6 +5,7 @@ import {HashRouter, useNavigate} from "react-router-dom";
 import {App, URLOpenListenerEvent} from "@capacitor/app";
 import "react-toastify/dist/ReactToastify.css";
 import {ToastContainer} from "react-toastify";
+import "./panda.css";
 
 const AppUrlListener = () => {
   const navigate = useNavigate();

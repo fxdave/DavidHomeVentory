@@ -1,4 +1,4 @@
-import {styled} from "@macaron-css/react";
+import {styled} from "styled-system/jsx";
 import {memo, useRef, useState} from "react";
 import {Save, Inbox} from "lucide-react";
 import {WarehouseEntryWithPath} from "../../../../back/src/modules/warehouse";
@@ -7,7 +7,6 @@ import {useInfinityScroll} from "./useInfinityScroll";
 import {TextField} from "@ui/Input";
 import {IconButton} from "@ui/Button";
 import {List, ListItem} from "./components/List";
-import {colors} from "@ui/theme";
 
 function ItemListRaw(props: {
   list: WarehouseEntryWithPath[];
@@ -96,7 +95,7 @@ const EmptyState = styled("div", {
 
 const EmptyIcon = styled("div", {
   base: {
-    color: colors.text.disabled,
+    color: "text.disabled",
     marginBottom: "16px",
   },
 });
@@ -106,7 +105,7 @@ const EmptyTitle = styled("h3", {
     fontSize: "1.25rem",
     fontWeight: 500,
     margin: "0 0 8px 0",
-    color: colors.text.primary,
+    color: "text.primary",
   },
 });
 
@@ -114,7 +113,7 @@ const EmptyText = styled("p", {
   base: {
     fontSize: "0.875rem",
     margin: 0,
-    color: colors.text.secondary,
+    color: "text.secondary",
     maxWidth: "400px",
   },
 });

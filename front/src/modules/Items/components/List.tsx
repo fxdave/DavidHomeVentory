@@ -1,4 +1,4 @@
-import {styled} from "@macaron-css/react";
+import {styled} from "styled-system/jsx";
 import {ReactNode, HTMLAttributes} from "react";
 
 type ListProps = {
@@ -11,12 +11,6 @@ type ListItemProps = {
   onClick?: () => void;
   disabled?: boolean;
 } & HTMLAttributes<HTMLLIElement>;
-
-type ListItemButtonProps = {
-  children: ReactNode;
-  onClick?: () => void;
-  disabled?: boolean;
-};
 
 type ListItemTextProps = {
   primary: ReactNode;
@@ -52,16 +46,6 @@ export const ListItem = ({
   </StyledListItem>
 );
 
-export const ListItemButton = ({
-  children,
-  onClick,
-  disabled,
-}: ListItemButtonProps) => (
-  <StyledListItemButton onClick={onClick} disabled={disabled}>
-    {children}
-  </StyledListItemButton>
-);
-
 export const ListItemText = ({primary, secondary}: ListItemTextProps) => (
   <TextWrapper>
     <Primary>{primary}</Primary>
@@ -92,17 +76,15 @@ const StyledListItem = styled("li", {
     padding: "8px 16px",
     borderBottom: "1px solid #333",
     transition: "background-color 0.2s",
-    selectors: {
-      '&[data-clickable="true"]': {
-        cursor: "pointer",
-      },
-      '&[data-clickable="true"]:hover:not([data-disabled="true"])': {
-        backgroundColor: "#2a2a2a",
-      },
-      '&[data-disabled="true"]': {
-        opacity: 0.5,
-        cursor: "not-allowed",
-      },
+    "&[data-clickable='true']": {
+      cursor: "pointer",
+    },
+    "&[data-clickable='true']:hover:not([data-disabled='true'])": {
+      backgroundColor: "#2a2a2a",
+    },
+    "&[data-disabled='true']": {
+      opacity: 0.5,
+      cursor: "not-allowed",
     },
   },
 });
@@ -111,25 +93,6 @@ const AvatarWrapper = styled("div", {
   base: {
     display: "flex",
     alignItems: "center",
-  },
-});
-
-const StyledListItemButton = styled("button", {
-  base: {
-    display: "flex",
-    alignItems: "center",
-    flex: 1,
-    padding: "8px",
-    background: "transparent",
-    border: "none",
-    color: "#fff",
-    cursor: "pointer",
-    textAlign: "left",
-    transition: "background-color 0.2s",
-    "&:disabled": {
-      opacity: 0.5,
-      cursor: "not-allowed",
-    },
   },
 });
 
