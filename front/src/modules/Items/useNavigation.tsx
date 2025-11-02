@@ -1,5 +1,5 @@
-import {useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useState, useEffect} from "react";
+import {useNavigate, useLocation} from "react-router-dom";
 import {ROUTES} from "Router";
 import {WarehouseEntryWithPath} from "../../../../back/src/modules/warehouse";
 
@@ -16,9 +16,24 @@ export const DEFAULT_PATH = [
 
 export function useNavigation() {
   const navigate = useNavigate();
-  const [path, setPath] =
-    useState<{name: string; id: string | null}[]>(DEFAULT_PATH);
+  const location = useLocation();
+  const [path, setPath] = useState<{name: string; id: string | null}[]>(
+    location.state?.path || DEFAULT_PATH,
+  );
   const [keyword, setKeyword] = useState<string>("");
+
+  // Sync state when location changes (browser back/forward)
+  useEffect(() => {
+    const savedPath = location.state?.path;
+    if (savedPath) {
+      setPath(savedPath);
+    } else if (
+      location.pathname === "/items" ||
+      location.pathname === "/items/"
+    ) {
+      setPath(DEFAULT_PATH);
+    }
+  }, [location.key, location.pathname]);
 
   function rebuildPath(path: {name: string; id: string | null}[]) {
     const newPath = path
@@ -27,7 +42,7 @@ export function useNavigation() {
       )
       .join("/");
 
-    navigate(ROUTES.ITEMS(newPath));
+    navigate(ROUTES.ITEMS(newPath), {state: {path}});
   }
 
   function goForward(id: string | null, name: string) {
