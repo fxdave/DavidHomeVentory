@@ -12,28 +12,14 @@ export const Alert = ({children, severity = "info"}: AlertProps) => {
 
 const StyledAlert = styled("div", {
   base: {
-    padding: "12px 16px",
-    borderRadius: "4px",
-    border: "1px solid",
-    "&[data-severity='error']": {
-      backgroundColor: "#d32f2f33",
-      color: "#f44336",
-      borderColor: "#f44336",
-    },
-    "&[data-severity='warning']": {
-      backgroundColor: "#ff980033",
-      color: "#ff9800",
-      borderColor: "#ff9800",
-    },
-    "&[data-severity='info']": {
-      backgroundColor: "#2196f333",
-      color: "#2196f3",
-      borderColor: "#2196f3",
-    },
-    "&[data-severity='success']": {
-      backgroundColor: "#4caf5033",
-      color: "#4caf50",
-      borderColor: "#4caf50",
-    },
+    padding: "10px 12px",
+    borderRadius: "8px",
+    borderLeft: "4px solid",
+    backgroundColor: "paper",
+    color: "text.primary",
+    "&[data-severity='error']": {borderColor: "error"},
+    "&[data-severity='warning']": {borderColor: "warning"},
+    "&[data-severity='info']": {borderColor: "secondary"},
+    "&[data-severity='success']": {borderColor: "success"},
   },
 });

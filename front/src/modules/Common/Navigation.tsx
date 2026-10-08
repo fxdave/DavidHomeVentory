@@ -1,9 +1,9 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 import {styled} from "styled-system/jsx";
 import {useState} from "react";
-import {Menu, X} from "lucide-react";
+import {Boxes, LogOut, Menu, Printer, ScanLine, X} from "lucide-react";
 import {ROUTES} from "Router";
-import {Link} from "react-router-dom";
+import {Link, NavLink} from "react-router-dom";
 import {useLoggedInAuth} from "services/useAuth";
 
 export const Navigation = () => {
@@ -13,63 +13,96 @@ export const Navigation = () => {
   return (
     <>
       <Header>
-        <AppTitle>HomeVentory</AppTitle>
-        <ToggleButton
+        <Brand to={ROUTES.ITEMS()}>
+          <img src="/favicon.svg" alt="" width={32} height={32} />
+          HomeVentory
+        </Brand>
+        <HeaderLink to={ROUTES.QR_SCANNER} aria-label="Scan a box">
+          <ScanLine size={22} />
+        </HeaderLink>
+        <HeaderButton
           onClick={() => setIsOpen(!isOpen)}
-          data-open={isOpen}
-          aria-label={isOpen ? "Close navigation" : "Open navigation"}>
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
-        </ToggleButton>
+          aria-expanded={isOpen}
+          aria-label={isOpen ? "Close menu" : "Open menu"}>
+          {isOpen ? <X size={22} /> : <Menu size={22} />}
+        </HeaderButton>
       </Header>
       <Backdrop data-open={isOpen} onClick={() => setIsOpen(false)} />
-      <NavigationContainer data-open={isOpen}>
-        <NavItem to={ROUTES.ITEMS()}>Items</NavItem>
-        <NavItem to={ROUTES.STICKERS}>Box Sticker Generator</NavItem>
-        <NavItem to={ROUTES.QR_SCANNER}>QR Code Scanner</NavItem>
-        <NavButton onClick={() => auth.logout()}>Logout</NavButton>
-      </NavigationContainer>
+      <Drawer data-open={isOpen} aria-hidden={!isOpen}>
+        <NavItem to={ROUTES.ITEMS()} onClick={() => setIsOpen(false)}>
+          <Boxes size={20} /> Boxes
+        </NavItem>
+        <NavItem to={ROUTES.QR_SCANNER} onClick={() => setIsOpen(false)}>
+          <ScanLine size={20} /> Scan a box
+        </NavItem>
+        <NavItem to={ROUTES.STICKERS} onClick={() => setIsOpen(false)}>
+          <Printer size={20} /> Print stickers
+        </NavItem>
+        <DrawerSpacer />
+        <NavButton onClick={() => auth.logout()}>
+          <LogOut size={20} /> Log out
+        </NavButton>
+      </Drawer>
     </>
   );
 };
 
 const Header = styled("header", {
   base: {
+    position: "sticky",
+    top: 0,
+    zIndex: 10,
     display: "flex",
     alignItems: "center",
-    justifyContent: "space-between",
-    padding: "12px 16px",
-    margin: "-16px -16px 16px -16px",
-    backgroundColor: "paper",
-    borderBottom: "token(1px solid {colors.border})",
-    "@media (max-width: 600px)": {
-      padding: "8px 12px",
-      margin: "-8px -8px 8px -8px",
-    },
+    gap: "4px",
+    height: "56px",
+    padding: "0 8px 0 16px",
+    margin: "0 -16px",
+    backgroundColor: "background",
+    borderBottom: "1px solid token(colors.border)",
+    "@media print": {display: "none"},
   },
 });
 
-const AppTitle = styled("h1", {
+const Brand = styled(Link, {
   base: {
-    margin: 0,
-    fontSize: "20px",
-    fontWeight: 600,
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    marginRight: "auto",
+    fontSize: "18px",
+    fontWeight: 700,
     color: "text.primary",
-    "@media (max-width: 600px)": {
-      fontSize: "18px",
-    },
+    textDecoration: "none",
+    borderRadius: "8px",
   },
 });
+
+const headerButtonStyle = {
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  width: "44px",
+  height: "44px",
+  padding: 0,
+  border: "none",
+  borderRadius: "8px",
+  backgroundColor: "transparent",
+  color: "text.primary",
+  cursor: "pointer",
+  _hover: {backgroundColor: "hover"},
+} as const;
+
+const HeaderButton = styled("button", {base: headerButtonStyle});
+const HeaderLink = styled(Link, {base: headerButtonStyle});
 
 const Backdrop = styled("div", {
   base: {
     position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    inset: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     zIndex: 999,
-    transition: "opacity 0.3s ease",
+    transition: "opacity 0.2s ease",
     opacity: 0,
     pointerEvents: "none",
     "&[data-open='true']": {
@@ -79,89 +112,67 @@ const Backdrop = styled("div", {
   },
 });
 
-const ToggleButton = styled("button", {
-  base: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "8px",
-    backgroundColor: "transparent",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-    transition: "background-color 0.2s",
-    color: "text.primary",
-    _hover: {
-      backgroundColor: "hover",
-    },
-  },
-});
-
-const NavigationContainer = styled("div", {
+const Drawer = styled("nav", {
   base: {
     position: "fixed",
     top: 0,
-    left: 0,
+    right: 0,
     bottom: 0,
-    width: "280px",
-    padding: "24px 1rem",
+    width: "min(280px, calc(100% - 56px))",
+    display: "flex",
+    flexDirection: "column",
+    gap: "2px",
+    padding: "16px 8px",
     backgroundColor: "paper",
-    borderRight: "token(1px solid {colors.border})",
-    boxShadow: "4px 0 12px rgba(0, 0, 0, 0.3)",
-    transition: "transform 0.3s ease",
+    borderLeft: "1px solid token(colors.border)",
+    transition: "transform 0.2s ease, visibility 0.2s",
     zIndex: 1000,
     overflowY: "auto",
-    "@media (max-width: 600px)": {
-      width: "calc(100% - 72px)",
-      padding: "16px 0.5rem",
-    },
     "&[data-open='true']": {
       transform: "translateX(0)",
+      visibility: "visible",
     },
     "&[data-open='false']": {
-      transform: "translateX(-100%)",
+      transform: "translateX(100%)",
+      visibility: "hidden",
     },
   },
 });
 
-const NavItem = styled(Link, {
+const navItemStyle = {
+  display: "flex",
+  alignItems: "center",
+  gap: "12px",
+  width: "100%",
+  minHeight: "44px",
+  padding: "0 12px",
+  border: "none",
+  borderRadius: "8px",
+  backgroundColor: "transparent",
+  color: "text.primary",
+  fontFamily: "inherit",
+  fontSize: "15px",
+  fontWeight: 600,
+  textAlign: "left",
+  textDecoration: "none",
+  cursor: "pointer",
+  _hover: {backgroundColor: "hover"},
+} as const;
+
+const NavItem = styled(NavLink, {
   base: {
-    display: "block",
-    padding: "12px 16px",
-    textDecoration: "none",
-    color: "text.primary",
-    fontSize: "14px",
-    borderRadius: "4px",
-    transition: "background-color 0.2s",
-    _hover: {
-      backgroundColor: "hover",
-    },
-    "@media (max-width: 600px)": {
-      padding: "10px 12px",
-      fontSize: "13px",
-    },
+    ...navItemStyle,
+    "&.active": {backgroundColor: "raised"},
   },
 });
 
 const NavButton = styled("button", {
   base: {
-    display: "block",
-    width: "100%",
-    padding: "12px 16px",
-    textAlign: "left",
-    border: "none",
-    backgroundColor: "transparent",
-    color: "text.primary",
-    fontSize: "14px",
-    borderRadius: "4px",
-    cursor: "pointer",
-    transition: "background-color 0.2s",
-    _hover: {
-      backgroundColor: "hover",
-    },
-    "@media (max-width: 600px)": {
-      padding: "10px 12px",
-      fontSize: "13px",
-    },
+    ...navItemStyle,
+    color: "text.secondary",
   },
+});
+
+const DrawerSpacer = styled("div", {
+  base: {flex: 1},
 });

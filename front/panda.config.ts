@@ -15,24 +15,36 @@ export default defineConfig({
     extend: {
       tokens: {
         colors: {
-          background: {value: "#121212"},
-          paper: {value: "#1e1e1e"},
-          border: {value: "#333"},
-          hover: {value: "#ffffff2a"},
-          primary: {value: "#90caf9"},
-          primaryHover: {value: "#64b5f6"},
-          primaryDark: {value: "#42a5f5"},
-          secondary: {value: "#b0b0b0"},
-          error: {value: "#f44336"},
-          errorHover: {value: "#d32f2f"},
-          warning: {value: "#ff9800"},
-          warningHover: {value: "#f57c00"},
-          success: {value: "#4caf50"},
+          background: {value: "#15171c"},
+          paper: {value: "#1d2027"},
+          raised: {value: "#252932"},
+          border: {value: "#2e333d"},
+          hover: {value: "#ffffff0f"},
+          primary: {value: "#eceef2"},
+          primaryHover: {value: "#ffffff"},
+          primaryDark: {value: "#cfd3db"},
+          secondary: {value: "#9098a6"},
+          error: {value: "#f0716a"},
+          errorHover: {value: "#e0554d"},
+          warning: {value: "#f2b45c"},
+          warningHover: {value: "#e09a3a"},
+          success: {value: "#6cc58f"},
+          // Cardboard, from the box in the logo.
+          cardboard: {value: "#221e1c"},
+          cardboardEdge: {value: "#5a3d27"},
+          cardboardLight: {value: "#c88a52"},
           text: {
-            primary: {value: "#ffffff"},
-            secondary: {value: "#b0b0b0"},
-            disabled: {value: "#666"},
+            primary: {value: "#eceef2"},
+            secondary: {value: "#9098a6"},
+            disabled: {value: "#5c6370"},
           },
+        },
+        fonts: {
+          body: {
+            value:
+              '"Atkinson Hyperlegible Next Variable", system-ui, sans-serif',
+          },
+          label: {value: '"SourceCodePro", ui-monospace, monospace'},
         },
         spacing: {
           xs: {value: "4px"},
@@ -64,6 +76,23 @@ export default defineConfig({
 
   // Global styles and animations
   globalCss: {
+    "html, body": {
+      margin: 0,
+      backgroundColor: "background",
+      color: "text.primary",
+      fontFamily: "body",
+      fontSize: "15px",
+      lineHeight: 1.4,
+      WebkitTapHighlightColor: "transparent",
+    },
+    "*": {boxSizing: "border-box"},
+    ":focus-visible": {
+      outline: "2px solid token(colors.primary)",
+      outlineOffset: "2px",
+    },
+    "@media (prefers-reduced-motion: reduce)": {
+      "*": {transition: "none !important", animation: "none !important"},
+    },
     "@keyframes spin": {
       "0%": {transform: "rotate(0deg)"},
       "100%": {transform: "rotate(360deg)"},

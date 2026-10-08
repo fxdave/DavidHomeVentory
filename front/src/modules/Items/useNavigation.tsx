@@ -79,6 +79,7 @@ export function useNavigation() {
     ];
     setPath(newPath);
     rebuildPath(newPath);
+    setKeyword("");
   }
 
   const parent = path[path.length - 1];

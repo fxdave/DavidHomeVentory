@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="290 300 1360 1360">
+  <title>HomeVentory</title>
+  <defs>
+    <linearGradient id="lidTop" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5079ab"/>
+      <stop offset="1" stop-color="#335a8e"/>
+    </linearGradient>
+    <linearGradient id="boxLeft" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#dba26b"/>
+      <stop offset="1" stop-color="#c88a52"/>
+    </linearGradient>
+    <linearGradient id="boxRight" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#c27f48"/>
+      <stop offset="1" stop-color="#b8743f"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-50%" width="140%" height="200%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+  </defs>
+
+  
+
+  <g stroke-linejoin="round" stroke-width="26">
+    <!-- box body -->
+    <polygon points="360.0,778.9 985.0,938.3 985.0,1385.0 360.0,1225.6" fill="url(#boxLeft)" stroke="#8c5631"/>
+    <polygon points="985.0,938.3 1580.0,688.4 1580.0,1135.1 985.0,1385.0" fill="url(#boxRight)" stroke="#8c5631"/>
+
+  </g>
+  <g stroke-linejoin="round" stroke-width="20">
+    <!-- lid -->
+    <polygon points="325.0,690.0 985.0,858.3 985.0,1048.3 325.0,880.0" fill="#355b8f" stroke="#223f6c"/>
+    <polygon points="985.0,858.3 1620.0,591.6 1620.0,781.6 985.0,1048.3" fill="#2a4b7d" stroke="#223f6c"/>
+    <polygon points="960.0,423.3 1620.0,591.6 985.0,858.3 325.0,690.0" fill="url(#lidTop)" stroke="#223f6c"/>
+  </g>
+  <!-- lid edge highlight -->
+  <polyline points="345.0,712.0 985.0,880.3 1600.0,613.6"
+    fill="none" stroke="#fff" stroke-opacity="0.22" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- sticker on the left face -->
+  <g transform="matrix(1 0.255 0 1 0 0)">
+    <rect x="424" y="887" width="466" height="238" rx="16" fill="#000" opacity="0.15"/>
+    <path d="M436 881h400l44 44v178a14 14 0 0 1 -14 14h-430a14 14 0 0 1 -14 -14v-208a14 14 0 0 1 14 -14z" fill="#f8f8f6"/>
+    <path d="M836 881v34a10 10 0 0 0 10 10h34z" fill="#d9d9d6"/>
+    <path fill="#111" d="M452,905h80.70588235294117v80.70588235294117h-80.70588235294117z M463.52941176470586,916.5294117647059v57.64705882352941h57.64705882352941v-57.64705882352941z M475.05882352941177,928.0588235294117h34.588235294117645v34.588235294117645h-34.588235294117645zM567.2941176470588,905h80.70588235294117v80.70588235294117h-80.70588235294117z M578.8235294117646,916.5294117647059v57.64705882352941h57.64705882352941v-57.64705882352941z M590.3529411764705,928.0588235294117h34.588235294117645v34.588235294117645h-34.588235294117645zM452,1020.2941176470588h80.70588235294117v80.70588235294117h-80.70588235294117z M463.52941176470586,1031.8235294117646v57.64705882352941h57.64705882352941v-57.64705882352941z M475.05882352941177,1043.3529411764705h34.588235294117645v34.588235294117645h-34.588235294117645zM544.2,997.2h18.4v18.4h-18.4zM567.3,997.2h18.4v18.4h-18.4zM544.2,1020.3h18.4v18.4h-18.4zM590.4,1031.8h18.4v18.4h-18.4zM567.3,1043.4h18.4v18.4h-18.4zM613.4,1066.4h18.4v18.4h-18.4zM578.8,1066.4h18.4v18.4h-18.4zM613.4,1008.8h18.4v18.4h-18.4zM555.8,1066.4h18.4v18.4h-18.4z"/>
+    <rect x="702" y="930" width="140" height="22" rx="11" fill="#8d8d8d"/><rect x="702" y="980" width="100" height="22" rx="11" fill="#b0b0b0"/><rect x="702" y="1030" width="140" height="22" rx="11" fill="#8d8d8d"/>
+    <rect x="702" y="1088" width="151" height="6" fill="#f8f8f6" opacity="0.6"/>
+  </g>
+</svg>

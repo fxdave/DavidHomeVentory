@@ -9,7 +9,6 @@ import {
 } from "unique-names-generator";
 import SourceCodeProBold from "../../assets/SourceCodePro-Bold.ttf?url";
 import {Plus, Trash2, Printer as PrinterIcon} from "lucide-react";
-import {useNavigate} from "react-router-dom";
 import {Navigation} from "modules/Common/Navigation";
 import {Printer} from "@bcyesil/capacitor-plugin-printer";
 import {Button, IconButton} from "@ui/Button";
@@ -32,6 +31,7 @@ export default function StickerPage() {
   const [size, setSize] = useState(["297mm", "210mm"]);
   const pageRef = useRef<HTMLDivElement>(null);
   const [previewScaleRatio, setPreviewScaleRatio] = useState(1);
+  const [previewHeight, setPreviewHeight] = useState<number | null>(null);
   const [list, setList] = useState(
     new Array(5 * 3).fill(1).map(() => genName()),
   );
@@ -39,21 +39,23 @@ export default function StickerPage() {
     numRows: parseInt(numRows),
     stickersPerRow: parseInt(stickersPerRow),
   };
-  const navigate = useNavigate();
 
   useEffect(() => {
     const listener = () => {
-      if (!pageRef.current) return;
-      const ratio =
-        window.document.body.clientWidth / pageRef.current.clientWidth;
-      setPreviewScaleRatio(Math.min(1, ratio));
+      const page = pageRef.current;
+      const frame = page?.parentElement;
+      if (!page || !frame) return;
+      // Fit the sheet into its frame; offset sizes ignore the scale transform.
+      const ratio = Math.min(1, frame.clientWidth / page.offsetWidth);
+      setPreviewScaleRatio(ratio);
+      setPreviewHeight(page.offsetHeight * ratio);
     };
     listener();
     window.addEventListener("resize", listener);
     return () => {
       window.removeEventListener("resize", listener);
     };
-  }, []);
+  }, [size]);
 
   function print() {
     const page = pageRef.current;
@@ -97,9 +99,7 @@ export default function StickerPage() {
 
   return (
     <Container>
-      <NavigationContainer>
-        <Navigation />
-      </NavigationContainer>
+      <Navigation />
       <style>
         {`
           @font-face {
@@ -122,85 +122,107 @@ export default function StickerPage() {
           }
         `}
       </style>
-      <Form>
-        <Button onClick={() => navigate("/")}>Dashboard</Button>
+      <Form onSubmit={e => e.preventDefault()}>
+        <TitleRow>
+          <Title>Print stickers</Title>
+          <Button type="button" onClick={() => print()}>
+            <PrinterIcon size={18} /> Print
+          </Button>
+        </TitleRow>
 
-        <SectionTitle>Page Settings:</SectionTitle>
+        <Section>
+          <SectionTitle>Sheet</SectionTitle>
+          <FieldGrid>
+            <TextField
+              value={size[0]}
+              label="Width"
+              onChange={e => setSize([e.target.value, size[1]])}
+            />
+            <TextField
+              value={size[1]}
+              label="Height"
+              onChange={e => setSize([size[0], e.target.value])}
+            />
+            <TextField
+              value={stickersPerRow}
+              label="Per row"
+              inputMode="numeric"
+              onChange={e => setStickersPerRow(e.target.value)}
+            />
+            <TextField
+              value={numRows}
+              label="Rows"
+              inputMode="numeric"
+              onChange={e => setNumRows(e.target.value)}
+            />
+            {margins.map((margin, index) => (
+              <TextField
+                key={index}
+                value={margin}
+                label={`Margin ${MARGIN_DIRECTIONS[index]}`}
+                onChange={e => {
+                  setMargins([
+                    ...margins.slice(0, index),
+                    e.target.value,
+                    ...margins.slice(index + 1, 4),
+                  ]);
+                }}
+              />
+            ))}
+          </FieldGrid>
+        </Section>
 
-        <TextField
-          value={size[0]}
-          label="Page width"
-          onChange={e => setSize([e.target.value, size[1]])}
-        />
-        <TextField
-          value={size[1]}
-          label="Page height"
-          onChange={e => setSize([size[0], e.target.value])}
-        />
-        <Separator />
-        <TextField
-          value={stickersPerRow}
-          label="Stickers per row"
-          onChange={e => setStickersPerRow(e.target.value)}
-        />
-        <TextField
-          value={numRows}
-          label="Number of rows"
-          onChange={e => setNumRows(e.target.value)}
-        />
-        <Separator />
-        {margins.map((margin, index) => (
-          <TextField
-            key={index}
-            value={margin}
-            label={`Margin ${MARGIN_DIRECTIONS[index]}`}
-            onChange={e => {
-              setMargins([
-                ...margins.slice(0, index),
-                e.target.value,
-                ...margins.slice(index + 1, 4),
-              ]);
-            }}
-          />
-        ))}
-        <SectionTitle>Stickers:</SectionTitle>
-        {list.map((item, index) => (
-          <TextField
-            key={index}
-            placeholder="Something"
-            value={item}
-            onChange={e => {
-              setList([
-                ...list.slice(0, index),
-                e.target.value,
-                ...list.slice(index + 1, list.length),
-              ]);
-            }}
-            endAdornment={
-              <IconButton
-                onClick={() => setList(list.filter((_, idx) => idx !== index))}
-                aria-label="Remove sticker">
-                <Trash2 size={20} />
-              </IconButton>
-            }
-          />
-        ))}
-        <IconButton
-          disabled={settings.numRows * settings.stickersPerRow === list.length}
-          onClick={() => setList([...list, genName()])}
-          aria-label="Add new sticker">
-          <Plus size={20} />
-        </IconButton>
+        <Section>
+          <SectionTitle>Names</SectionTitle>
+          <Hint>
+            Each name becomes a box the first time its sticker is scanned.
+          </Hint>
+          <NameGrid>
+            {list.map((item, index) => (
+              <TextField
+                key={index}
+                aria-label={`Sticker ${index + 1}`}
+                placeholder="Sticker name"
+                value={item}
+                onChange={e => {
+                  setList([
+                    ...list.slice(0, index),
+                    e.target.value,
+                    ...list.slice(index + 1, list.length),
+                  ]);
+                }}
+                endAdornment={
+                  <IconButton
+                    type="button"
+                    onClick={() =>
+                      setList(list.filter((_, idx) => idx !== index))
+                    }
+                    aria-label="Remove sticker">
+                    <Trash2 size={16} />
+                  </IconButton>
+                }
+              />
+            ))}
+            <Button
+              type="button"
+              variant="outlined"
+              disabled={
+                settings.numRows * settings.stickersPerRow === list.length
+              }
+              onClick={() => setList([...list, genName()])}>
+              <Plus size={18} /> Add sticker
+            </Button>
+          </NameGrid>
+        </Section>
 
-        <PreviewHeader>
-          <SectionTitle>Preview:</SectionTitle>
-
-          <PrintButton onClick={() => print()} aria-label="Print stickers">
-            <PrinterIcon size={20} />
-          </PrintButton>
-        </PreviewHeader>
+        <SectionTitle>Preview</SectionTitle>
       </Form>
-      <PageContainer>
+      <PageContainer
+        style={
+          previewHeight === null
+            ? {}
+            : {["--preview-height" as string]: `${previewHeight}px`}
+        }>
         {/** Inline styles are required for printing on mobile */}
         <Page
           ref={pageRef}
@@ -277,72 +299,85 @@ export default function StickerPage() {
   );
 }
 
-const NavigationContainer = styled("div", {
-  base: {
-    width: "100%",
-    "@media print": {
-      display: "none",
-    },
-  },
-});
-
-const Separator = styled("div", {
-  base: {
-    width: "100%",
-  },
-});
-
 const Container = styled("div", {
   base: {
-    display: "flex",
-    flexWrap: "wrap",
-    padding: "0.5rem",
-    alignItems: "flex-start",
-    alignContent: "flex-start",
-    "@media (max-width: 600px)": {
-      padding: "0.25rem",
-    },
+    width: "100%",
+    minWidth: 0,
+    maxWidth: "960px",
+    margin: "0 auto",
+    padding: "0 16px 32px",
+    "@media print": {padding: 0, maxWidth: "none"},
   },
 });
 
 const Form = styled("form", {
   base: {
     display: "flex",
-    flexWrap: "wrap",
-    gap: "0.5rem",
+    flexDirection: "column",
+    gap: "20px",
+    paddingTop: "12px",
+  },
+});
+
+const TitleRow = styled("div", {
+  base: {
+    display: "flex",
     alignItems: "center",
-    justifyContent: "stretch",
-    width: "100%",
-    "@media (max-width: 600px)": {
-      gap: "0.25rem",
-    },
+    justifyContent: "space-between",
+    gap: "12px",
   },
 });
 
-const SectionTitle = styled("h5", {
+const Title = styled("h2", {
   base: {
-    fontSize: "1.5rem",
-    width: "100%",
     margin: 0,
-    color: "#fff",
+    fontSize: "22px",
+    fontWeight: 700,
   },
 });
 
-const PrintButton = styled(Button, {
+const Section = styled("section", {
   base: {
-    marginLeft: "auto",
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+  },
+});
+
+const SectionTitle = styled("h3", {
+  base: {
+    margin: 0,
+    fontSize: "15px",
+    fontWeight: 700,
+    color: "text.primary",
+  },
+});
+
+const Hint = styled("p", {
+  base: {
+    margin: 0,
+    color: "text.secondary",
+  },
+});
+
+const FieldGrid = styled("div", {
+  base: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(104px, 1fr))",
+    gap: "12px",
+  },
+});
+
+const NameGrid = styled("div", {
+  base: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+    gap: "8px",
   },
 });
 
 const QrCodeContainer = styled("div", {
-  base: {
-    "@media print": {
-      filter: "none",
-    },
-    "@media not print": {
-      filter: "invert(1)",
-    },
-  },
+  base: {},
 });
 
 const StickerContainer = styled("div", {
@@ -364,8 +399,7 @@ const Page = styled("div", {
       background: "none",
     },
     "@media not print": {
-      filter: "invert(100%)",
-      background: "#CFCFCF",
+      background: "white",
       transformOrigin: "top left",
     },
   },
@@ -374,18 +408,10 @@ const Page = styled("div", {
 const PageContainer = styled("div", {
   base: {
     "@media not print": {
-      marginTop: "0.5rem",
-      borderRadius: "0.5rem",
-      border: "2px solid white",
-      maxWidth: "calc(100vw - 1rem)",
-      overflow: "auto",
+      marginTop: "10px",
+      borderRadius: "8px",
+      overflow: "hidden",
+      height: "var(--preview-height, auto)",
     },
-  },
-});
-
-const PreviewHeader = styled("div", {
-  base: {
-    display: "flex",
-    width: "100%",
   },
 });

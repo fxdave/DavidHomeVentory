@@ -1,5 +1,6 @@
 import {styled} from "styled-system/jsx";
 import {ChevronRight} from "lucide-react";
+import {useEffect, useRef} from "react";
 
 type BreadcrumbItem = {
   label: string;
@@ -11,39 +12,55 @@ type BreadcrumbsProps = {
 };
 
 export const Breadcrumbs = ({items}: BreadcrumbsProps) => {
+  const ref = useRef<HTMLOListElement>(null);
+
+  // Keep the deepest crumb in view when the path is wider than the screen.
+  useEffect(() => {
+    ref.current?.scrollTo({left: ref.current.scrollWidth});
+  }, [items.length]);
+
   return (
-    <StyledBreadcrumbs>
-      {items.map((item, index) => (
-        <BreadcrumbWrapper key={index}>
-          <BreadcrumbButton onClick={item.onClick}>
-            {item.label}
-          </BreadcrumbButton>
-          {index < items.length - 1 && (
-            <Separator>
-              <ChevronRight size={16} />
+    <StyledBreadcrumbs aria-label="Location">
+      <List ref={ref}>
+        {items.map((item, index) => (
+          <Crumb key={index}>
+            <BreadcrumbButton type="button" onClick={item.onClick}>
+              {item.label}
+            </BreadcrumbButton>
+            <Separator aria-hidden>
+              <ChevronRight size={14} />
             </Separator>
-          )}
-        </BreadcrumbWrapper>
-      ))}
+          </Crumb>
+        ))}
+      </List>
     </StyledBreadcrumbs>
   );
 };
 
 const StyledBreadcrumbs = styled("nav", {
   base: {
-    display: "flex",
-    alignItems: "center",
-    padding: "8px 0",
-    color: "text.secondary",
-    flexWrap: "wrap",
+    minWidth: 0,
   },
 });
 
-const BreadcrumbWrapper = styled("div", {
+const List = styled("ol", {
   base: {
     display: "flex",
     alignItems: "center",
-    gap: "8px",
+    margin: 0,
+    padding: 0,
+    listStyle: "none",
+    overflowX: "auto",
+    scrollbarWidth: "none",
+    "&::-webkit-scrollbar": {display: "none"},
+  },
+});
+
+const Crumb = styled("li", {
+  base: {
+    display: "flex",
+    alignItems: "center",
+    flexShrink: 0,
   },
 });
 
@@ -53,10 +70,12 @@ const BreadcrumbButton = styled("button", {
     border: "none",
     color: "text.secondary",
     cursor: "pointer",
-    padding: "4px 8px",
-    fontSize: "14px",
-    borderRadius: "4px",
-    transition: "background-color 0.2s, color 0.2s",
+    padding: "4px 6px",
+    margin: "0 -2px",
+    fontFamily: "inherit",
+    fontSize: "13px",
+    borderRadius: "6px",
+    whiteSpace: "nowrap",
     _hover: {
       backgroundColor: "hover",
       color: "text.primary",

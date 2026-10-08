@@ -31,16 +31,18 @@ export function SafeDeleteButton({onClick, disabled}: SafeDeleteButtonProps) {
       }}
       aria-label="Delete item"
       title="Click to delete">
-      <Trash2 size={20} />
+      <Trash2 size={18} />
     </IconButton>
   );
 }
 
 const ConfirmButton = styled(IconButton, {
   base: {
-    color: "error",
+    color: "background",
+    backgroundColor: "error",
     _hover: {
-      backgroundColor: "token(colors.error / 0.133)",
+      color: "background",
+      backgroundColor: "errorHover",
     },
   },
 });

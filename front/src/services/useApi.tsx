@@ -5,9 +5,7 @@ import {Routes} from "../../../back/src/index";
 
 export const token: string | undefined = undefined;
 
-const [useApiStore] = createStore<Client<Routes, Record<string, never>> | null>(
-  null,
-);
+const [useApiStore] = createStore<Client<Routes> | null>(null);
 
 export const useApi = () => {
   const [api, setApi] = useApiStore();
@@ -40,14 +38,17 @@ export const useAuthedApi = () => {
     throw new Error("Api is null");
   }
 
-  const authedApi = useMemo(() => {
-    const token = localStorage.getItem("token");
-    return api?.with(() => ({
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    }));
-  }, [api]);
+  const authedApi = useMemo(
+    () =>
+      api.with({
+        middleware: () => ({
+          headers: {
+            authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }),
+      }),
+    [api],
+  );
 
   return {
     api: authedApi,

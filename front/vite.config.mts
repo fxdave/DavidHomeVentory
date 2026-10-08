@@ -25,6 +25,21 @@ export default defineConfig({
         enabled: true,
       },
       manifest: {
+        name: "HomeVentory",
+        short_name: "HomeVentory",
+        description: "Know what's in every box without opening it.",
+        theme_color: "#15171c",
+        background_color: "#15171c",
+        icons: [
+          {src: "/pwa-192.png", sizes: "192x192", type: "image/png"},
+          {src: "/pwa-512.png", sizes: "512x512", type: "image/png"},
+          {
+            src: "/pwa-maskable-512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "maskable",
+          },
+        ],
         protocol_handlers: [
           {
             protocol: "davidhomeventory",

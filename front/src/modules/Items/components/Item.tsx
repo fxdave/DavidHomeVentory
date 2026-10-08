@@ -1,6 +1,6 @@
 /* eslint-disable sonarjs/no-duplicate-string */
-import {memo, useState} from "react";
-import {Scissors, Pencil, Save, QrCode} from "lucide-react";
+import {memo, useEffect, useRef, useState} from "react";
+import {Scissors, Pencil, Check, QrCode} from "lucide-react";
 import {styled} from "styled-system/jsx";
 import {SafeDeleteButton} from "./SafeDelete";
 import {WarehouseEntryVariant} from "../../../../../back/src/modules/warehouse/models";
@@ -8,6 +8,21 @@ import {WarehouseEntryWithPath} from "../../../../../back/src/modules/warehouse"
 import {TextField} from "@ui/Input";
 import {IconButton} from "@ui/Button";
 import {ListItem, ListItemText} from "./List";
+import {boxLidColors} from "utils/boxHue";
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** Where a search hit lives, or the sticker name when the box was renamed. */
+function secondaryLine(item: WarehouseEntryWithPath, isSearch: boolean) {
+  if (isSearch)
+    return item.path
+      .filter(segment => segment.id !== "ROOT")
+      .map(segment => segment.name)
+      .join(" › ");
+  if (item.id !== item.name && !UUID.test(item.id))
+    return `Sticker: ${item.id}`;
+  return undefined;
+}
 
 type ItemProps = {
   isSearch: boolean;
@@ -22,6 +37,12 @@ function ItemRaw(props: ItemProps) {
   const [editing, setEditing] = useState<null | {
     title: string;
   }>(null);
+  const isEditing = editing !== null;
+  const editInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isEditing) editInputRef.current?.focus();
+  }, [isEditing]);
 
   function save() {
     if (editing)
@@ -35,146 +56,143 @@ function ItemRaw(props: ItemProps) {
 
   return (
     <StyledListItem
-      data-isContainer={isContainer}
+      data-container={isContainer}
+      style={isContainer ? boxLidColors(props.item.id) : {}}
       onClick={editing ? undefined : () => props.onGoForward()}
       disabled={props.cutting?.item.id == props.item.id}
-      data-editing={!!editing}>
+      data-editing={isEditing}>
       {isContainer && (
-        <QrIconWrapper>
-          <QrCode size={24} />
-        </QrIconWrapper>
+        <Sticker>
+          <QrCode size={18} />
+        </Sticker>
       )}
       {editing ? (
-        <EditGroup>
-          <EditTextField
-            label="Name"
+        <EditGroup onClick={e => e.stopPropagation()}>
+          <TextField
+            ref={editInputRef}
+            aria-label="Name"
             value={editing.title}
             onChange={e => setEditing({title: e.target.value})}
             onKeyUp={e => {
               if (e.code === "Enter") save();
+              if (e.code === "Escape") setEditing(null);
             }}
+            endAdornment={
+              <IconButton
+                onClick={e => {
+                  e.stopPropagation();
+                  save();
+                }}
+                aria-label="Save changes">
+                <Check size={20} />
+              </IconButton>
+            }
           />
-          <EditSaveButton
-            onClick={e => {
-              e.stopPropagation();
-              save();
-            }}
-            aria-label="Save changes">
-            <Save size={20} />
-          </EditSaveButton>
         </EditGroup>
       ) : (
         <ListItemText
-          primary={`${
-            props.isSearch
-              ? props.item.path.map(s => s.name).join(" / ") + " / "
-              : ""
-          } ${props.item.name}`}
-          secondary={props.item.id}
+          primary={
+            isContainer ? <BoxName>{props.item.name}</BoxName> : props.item.name
+          }
+          secondary={secondaryLine(props.item, props.isSearch)}
         />
       )}
-      <>
-        {!editing && (
+      {!editing && (
+        <>
           <IconButton
             onClick={e => {
               e.stopPropagation();
               setEditing({title: props.item.name});
             }}
             disabled={!!props.cutting}
-            aria-label="Edit item name">
-            <Pencil size={20} />
+            aria-label="Rename">
+            <Pencil size={18} />
           </IconButton>
-        )}
-        <IconButton
-          disabled={!!props.cutting}
-          onClick={e => {
-            e.stopPropagation();
-            props.onCutStart();
-          }}
-          aria-label="Cut item to move">
-          <Scissors size={20} />
-        </IconButton>
-        <SafeDeleteButton
-          disabled={
-            props.item.variant === WarehouseEntryVariant.Container ||
-            !!props.cutting
-          }
-          onClick={e => {
-            e.stopPropagation();
-            props.onDelete();
-          }}
-        />
-      </>
+          <IconButton
+            disabled={!!props.cutting}
+            onClick={e => {
+              e.stopPropagation();
+              props.onCutStart();
+            }}
+            aria-label="Move">
+            <Scissors size={18} />
+          </IconButton>
+          <SafeDeleteButton
+            disabled={isContainer || !!props.cutting}
+            onClick={e => {
+              e.stopPropagation();
+              props.onDelete();
+            }}
+          />
+        </>
+      )}
     </StyledListItem>
   );
 }
 export const Item = memo(
   ItemRaw,
+  // The cache keeps an unchanged item's object, so a new object means a change.
   (prev, next) =>
-    prev.item.id == next.item.id &&
+    prev.item === next.item &&
     prev.isSearch == next.isSearch &&
     prev.cutting?.item?.id == next.cutting?.item?.id,
 );
 
-const QrIconWrapper = styled("div", {
+/** The QR icon sits on a little white sticker, like the label in the logo. */
+const Sticker = styled("div", {
   base: {
     display: "flex",
     alignItems: "center",
-    marginRight: "12px",
-    color: "primary",
+    justifyContent: "center",
+    width: "28px",
+    height: "28px",
+    marginRight: "10px",
+    borderRadius: "4px",
+    backgroundColor: "#f4f4f1",
+    color: "#15171c",
     flexShrink: 0,
+    boxShadow: "0 1px 0 rgba(0, 0, 0, 0.3)",
   },
 });
 
+/** A box is drawn as a shoe box: a cardboard body with a lid that lifts on hover. */
 const StyledListItem = styled(ListItem, {
   base: {
-    "&[data-isContainer='true']": {
-      position: "relative",
+    "&[data-container='true']": {
       marginTop: "16px",
-      border: "1px solid token(colors.border)",
-      borderLeft: "3px solid token(colors.border)",
-      borderRight: "1px solid rgba(255, 255, 255, 0.1)",
-      borderRadius: "0 0 4px 4px",
-      backgroundColor: "rgba(144, 202, 249, 0.04)",
       marginBottom: "7px",
-      boxShadow:
-        "2px 2px 0 rgba(0, 0, 0, 0.2), inset -1px 0 0 rgba(0, 0, 0, 0.1)",
-      "&::before": {
-        content: '""',
-        position: "absolute",
-        top: "-10px",
-        left: "-4px",
-        right: "-4px",
-        height: "14px",
-        backgroundColor: "paper",
-        border: "1px solid token(colors.border)",
-        borderBottom: "none",
-        boxShadow:
-          "inset 0 1px 0 rgba(255, 255, 255, 0.1), 1px -1px 0 rgba(0, 0, 0, 0.1)",
-        transition: "transform 0.2s ease-out",
-        transformOrigin: "bottom center",
-        borderRadius: "4px 4px 0 0",
-      },
-      "&:hover::before": {
-        transform: "translateY(-4px) rotate(0.3deg)",
-      },
-      "&:focus-within::before": {
-        transform: "translateY(-4px) rotate(0.3deg)",
-      },
-      "&[data-editing='true']::before": {
-        transform: "translateY(-4px) rotate(0.3deg)",
-      },
-      "&::after": {
-        content: '""',
-        position: "absolute",
-        bottom: "0",
-        left: "0",
-        right: "0",
-        height: "1px",
-        background:
-          "linear-gradient(to right, token(colors.border) 0%, transparent 50%, token(colors.border) 100%)",
-      },
+      border: "1px solid token(colors.cardboardEdge)",
+      borderLeft: "3px solid token(colors.cardboardEdge)",
+      borderRadius: "0 0 6px 6px",
+      backgroundColor: "cardboard",
+      boxShadow: "2px 2px 0 rgba(0, 0, 0, 0.25)",
     },
+    "&[data-container='true']::before": {
+      content: '""',
+      position: "absolute",
+      top: "-11px",
+      left: "-5px",
+      right: "-5px",
+      height: "15px",
+      backgroundColor: "var(--lid)",
+      border: "1px solid var(--lid-edge)",
+      borderBottomWidth: "3px",
+      borderRadius: "5px 5px 2px 2px",
+      boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.18)",
+      transition: "transform 0.2s ease-out",
+      transformOrigin: "bottom center",
+    },
+    "&[data-container='true']:hover::before, &[data-container='true']:focus-within::before, &[data-container='true'][data-editing='true']::before":
+      {
+        transform: "translateY(-4px) rotate(0.3deg)",
+      },
+  },
+});
+
+const BoxName = styled("span", {
+  base: {
+    fontFamily: "label",
+    fontWeight: 700,
   },
 });
 
@@ -182,26 +200,6 @@ const EditGroup = styled("div", {
   base: {
     display: "flex",
     flex: 1,
-    alignItems: "stretch",
-  },
-});
-
-const EditTextField = styled(TextField, {
-  base: {
-    flex: 1,
-  },
-});
-
-const EditSaveButton = styled(IconButton, {
-  base: {
-    borderRadius: "0 4px 4px 0",
-    backgroundColor: "paper",
-    border: "1px solid token(colors.border)",
-    borderLeft: "none",
-    minWidth: "48px",
-    "&:hover:not(:disabled)": {
-      backgroundColor: "hover",
-      borderColor: "primary",
-    },
+    minWidth: 0,
   },
 });

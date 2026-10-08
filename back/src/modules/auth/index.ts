@@ -1,4 +1,4 @@
-import {success, zodValidationError} from "@cuple/server";
+import {invalidInput, success} from "@cuple/server";
 import {z} from "zod";
 import {unauthorizedError} from "../../responses";
 import {createToken, isTokenValid} from "./token";
@@ -49,7 +49,7 @@ export function initAuthModule(db: PrismaClient, builder: Builder) {
           return success({token});
         }
 
-        return zodValidationError([
+        return invalidInput("body", [
           {
             code: "custom",
             message: "Wrong password.",

@@ -1,5 +1,7 @@
+import {fetchCuple} from "@cuple/client";
 import {createStore} from "../utils/createStore";
 import {useApi} from "./useApi";
+import {store} from "./cuple";
 
 export enum AuthStatus {
   LoggedIn,
@@ -49,29 +51,21 @@ export const useAuth = () => {
   const login = async (url: string, password: string) => {
     try {
       const api = setBaseUrl(url);
-      const setResponse = await api.auth.setPassword.post({
+      // Sets the password on first login; afterwards it answers unauthorized.
+      await fetchCuple(api.auth.setPassword.post, {
         body: {
           password,
         },
-      });
+      }).thenKeep(["success", "unauthorized-error"]);
 
-      if (
-        ["unexpected-error", "validation-error"].includes(setResponse.result)
-      ) {
-        setAuthInfo({
-          isLoggedIn: false,
-          error: `${setResponse.message}`,
-        });
-        return false;
-      }
-
-      const authResponse = await api.auth.authenticate.post({
+      const authResponse = await fetchCuple(api.auth.authenticate.post, {
         body: {
           password,
         },
-      });
+      }).thenKeep(["success", "invalid-body"]);
       if (authResponse.result === "success") {
         setCredentials(url, authResponse.token);
+        store.clear();
         setAuthInfo({
           isLoggedIn: true,
           token: authResponse.token,
@@ -81,7 +75,7 @@ export const useAuth = () => {
       } else {
         setAuthInfo({
           isLoggedIn: false,
-          error: `${authResponse.message}`,
+          error: authResponse.issues[0]?.message ?? authResponse.message,
         });
         return false;
       }
@@ -96,6 +90,7 @@ export const useAuth = () => {
 
   const logout = () => {
     localStorage.removeItem("token");
+    store.clear();
     setAuthInfo({
       isLoggedIn: false,
     });

@@ -1,99 +1,90 @@
 import {styled} from "styled-system/jsx";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useAuthedApi} from "services/useApi";
-import {useInvalidate} from "utils/useInvalidate";
-import {Search} from "lucide-react";
+import {Search, X} from "lucide-react";
+import {fetchCuple} from "@cuple/client";
+import {Boundary, useAction, useGetWrapped} from "@cuple/react";
 import {useParams} from "react-router-dom";
 import {WarehouseEntryWithPath} from "../../../../back/src/modules/warehouse";
 import {useNavigation} from "./useNavigation";
-import {useAsyncEffect} from "utils/useAsyncEffect";
-import {asyncCallback} from "utils/useAsyncCallback";
 import {CuttingBar} from "./components/CuttingBar";
-import {BreadcrumbsBar} from "./components/BreadcrumbsBar";
+import {BreadcrumbsBar, displayName} from "./components/BreadcrumbsBar";
 import {ItemList} from "./ItemList";
 import {Navigation} from "modules/Common/Navigation";
 import {TextField} from "@ui/Input";
+import {Button, IconButton} from "@ui/Button";
+import {Spinner} from "@ui/Spinner";
+import {Alert} from "@ui/Alert";
+
+type EntryUpdate = Pick<
+  WarehouseEntryWithPath,
+  "id" | "name" | "parentId" | "variant"
+>;
 
 export default function ItemsScreen() {
   const {api} = useAuthedApi();
   const nav = useNavigation();
-  const [list, setList] = useState<{
-    arr: WarehouseEntryWithPath[];
-    key: number;
-  }>({arr: [], key: 0});
   const [cutting, setCutting] = useState<null | {item: WarehouseEntryWithPath}>(
     null,
   );
-  const listInvalidate = useInvalidate();
   const query = useParams();
+  const changesList = {refresh: [api.warehouse.list]};
 
-  useAsyncEffect(async () => {
+  // An item opened by its id (a scanned sticker): created if it's new.
+  const openItem = useAction(
+    (id: string) =>
+      fetchCuple(api.warehouse.getOrCreate.post, {
+        query: {id},
+      }).thenKeepSuccess(),
+    changesList,
+  );
+  useEffect(() => {
     const initialItemId = query?.id;
-    if (initialItemId) {
-      const response = await api.warehouse.getOrCreate.post({
-        query: {
-          id: initialItemId,
-        },
-      });
-      if (response.result === "success") {
-        nav.initFromParent(response.entry);
-      }
-    }
+    if (!initialItemId) return;
+    void openItem.run(initialItemId).then(state => {
+      if (state.status === "done") nav.initFromParent(state.value.entry);
+    });
   }, [query?.id]);
 
-  useAsyncEffect(async () => {
-    const response = await api.warehouse.list.get({
-      query: {
-        keyword: nav.keyword,
-        parentId: nav.parent.id,
-      },
-    });
-    if (response.result === "success") {
-      setList(old => ({arr: response.list, key: old.key + 1}));
-    }
-  }, [nav.keyword, parent, listInvalidate.id, nav.path]);
-
-  const handleCreateItem = asyncCallback(async (item: {name: string}) => {
-    console.log(item);
-
-    await api.warehouse.create.post({
-      body: {
-        name: item.name,
-        parentId: nav.parent.id,
-        id: null,
-      },
-    });
-
-    listInvalidate.invalidate();
-  });
-
-  const handlePaste = asyncCallback(async () => {
-    if (cutting && nav.parent.id) {
-      await api.warehouse.update.put({
+  const createItem = useAction(
+    (item: {name: string}) =>
+      fetchCuple(api.warehouse.create.post, {
         body: {
-          id: cutting.item.id,
-          name: cutting.item.name,
-          variant: cutting.item.variant,
+          name: item.name,
           parentId: nav.parent.id,
+          id: null,
         },
-      });
-
-      setCutting(null);
-      listInvalidate.invalidate();
-    }
-  });
-
-  const handleUpdateItem = asyncCallback(
-    async (newEntry: WarehouseEntryWithPath) => {
-      await api.warehouse.update.put({body: newEntry});
-      listInvalidate.invalidate();
-    },
+      }).thenKeepSuccess(),
+    changesList,
   );
 
-  const handleDeleteItem = asyncCallback(async (itemId: string) => {
-    await api.warehouse.delete.delete({query: {id: itemId}});
-    listInvalidate.invalidate();
-  });
+  const updateItem = useAction(
+    (entry: EntryUpdate) =>
+      fetchCuple(api.warehouse.update.put, {
+        body: entry,
+      }).thenKeepSuccess(),
+    changesList,
+  );
+
+  const deleteItem = useAction(
+    (itemId: string) =>
+      fetchCuple(api.warehouse.delete.delete, {
+        query: {id: itemId},
+      }).thenKeepSuccess(),
+    changesList,
+  );
+
+  const handlePaste = async () => {
+    if (!cutting || !nav.parent.id) return;
+    const state = await updateItem.run({
+      id: cutting.item.id,
+      name: cutting.item.name,
+      variant: cutting.item.variant,
+      parentId: nav.parent.id,
+    });
+    if (state.status === "done") setCutting(null);
+  };
+
   return (
     <Container>
       <Navigation />
@@ -108,24 +99,73 @@ export default function ItemsScreen() {
       <BreadcrumbsBar nav={nav} />
 
       <SearchField
+        aria-label="Search"
+        placeholder={
+          nav.parent.id === null
+            ? "Search everything"
+            : `Search in ${displayName(nav.parent)}`
+        }
         value={nav.keyword}
         onChange={e => nav.setKeyword(e.target.value)}
-        label="Filter the current list"
-        startAdornment={<Search size={20} />}
+        startAdornment={<Search size={18} />}
+        endAdornment={
+          nav.keyword && (
+            <IconButton
+              onClick={() => nav.setKeyword("")}
+              aria-label="Clear search">
+              <X size={18} />
+            </IconButton>
+          )
+        }
       />
 
-      <ItemList
-        key={list.key}
-        list={list.arr}
-        cutting={cutting}
-        isSearch={!!nav.keyword}
-        onCreateItem={item => handleCreateItem(item)}
-        onDeleteItem={item => handleDeleteItem(item.id)}
-        onUpdateItem={item => handleUpdateItem(item)}
-        onOpenItem={item => nav.goForward(item.id, item.name)}
-        onStartCutting={item => setCutting({item})}
-      />
+      <Boundary
+        fallback={
+          <Centered>
+            <Spinner />
+          </Centered>
+        }
+        error={(error, retry) => (
+          <Alert severity="error">
+            {error.message} <Button onClick={retry}>Retry</Button>
+          </Alert>
+        )}>
+        <Contents
+          keyword={nav.keyword}
+          parentId={nav.parent.id}
+          cutting={cutting}
+          onCreateItem={createItem.run}
+          onDeleteItem={item => deleteItem.run(item.id)}
+          onUpdateItem={updateItem.run}
+          onOpenItem={item => nav.goForward(item.id, item.name)}
+          onStartCutting={item => setCutting({item})}
+        />
+      </Boundary>
     </Container>
+  );
+}
+
+type ContentsProps = Omit<
+  Parameters<typeof ItemList>[0],
+  "list" | "isSearch"
+> & {
+  keyword: string;
+  parentId: string | null;
+};
+
+/** The listed items. While the next folder or search loads, the current one stays, dimmed. */
+function Contents({keyword, parentId, ...props}: ContentsProps) {
+  const {api} = useAuthedApi();
+  const found = useGetWrapped(
+    api.warehouse.list,
+    {query: {keyword, parentId}},
+    {config: {loading: {debounceMs: 150}}},
+  );
+
+  return (
+    <Dimmed data-pending={found.isPending || undefined}>
+      <ItemList {...props} list={found.data.list} isSearch={!!keyword} />
+    </Dimmed>
   );
 }
 
@@ -133,18 +173,32 @@ const Container = styled("div", {
   base: {
     overflow: "auto",
     height: "100vh",
-    maxWidth: "1200px",
+    maxWidth: "720px",
     margin: "0 auto",
-    padding: "16px",
+    padding: "0 16px 96px",
     width: "100%",
-    "@media (max-width: 600px)": {
-      padding: "8px",
-    },
   },
 });
 
 const SearchField = styled(TextField, {
   base: {
-    marginBottom: "16px",
+    marginBottom: "12px",
+  },
+});
+
+const Centered = styled("div", {
+  base: {
+    display: "flex",
+    justifyContent: "center",
+    padding: "24px",
+  },
+});
+
+const Dimmed = styled("div", {
+  base: {
+    transition: "opacity 0.15s",
+    "&[data-pending]": {
+      opacity: 0.6,
+    },
   },
 });

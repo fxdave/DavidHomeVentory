@@ -1,12 +1,12 @@
 import {styled} from "styled-system/jsx";
 import {memo, useRef, useState} from "react";
-import {Save, Inbox} from "lucide-react";
+import {Plus} from "lucide-react";
 import {WarehouseEntryWithPath} from "../../../../back/src/modules/warehouse";
 import {Item} from "./components/Item";
 import {useInfinityScroll} from "./useInfinityScroll";
 import {TextField} from "@ui/Input";
 import {IconButton} from "@ui/Button";
-import {List, ListItem} from "./components/List";
+import {List} from "./components/List";
 
 function ItemListRaw(props: {
   list: WarehouseEntryWithPath[];
@@ -28,51 +28,51 @@ function ItemListRaw(props: {
   }
 
   return (
-    <List>
-      {slicedList.length === 0 && (
-        <EmptyState>
-          <EmptyIcon>
-            <Inbox size={48} />
-          </EmptyIcon>
-          <EmptyTitle>No items yet</EmptyTitle>
-          <EmptyText>
+    <>
+      <List>
+        {slicedList.length === 0 && (
+          <EmptyState>
             {props.isSearch
-              ? "No items match your search. Try different keywords."
-              : "Get started by creating your first item or box below."}
-          </EmptyText>
-        </EmptyState>
-      )}
-      {slicedList.map(item => (
-        <Item
-          key={item.id}
-          isSearch={props.isSearch}
-          item={item}
-          onDelete={() => props.onDeleteItem(item)}
-          onGoForward={() => props.onOpenItem(item)}
-          onEdit={props.onUpdateItem}
-          onCutStart={() => props.onStartCutting(item)}
-          cutting={props.cutting}
-        />
-      ))}
-      <ListItem>
+              ? "Nothing matches your search."
+              : "Nothing here yet. Add the first item below."}
+          </EmptyState>
+        )}
+        {slicedList.map(item => (
+          <Item
+            key={item.id}
+            isSearch={props.isSearch}
+            item={item}
+            onDelete={() => props.onDeleteItem(item)}
+            onGoForward={() => props.onOpenItem(item)}
+            onEdit={props.onUpdateItem}
+            onCutStart={() => props.onStartCutting(item)}
+            cutting={props.cutting}
+          />
+        ))}
+      </List>
+      <div ref={watchedDivRef} />
+      <AddForm
+        onSubmit={e => {
+          e.preventDefault();
+          if (newItemName.trim()) handleCreateItem();
+        }}>
         <TextField
+          aria-label="New item or box"
+          placeholder="Add an item or box"
           disabled={!!props.cutting}
-          label="Name of the new Item or Box"
           onChange={e => setNewItemName(e.target.value)}
-          onKeyUp={e => {
-            if (e.code === "Enter") handleCreateItem();
-          }}
           value={newItemName}
+          startAdornment={<Plus size={18} />}
+          endAdornment={
+            newItemName.trim() && (
+              <IconButton type="submit" aria-label="Add">
+                <Plus size={20} />
+              </IconButton>
+            )
+          }
         />
-        <IconButton
-          onClick={() => handleCreateItem()}
-          disabled={!!props.cutting}
-          aria-label="Create new item">
-          <Save size={20} />
-        </IconButton>
-        <div ref={watchedDivRef} />
-      </ListItem>
-    </List>
+      </AddForm>
+    </>
   );
 }
 
@@ -82,38 +82,16 @@ export const ItemList = memo(
     prev.list == next.list && prev.cutting?.item?.id == next.cutting?.item?.id,
 );
 
-const EmptyState = styled("div", {
+const EmptyState = styled("li", {
   base: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "48px 24px",
-    textAlign: "center",
-  },
-});
-
-const EmptyIcon = styled("div", {
-  base: {
-    color: "text.disabled",
-    marginBottom: "16px",
-  },
-});
-
-const EmptyTitle = styled("h3", {
-  base: {
-    fontSize: "1.25rem",
-    fontWeight: 500,
-    margin: "0 0 8px 0",
-    color: "text.primary",
-  },
-});
-
-const EmptyText = styled("p", {
-  base: {
-    fontSize: "0.875rem",
-    margin: 0,
+    padding: "24px 12px",
     color: "text.secondary",
-    maxWidth: "400px",
+    borderBottom: "1px solid token(colors.border)",
+  },
+});
+
+const AddForm = styled("form", {
+  base: {
+    marginTop: "12px",
   },
 });
