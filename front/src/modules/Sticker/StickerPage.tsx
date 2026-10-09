@@ -66,7 +66,7 @@ export default function StickerPage() {
 
     // For phone:
     Printer.print({
-      name: "HomveVentory Stickers",
+      name: "HomeVentory Stickers",
       orientation: "landscape",
       content: `<!DOCTYPE html>
       <html>

@@ -2,7 +2,7 @@
 
 <img src="front/public/logo.svg" alt="" width="160">
 
-# DavidHomeVentory
+# HomeVentory
 
 **Know what's in every box without opening it.**
 
@@ -35,8 +35,8 @@ Self-hosted home inventory. Stick a QR code on a box, scan it, see what's inside
 Requires Docker with `docker-compose`.
 
 ```sh
-git clone https://github.com/fxdave/DavidHomeVentory.git
-cd DavidHomeVentory
+git clone https://github.com/fxdave/HomeVentory.git
+cd HomeVentory
 make install    # generates back/.env, installs, migrates, builds
 make prod-start # http://localhost:3001
 ```

@@ -2,7 +2,7 @@ import {CapacitorConfig} from "@capacitor/cli";
 
 const config: CapacitorConfig = {
   appId: "david.home.ventory",
-  appName: "DavidHomeVentory",
+  appName: "HomeVentory",
   webDir: "dist",
   bundledWebRuntime: false,
 };
