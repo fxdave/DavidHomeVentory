@@ -1,8 +1,6 @@
 .ONESHELL: # keep cd -ed dirs
 .SHELLFLAGS = -ec # stop a recipe at its first failing command
 
-.PHONY: start stop update install prod-start prod-stop prod-update build build-back build-front build-front-apk install-front-apk
-
 PROD_COMPOSE = docker-compose -f compose.prod.yml -f compose.prod.override.yml
 
 start:
@@ -20,13 +18,13 @@ update:
 	make build
 	make start
 
-prod-start: compose.prod.override.yml
+prod-start: prod-config
 	$(PROD_COMPOSE) up -d --remove-orphans
 
-prod-stop: compose.prod.override.yml
+prod-stop: prod-config
 	$(PROD_COMPOSE) down
 
-prod-update: compose.prod.override.yml
+prod-update: prod-config
 	git pull
 	$(PROD_COMPOSE) stop
 	docker-compose run --rm front npm i
@@ -35,20 +33,21 @@ prod-update: compose.prod.override.yml
 	make build
 	make prod-start
 
-install: compose.prod.override.yml back/.env
+install: env prod-config
 	docker-compose run --rm front npm i
 	docker-compose run --rm back npm i
 	docker-compose run --rm back sh -c "npx prisma migrate deploy && npx prisma generate"
 	make build
 
-back/.env: | back/.env.example
+env:
+	[ -f back/.env ] && exit 0 # keep the existing JWT_SECRET
 	cp back/.env.example back/.env
 	export REPLACE="\"$$(cat /dev/random | head -c 50 | base64)\""
 	export ESCAPED_REPLACE=$$(printf '%s\n' "$$REPLACE" | sed -e 's/[\/&]/\\&/g')
 	sed -i -e "s|JWT_SECRET=|JWT_SECRET=$${ESCAPED_REPLACE}|" back/.env
 
-compose.prod.override.yml: | compose.prod.override.yml.sample
-	cp compose.prod.override.yml.sample compose.prod.override.yml
+prod-config:
+	[ -f compose.prod.override.yml ] || cp compose.prod.override.yml.sample compose.prod.override.yml
 
 build:
 	make build-back
@@ -70,3 +69,5 @@ install-front-apk: build-front
 	npx cap sync android
 	cd android
 	./gradlew installDebug
+
+.PHONY: *
