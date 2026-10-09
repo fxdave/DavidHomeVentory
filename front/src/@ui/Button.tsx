@@ -1,3 +1,4 @@
+/* eslint-disable sonarjs/no-duplicate-string */
 import {styled} from "styled-system/jsx";
 import {forwardRef, ButtonHTMLAttributes} from "react";
 
@@ -23,22 +24,26 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
 
 const StyledButton = styled("button", {
   base: {
-    padding: "8px 16px",
-    fontSize: "14px",
-    fontWeight: 500,
-    textTransform: "uppercase",
-    border: "none",
-    borderRadius: "4px",
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "8px",
+    padding: "0 16px",
+    minHeight: "40px",
+    fontFamily: "inherit",
+    fontSize: "15px",
+    fontWeight: 600,
+    border: "1px solid transparent",
+    borderRadius: "8px",
     cursor: "pointer",
-    transition: "all 0.2s",
-    minHeight: "36px",
+    transition: "background-color 0.15s, border-color 0.15s",
     _disabled: {
       opacity: 0.5,
       cursor: "not-allowed",
     },
     "&[data-variant='primary']": {
       backgroundColor: "primary",
-      color: "#000",
+      color: "background",
       _hover: {
         _disabled: {},
         backgroundColor: "primaryHover",
@@ -49,23 +54,20 @@ const StyledButton = styled("button", {
       },
     },
     "&[data-variant='secondary']": {
-      backgroundColor: "paper",
+      backgroundColor: "raised",
       color: "text.primary",
-      border: "1px solid token(colors.border)",
       _hover: {
         _disabled: {},
-        backgroundColor: "hover",
-        borderColor: "secondary",
+        backgroundColor: "border",
       },
     },
     "&[data-variant='outlined']": {
       backgroundColor: "transparent",
-      color: "primary",
-      border: "1px solid token(colors.primary)",
+      color: "text.primary",
+      borderColor: "border",
       _hover: {
         _disabled: {},
-        backgroundColor: "rgba(144, 202, 249, 0.13)",
-        borderColor: "primaryHover",
+        backgroundColor: "hover",
       },
     },
   },
@@ -73,30 +75,32 @@ const StyledButton = styled("button", {
 
 const StyledIconButton = styled("button", {
   base: {
-    minWidth: "44px",
-    minHeight: "44px",
-    padding: "12px",
+    width: "40px",
+    height: "40px",
+    flexShrink: 0,
+    padding: 0,
     border: "none",
-    borderRadius: "10%",
+    borderRadius: "8px",
     cursor: "pointer",
     backgroundColor: "transparent",
-    color: "text.primary",
+    color: "text.secondary",
     display: "inline-flex",
     alignItems: "center",
     justifyContent: "center",
-    transition: "background-color 0.2s",
+    transition: "background-color 0.15s, color 0.15s",
     _hover: {
       _disabled: {},
       backgroundColor: "hover",
+      color: "text.primary",
     },
     _active: {
       _disabled: {},
       backgroundColor: "border",
     },
     _disabled: {
-      opacity: 0.5,
       cursor: "not-allowed",
       color: "text.disabled",
+      opacity: 0.4,
     },
   },
 });

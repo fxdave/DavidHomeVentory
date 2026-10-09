@@ -1,5 +1,6 @@
 import {Navigate, Route, Routes} from "react-router-dom";
-import React, {ReactElement, Suspense} from "react";
+import React, {ReactElement} from "react";
+import {Boundary} from "@cuple/react";
 import {useAuth} from "services/useAuth";
 
 export const ROUTES = {
@@ -18,7 +19,7 @@ const QRScannerPage = React.lazy(
 );
 
 const withLoader = (element: ReactElement) => (
-  <Suspense fallback={<></>}>{element}</Suspense>
+  <Boundary fallback={<></>}>{element}</Boundary>
 );
 
 export default function Router() {

@@ -1,29 +1,69 @@
+<div align="center">
+
+<img src="front/public/logo.svg" alt="" width="160">
+
 # DavidHomeVentory
 
-An inventory management software for households.
-The software has an android client and a very lightweight server that runs on x86_64 and probably on ARM.
+**Know what's in every box without opening it.**
 
-Features:
- - Tag your boxes with a QR code (with the data: `davidhomeventory://THE_ID_OF_THE_BOX`)
- - You can read the QR with the camera app, that launches the client and you can edit the list there.
- - You can view the list of items
- - You can have boxes in boxes with each having items
- - You can reparent a box (e.g: you reparent a `shoe box` from the `gardrobe top` to the `gardrobe bottom`
- - You can edit everything in the list.
- - You can search by keywords and get the exact location of the box.
+Self-hosted home inventory. Stick a QR code on a box, scan it, see what's inside.
 
+[![License: GPL v3](https://img.shields.io/badge/license-GPLv3-3f6596.svg)](LICENSE.md)
+![Android | Web](https://img.shields.io/badge/platform-Android%20%7C%20Web-3f6596.svg)
+![Self-hosted](https://img.shields.io/badge/self--hosted-SQLite-c88a52.svg)
 
-<a href="https://endsoftwarepatents.org/innovating-without-patents"><img style="height: 45px;" src="https://static.fsf.org/nosvn/esp/logos/patent-free.svg"></a>
+<img src="docs/screenshots/box.png" alt="Contents of a box" width="280">
+<img src="docs/screenshots/search.png" alt="Search showing where each item is" width="280">
 
+</div>
 
-## Installation:
+## Features
 
-For android app:
+- **Nested boxes**: boxes hold items and other boxes, as deep as you like.
+- **Search**: find any item and see its full location, e.g. `Basement / Shelf 1 / Brave Fox`.
+- **QR stickers**: print sticker sheets; scanning a new sticker creates its box.
+- **Move things**: cut a box and paste it elsewhere; its contents move with it.
+- **Android app and PWA**: `davidhomeventory://` QR links open the app directly.
+- **Lightweight**: one Node.js process and a SQLite file. No accounts, no cloud.
+
+<div align="center">
+<img src="docs/screenshots/stickers.png" alt="Printable sheet of QR stickers" width="600">
+</div>
+
+## Quick start
+
+Requires Docker with `docker-compose`.
+
+```sh
+git clone https://github.com/fxdave/DavidHomeVentory.git
+cd DavidHomeVentory
+make install    # generates back/.env, installs, migrates, builds
+make run-prod   # http://localhost:3001
 ```
-make install build-front build-front-apk
+
+Open the app, enter `http://<server>:3001/api` and a password. **The first password entered becomes the server password.**
+
+Update with `make update-prod`.
+
+### Android app
+
+Requires the Android SDK.
+
+```sh
+make build-front-apk     # APK in front/android/app/build/outputs/apk/
+make install-front-apk   # or install on a connected device
 ```
 
-For server:
+## Development
+
+```sh
+make run-dev   # frontend :3000 (Vite), backend :3001 (nodemon)
 ```
-make install build-back run-prod
-```
+
+React, Vite, Panda CSS, Capacitor · Express, [Cuple](https://github.com/fxdave/cuple), Prisma, SQLite.
+
+## License
+
+[GPLv3](LICENSE.md)
+
+<a href="https://endsoftwarepatents.org/innovating-without-patents"><img style="height: 45px;" src="https://static.fsf.org/nosvn/esp/logos/patent-free.svg" alt="Patent free"></a>

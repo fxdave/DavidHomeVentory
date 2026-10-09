@@ -3,22 +3,30 @@ import {useNavigate, useLocation} from "react-router-dom";
 import {ROUTES} from "Router";
 import {WarehouseEntryWithPath} from "../../../../back/src/modules/warehouse";
 
-export const DEFAULT_PATH = [
-  {
-    name: "*",
-    id: null,
-  },
+export type PathSegment = {name: string; id: string};
+
+export const DEFAULT_PATH: PathSegment[] = [
   {
     name: "root",
     id: "ROOT",
   },
 ];
 
+/** History entries saved before the root became the top still start with an "everything" segment. */
+function withoutEverything(path: {name: string; id: string | null}[]) {
+  const segments = path.filter(
+    (segment): segment is PathSegment => segment.id !== null,
+  );
+  return segments.length > 0 ? segments : DEFAULT_PATH;
+}
+
 export function useNavigation() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [path, setPath] = useState<{name: string; id: string | null}[]>(
-    location.state?.path || DEFAULT_PATH,
+  const [path, setPath] = useState<PathSegment[]>(
+    location.state?.path
+      ? withoutEverything(location.state.path)
+      : DEFAULT_PATH,
   );
   const [keyword, setKeyword] = useState<string>("");
 
@@ -26,7 +34,7 @@ export function useNavigation() {
   useEffect(() => {
     const savedPath = location.state?.path;
     if (savedPath) {
-      setPath(savedPath);
+      setPath(withoutEverything(savedPath));
     } else if (
       location.pathname === "/items" ||
       location.pathname === "/items/"
@@ -35,7 +43,7 @@ export function useNavigation() {
     }
   }, [location.key, location.pathname]);
 
-  function rebuildPath(path: {name: string; id: string | null}[]) {
+  function rebuildPath(path: PathSegment[]) {
     const newPath = path
       .map(segment =>
         segment.name.replace(/\*/, "_").replace(/[^a-zA-Z0-9\-_]/g, ""),
@@ -45,14 +53,14 @@ export function useNavigation() {
     navigate(ROUTES.ITEMS(newPath), {state: {path}});
   }
 
-  function goForward(id: string | null, name: string) {
+  function goForward(id: string, name: string) {
     const newPath = [...path, {id, name}];
     setPath(newPath);
     rebuildPath(newPath);
     setKeyword("");
   }
 
-  function goBack(id: string | null) {
+  function goBack(id: string) {
     const idx = path.findIndex(segment => segment.id === id);
     const newPath = path.slice(0, idx + 1);
     setPath(newPath);
@@ -67,9 +75,7 @@ export function useNavigation() {
 
   function initFromParent(entry: WarehouseEntryWithPath) {
     const newPath = [
-      // asterix
-      DEFAULT_PATH[0],
-      // parents
+      // parents, starting with the root
       ...entry.path,
       // the container
       {
@@ -79,6 +85,7 @@ export function useNavigation() {
     ];
     setPath(newPath);
     rebuildPath(newPath);
+    setKeyword("");
   }
 
   const parent = path[path.length - 1];

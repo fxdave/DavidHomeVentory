@@ -50,7 +50,7 @@ export function initWarehouseModule(db: PrismaClient, builder: AuthedBuilder) {
           id: z.string().min(1),
           name: z.string().min(1),
           parentId: z.string().nullable(),
-          variant: z.nativeEnum(WarehouseEntryVariant),
+          variant: z.enum(WarehouseEntryVariant),
         }),
       )
       .put(async ({data}) => {

@@ -45,7 +45,7 @@ build-back:
 	docker-compose run back npm run build
 	
 build-front:
-	docker-compose run front npm run build
+	docker-compose run front sh -c "npx panda generate && npm run build"
 
 build-front-apk: build-front
 	cd front

@@ -3,11 +3,10 @@ import {useForm} from "react-hook-form";
 import {useNavigate} from "react-router-dom";
 import {ROUTES} from "Router";
 import {useAuth} from "services/useAuth";
-import Logo from "../../assets/rgb-cube.svg";
 import {useEffect} from "react";
 import {Alert} from "@ui/Alert";
 import {Button} from "@ui/Button";
-import {Divider} from "@ui/Divider";
+import {BrandSticker} from "modules/Common/BrandSticker";
 import {TextField} from "@ui/Input";
 
 type IFields = {
@@ -54,42 +53,34 @@ export default function LoginPage() {
   });
   return (
     <Container>
-      <img
-        src={Logo}
-        alt=""
-        style={{
-          zIndex: -1,
-          position: "fixed",
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0,
-          margin: "auto",
-          opacity: "0.1",
-        }}
-      />
-      <Title>HomeVentory</Title>
-      <Divider>Login</Divider>
+      <Brand>
+        <img src="/logo.svg" alt="" width={136} height={136} />
+        <Title>
+          <BrandSticker size="large" />
+        </Title>
+        <Subtitle>Connect to your inventory server.</Subtitle>
+      </Brand>
       <Form onSubmit={onSubmit}>
         {!auth.isLoggedIn && auth.error && (
           <Alert severity="error">{auth.error}</Alert>
         )}
         <TextField
-          label="Server hostname and port:"
+          label="Server address"
           {...register("target")}
           name="target"
-          helperText="Usually something like: http://192.168.0.???:3000/api"
+          inputMode="url"
+          autoComplete="url"
+          helperText="For example http://192.168.0.10:3001/api"
         />
         <TextField
           label="Password"
-          helperText="Login password / new password (only for the first time)"
+          helperText="First time? The password you enter here becomes the server password."
           {...register("password")}
           name="password"
           type="password"
+          autoComplete="current-password"
         />
-        <Button onClick={onSubmit} type="submit">
-          Connect
-        </Button>
+        <Button type="submit">Connect</Button>
       </Form>
     </Container>
   );
@@ -97,23 +88,34 @@ export default function LoginPage() {
 
 const Container = styled("div", {
   base: {
-    maxWidth: "444px",
+    maxWidth: "400px",
     margin: "0 auto",
-    padding: "16px",
+    padding: "56px 16px 32px",
     width: "100%",
-    "@media (max-width: 600px)": {
-      padding: "8px",
-    },
+  },
+});
+
+const Brand = styled("div", {
+  base: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: "8px",
+    marginBottom: "32px",
+    textAlign: "center",
   },
 });
 
 const Title = styled("h1", {
   base: {
-    fontSize: "3rem",
-    fontWeight: "bold",
-    margin: "24px 0",
-    textAlign: "center",
-    color: "#fff",
+    margin: "8px 0 4px",
+  },
+});
+
+const Subtitle = styled("p", {
+  base: {
+    margin: 0,
+    color: "text.secondary",
   },
 });
 
@@ -121,6 +123,6 @@ const Form = styled("form", {
   base: {
     flexDirection: "column",
     display: "flex",
-    gap: "16px",
+    gap: "20px",
   },
 });

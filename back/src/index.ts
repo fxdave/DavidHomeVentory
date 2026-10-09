@@ -36,7 +36,6 @@ const port = 3001;
 const frontend = path.join(__dirname, "../../front/dist");
 console.log(`Serving ${frontend}`);
 app.use(express.static(frontend));
-app.bind("0.0.0.0");
-app.listen(port, () => {
+app.listen(port, "0.0.0.0", () => {
   console.log(`⚡️[server]: Server is running at http://0.0.0.0:${port}`);
 });

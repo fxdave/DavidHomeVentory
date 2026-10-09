@@ -4,7 +4,11 @@ import Router, {ROUTES} from "Router";
 import {HashRouter, useNavigate} from "react-router-dom";
 import {App, URLOpenListenerEvent} from "@capacitor/app";
 import "react-toastify/dist/ReactToastify.css";
-import {ToastContainer} from "react-toastify";
+import {ToastContainer, toast} from "react-toastify";
+import {CupleProvider} from "@cuple/react";
+import {store} from "services/cuple";
+import "@fontsource-variable/atkinson-hyperlegible-next";
+import SourceCodeProBold from "./assets/SourceCodePro-Bold.ttf?url";
 import "./panda.css";
 
 const AppUrlListener = () => {
@@ -27,11 +31,21 @@ const root = createRoot(element);
 root.render(
   <StrictMode>
     <GlobalStyles />
-    <HashRouter>
-      <AppUrlListener />
-      <Router />
-    </HashRouter>
-    <ToastContainer />
+    <CupleProvider
+      store={store}
+      config={{
+        errors: {
+          notify: error => toast(error.message, {type: "error"}),
+          // A failed write shows as a toast; the page stays.
+          onError: "notify",
+        },
+      }}>
+      <HashRouter>
+        <AppUrlListener />
+        <Router />
+      </HashRouter>
+    </CupleProvider>
+    <ToastContainer theme="dark" position="bottom-center" />
   </StrictMode>,
 );
 
@@ -39,16 +53,10 @@ function GlobalStyles() {
   return (
     <style>
       {`
-        body {
-          margin: 0;
-          background-color: #121212;
-          color: #fff;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-            'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-            sans-serif;
-        }
-        * {
-          box-sizing: border-box;
+        @font-face {
+          font-family: "SourceCodePro";
+          src: url("${SourceCodeProBold}");
+          font-weight: 700;
         }
       `}
     </style>

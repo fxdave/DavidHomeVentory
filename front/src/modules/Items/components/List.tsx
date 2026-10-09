@@ -15,14 +15,7 @@ type ListItemProps = {
 type ListItemTextProps = {
   primary: ReactNode;
   secondary?: ReactNode;
-};
-
-type ListItemAvatarProps = {
-  children: ReactNode;
-};
-
-type AvatarProps = {
-  children: ReactNode;
+  className?: string;
 };
 
 export const List = ({children}: ListProps) => (
@@ -46,19 +39,15 @@ export const ListItem = ({
   </StyledListItem>
 );
 
-export const ListItemText = ({primary, secondary}: ListItemTextProps) => (
-  <TextWrapper>
+export const ListItemText = ({
+  primary,
+  secondary,
+  className,
+}: ListItemTextProps) => (
+  <TextWrapper className={className}>
     <Primary>{primary}</Primary>
     {secondary && <Secondary>{secondary}</Secondary>}
   </TextWrapper>
-);
-
-export const ListItemAvatar = ({children}: ListItemAvatarProps) => (
-  <AvatarWrapper>{children}</AvatarWrapper>
-);
-
-export const Avatar = ({children}: AvatarProps) => (
-  <StyledAvatar>{children}</StyledAvatar>
 );
 
 const StyledList = styled("ul", {
@@ -71,64 +60,59 @@ const StyledList = styled("ul", {
 
 const StyledListItem = styled("li", {
   base: {
+    position: "relative",
     display: "flex",
-    alignItems: "stretch",
-    padding: "8px 16px",
-    borderBottom: "1px solid #333",
-    transition: "background-color 0.2s",
+    alignItems: "center",
+    gap: "4px",
+    minHeight: "56px",
+    // The buttons sit 8px from the right edge, as far as from the top and bottom of a 56px row.
+    padding: "6px 8px 6px 12px",
     "&[data-clickable='true']": {
       cursor: "pointer",
     },
-    "&[data-clickable='true']:hover:not([data-disabled='true'])": {
-      backgroundColor: "#2a2a2a",
+    // A rounded overlay, so plain rows highlight like the box cards.
+    "&::after": {
+      content: '""',
+      position: "absolute",
+      inset: 0,
+      borderRadius: "10px",
+      pointerEvents: "none",
+      transition: "background-color 0.15s",
+    },
+    "&[data-clickable='true']:hover:not([data-disabled='true'])::after": {
+      backgroundColor: "hover",
     },
     "&[data-disabled='true']": {
-      opacity: 0.5,
+      opacity: 0.4,
       cursor: "not-allowed",
     },
-  },
-});
-
-const AvatarWrapper = styled("div", {
-  base: {
-    display: "flex",
-    alignItems: "center",
   },
 });
 
 const TextWrapper = styled("div", {
   base: {
     flex: 1,
+    minWidth: 0,
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
+    gap: "2px",
   },
 });
 
 const Primary = styled("div", {
   base: {
-    color: "#fff",
+    color: "text.primary",
+    overflowWrap: "anywhere",
   },
 });
 
 const Secondary = styled("div", {
   base: {
-    fontSize: "12px",
-    color: "#b0b0b0",
-  },
-});
-
-const StyledAvatar = styled("div", {
-  base: {
-    width: "32px",
-    height: "32px",
-    borderRadius: "50%",
-    backgroundColor: "#90caf9",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: "8px",
-    color: "#000",
-    flexShrink: 0,
+    fontSize: "13px",
+    color: "text.secondary",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
   },
 });

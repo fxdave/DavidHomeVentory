@@ -13,21 +13,21 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@cuple/server": "^1.2.0",
+        "@cuple/server": "^2.4.0",
         "@prisma/client": "^6.18.0",
         "@types/jsonwebtoken": "^9.0.10",
         "@types/sha256": "^0.2.2",
         "cors": "^2.8.5",
         "dotenv": "^17.2.3",
-        "express": "^4.21.2",
+        "express": "^5.2.1",
         "jsonwebtoken": "^9.0.2",
         "prisma": "^6.18.0",
         "sha256": "^0.2.0",
-        "zod": "^3.25.76"
+        "zod": "^4.6.5"
     },
     "devDependencies": {
         "@types/cors": "^2.8.19",
-        "@types/express": "^4.17.25",
+        "@types/express": "^5.0.6",
         "@types/node": "^24.9.2",
         "@typescript-eslint/eslint-plugin": "^8.46.2",
         "@typescript-eslint/parser": "^8.46.2",

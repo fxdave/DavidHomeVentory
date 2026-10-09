@@ -14,7 +14,7 @@ export class WarehouseRepository {
       keyword !== null
         ? {
             searchNameCache: {
-              contains: keyword,
+              contains: SearchNameCache.simplify(keyword),
             },
           }
         : {};
