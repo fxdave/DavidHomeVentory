@@ -38,12 +38,14 @@ Requires Docker with `docker-compose`.
 git clone https://github.com/fxdave/DavidHomeVentory.git
 cd DavidHomeVentory
 make install    # generates back/.env, installs, migrates, builds
-make run-prod   # http://localhost:3001
+make prod-start # http://localhost:3001
 ```
+
+The port is set in `compose.prod.override.yml` (gitignored, created by `make install` from `compose.prod.override.yml.sample`).
 
 Open the app, enter `http://<server>:3001/api` and a password. **The first password entered becomes the server password.**
 
-Update with `make update-prod`.
+Update with `make prod-update`, stop with `make prod-stop`.
 
 ### Android app
 
@@ -57,7 +59,7 @@ make install-front-apk   # or install on a connected device
 ## Development
 
 ```sh
-make run-dev   # frontend :3000 (Vite), backend :3001 (nodemon)
+make start      # frontend :3000 (Vite), backend :3001 (nodemon)
 ```
 
 React, Vite, Panda CSS, Capacitor · Express, [Cuple](https://github.com/fxdave/cuple), Prisma, SQLite.

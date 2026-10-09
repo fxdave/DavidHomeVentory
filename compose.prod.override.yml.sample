@@ -1,0 +1,6 @@
+# Copied to compose.prod.override.yml by `make install`; edit that copy.
+services:
+  app:
+    ports:
+      # host:container. Change the host side to serve on another port.
+      - "3001:3001"
