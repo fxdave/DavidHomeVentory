@@ -8,7 +8,7 @@ import {WarehouseEntryWithPath} from "../../../../../back/src/modules/warehouse"
 import {TextField} from "@ui/Input";
 import {IconButton} from "@ui/Button";
 import {ListItem, ListItemText} from "./List";
-import {boxLidColors} from "utils/boxHue";
+import {boxTagColor} from "utils/boxHue";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -57,14 +57,14 @@ function ItemRaw(props: ItemProps) {
   return (
     <StyledListItem
       data-container={isContainer}
-      style={isContainer ? boxLidColors(props.item.id) : {}}
+      style={isContainer ? boxTagColor(props.item.id) : {}}
       onClick={editing ? undefined : () => props.onGoForward()}
       disabled={props.cutting?.item.id == props.item.id}
       data-editing={isEditing}>
       {isContainer && (
-        <Sticker>
+        <BoxIcon>
           <QrCode size={18} />
-        </Sticker>
+        </BoxIcon>
       )}
       {editing ? (
         <EditGroup onClick={e => e.stopPropagation()}>
@@ -138,61 +138,39 @@ export const Item = memo(
     prev.cutting?.item?.id == next.cutting?.item?.id,
 );
 
-/** The QR icon sits on a little white sticker, like the label in the logo. */
-const Sticker = styled("div", {
+/** A box's icon, tinted with the box's own color. */
+const BoxIcon = styled("div", {
   base: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    width: "28px",
-    height: "28px",
-    marginRight: "10px",
-    borderRadius: "4px",
-    backgroundColor: "#f4f4f1",
-    color: "#15171c",
+    width: "32px",
+    height: "32px",
+    marginRight: "12px",
+    borderRadius: "8px",
+    backgroundColor: "var(--tag-bg)",
+    color: "var(--tag-fg)",
     flexShrink: 0,
-    boxShadow: "0 1px 0 rgba(0, 0, 0, 0.3)",
   },
 });
 
-/** A box is drawn as a shoe box: a cardboard body with a lid that lifts on hover. */
+/** A box is a card, so it stands out from the loose items. */
 const StyledListItem = styled(ListItem, {
   base: {
     "&[data-container='true']": {
-      marginTop: "16px",
-      marginBottom: "7px",
-      border: "1px solid token(colors.cardboardEdge)",
-      borderLeft: "3px solid token(colors.cardboardEdge)",
-      borderRadius: "0 0 6px 6px",
-      backgroundColor: "cardboard",
-      boxShadow: "2px 2px 0 rgba(0, 0, 0, 0.25)",
+      margin: "6px 0",
+      // One less than a plain row, to make up for the border.
+      paddingRight: "7px",
+      border: "1px solid token(colors.border)",
+      borderRadius: "10px",
+      backgroundColor: "paper",
     },
-    "&[data-container='true']::before": {
-      content: '""',
-      position: "absolute",
-      top: "-11px",
-      left: "-5px",
-      right: "-5px",
-      height: "15px",
-      backgroundColor: "var(--lid)",
-      border: "1px solid var(--lid-edge)",
-      borderBottomWidth: "3px",
-      borderRadius: "5px 5px 2px 2px",
-      boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.18)",
-      transition: "transform 0.2s ease-out",
-      transformOrigin: "bottom center",
-    },
-    "&[data-container='true']:hover::before, &[data-container='true']:focus-within::before, &[data-container='true'][data-editing='true']::before":
-      {
-        transform: "translateY(-4px) rotate(0.3deg)",
-      },
   },
 });
 
 const BoxName = styled("span", {
   base: {
-    fontFamily: "label",
-    fontWeight: 700,
+    fontWeight: 600,
   },
 });
 

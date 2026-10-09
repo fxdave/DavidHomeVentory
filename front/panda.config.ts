@@ -29,10 +29,6 @@ export default defineConfig({
           warning: {value: "#f2b45c"},
           warningHover: {value: "#e09a3a"},
           success: {value: "#6cc58f"},
-          // Cardboard, from the box in the logo.
-          cardboard: {value: "#221e1c"},
-          cardboardEdge: {value: "#5a3d27"},
-          cardboardLight: {value: "#c88a52"},
           text: {
             primary: {value: "#eceef2"},
             secondary: {value: "#9098a6"},
@@ -59,9 +55,6 @@ export default defineConfig({
           bg: {
             DEFAULT: {value: "{colors.background}"},
             paper: {value: "{colors.paper}"},
-          },
-          border: {
-            DEFAULT: {value: "{colors.border}"},
           },
         },
       },
@@ -92,6 +85,16 @@ export default defineConfig({
     },
     "@media (prefers-reduced-motion: reduce)": {
       "*": {transition: "none !important", animation: "none !important"},
+    },
+    // Opening a box comes in from the right, going back from the left.
+    "@keyframes enterForward": {
+      from: {opacity: 0, transform: "translateX(24px)"},
+    },
+    "@keyframes enterBack": {
+      from: {opacity: 0, transform: "translateX(-24px)"},
+    },
+    "@keyframes enterFade": {
+      from: {opacity: 0},
     },
     "@keyframes spin": {
       "0%": {transform: "rotate(0deg)"},

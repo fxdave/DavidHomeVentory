@@ -1,7 +1,8 @@
 import {styled} from "styled-system/jsx";
-import {Navigation} from "../useNavigation";
+import {PathSegment} from "../useNavigation";
 import {Breadcrumbs} from "@ui/Breadcrumbs";
-import {boxLidColors} from "utils/boxHue";
+import {QrCode} from "lucide-react";
+import {boxTagColor} from "utils/boxHue";
 
 const MAX_BREADCRUMB_LENGTH = 20;
 
@@ -10,16 +11,21 @@ function truncateName(name: string, maxLength: number = MAX_BREADCRUMB_LENGTH) {
   return name.slice(0, maxLength) + "…";
 }
 
-export function displayName(segment: {id: string | null; name: string}) {
-  if (segment.id === null) return "Everything";
+export function displayName(segment: {id: string; name: string}) {
   if (segment.id === "ROOT") return "Home";
   return segment.name;
 }
 
-export function BreadcrumbsBar({nav}: {nav: Navigation}) {
-  const ancestors = nav.path.slice(0, -1);
-  const current = nav.parent;
-  const isBox = current.id !== null && current.id !== "ROOT";
+export function BreadcrumbsBar({
+  path,
+  onGoBack,
+}: {
+  path: PathSegment[];
+  onGoBack: (id: string) => void;
+}) {
+  const ancestors = path.slice(0, -1);
+  const current = path[path.length - 1];
+  const isBox = current.id !== "ROOT";
 
   return (
     <Container>
@@ -27,12 +33,16 @@ export function BreadcrumbsBar({nav}: {nav: Navigation}) {
         <Breadcrumbs
           items={ancestors.map(segment => ({
             label: truncateName(displayName(segment)),
-            onClick: () => nav.goBack(segment.id),
+            onClick: () => onGoBack(segment.id),
           }))}
         />
       )}
-      <Title data-box={isBox}>
-        {isBox && <Swatch style={boxLidColors(current.id)} />}
+      <Title>
+        {isBox && (
+          <BoxIcon style={boxTagColor(current.id)}>
+            <QrCode size={16} />
+          </BoxIcon>
+        )}
         {displayName(current)}
       </Title>
     </Container>
@@ -60,33 +70,20 @@ const Title = styled("h2", {
     lineHeight: 1.2,
     color: "text.primary",
     overflowWrap: "anywhere",
-    "&[data-box='true']": {
-      fontFamily: "label",
-      fontSize: "20px",
-    },
   },
 });
 
-/** A tiny box with its colored lid, matching the rows below. */
-const Swatch = styled("span", {
+/** The open box's tinted icon, matching its row in the list. */
+const BoxIcon = styled("span", {
   base: {
-    position: "relative",
-    width: "18px",
-    height: "14px",
-    marginTop: "6px",
-    borderRadius: "1px 1px 3px 3px",
-    backgroundColor: "cardboardLight",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "28px",
+    height: "28px",
+    borderRadius: "7px",
+    backgroundColor: "var(--tag-bg)",
+    color: "var(--tag-fg)",
     flexShrink: 0,
-    "&::before": {
-      content: '""',
-      position: "absolute",
-      top: "-6px",
-      left: "-2px",
-      right: "-2px",
-      height: "7px",
-      borderRadius: "2px",
-      backgroundColor: "var(--lid)",
-      borderBottom: "2px solid var(--lid-edge)",
-    },
   },
 });

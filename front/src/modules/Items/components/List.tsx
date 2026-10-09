@@ -55,7 +55,6 @@ const StyledList = styled("ul", {
     listStyle: "none",
     padding: 0,
     margin: 0,
-    borderTop: "1px solid token(colors.border)",
   },
 });
 
@@ -66,13 +65,21 @@ const StyledListItem = styled("li", {
     alignItems: "center",
     gap: "4px",
     minHeight: "56px",
-    padding: "6px 0 6px 12px",
-    borderBottom: "1px solid token(colors.border)",
-    transition: "background-color 0.15s",
+    // The buttons sit 8px from the right edge, as far as from the top and bottom of a 56px row.
+    padding: "6px 8px 6px 12px",
     "&[data-clickable='true']": {
       cursor: "pointer",
     },
-    "&[data-clickable='true']:hover:not([data-disabled='true'])": {
+    // A rounded overlay, so plain rows highlight like the box cards.
+    "&::after": {
+      content: '""',
+      position: "absolute",
+      inset: 0,
+      borderRadius: "10px",
+      pointerEvents: "none",
+      transition: "background-color 0.15s",
+    },
+    "&[data-clickable='true']:hover:not([data-disabled='true'])::after": {
       backgroundColor: "hover",
     },
     "&[data-disabled='true']": {

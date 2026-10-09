@@ -6,6 +6,7 @@ import {useAuth} from "services/useAuth";
 import {useEffect} from "react";
 import {Alert} from "@ui/Alert";
 import {Button} from "@ui/Button";
+import {BrandSticker} from "modules/Common/BrandSticker";
 import {TextField} from "@ui/Input";
 
 type IFields = {
@@ -54,7 +55,9 @@ export default function LoginPage() {
     <Container>
       <Brand>
         <img src="/logo.svg" alt="" width={136} height={136} />
-        <Title>HomeVentory</Title>
+        <Title>
+          <BrandSticker size="large" />
+        </Title>
         <Subtitle>Connect to your inventory server.</Subtitle>
       </Brand>
       <Form onSubmit={onSubmit}>
@@ -105,10 +108,7 @@ const Brand = styled("div", {
 
 const Title = styled("h1", {
   base: {
-    margin: "8px 0 0",
-    fontSize: "28px",
-    fontWeight: 700,
-    color: "text.primary",
+    margin: "8px 0 4px",
   },
 });
 

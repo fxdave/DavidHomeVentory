@@ -1,31 +1,80 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 import {styled} from "styled-system/jsx";
-import {useState} from "react";
-import {Boxes, LogOut, Menu, Printer, ScanLine, X} from "lucide-react";
+import {useRef, useState} from "react";
+import {Boxes, LogOut, Menu, Printer, ScanLine, Search, X} from "lucide-react";
 import {ROUTES} from "Router";
 import {Link, NavLink} from "react-router-dom";
 import {useLoggedInAuth} from "services/useAuth";
+import {TextField} from "@ui/Input";
+import {IconButton} from "@ui/Button";
+import {BrandSticker} from "./BrandSticker";
 
-export const Navigation = () => {
+type SearchProps = {
+  value: string;
+  onChange: (value: string) => void;
+};
+
+/** The top bar. With `search`, it has a search field that takes the whole bar while in use. */
+export const Navigation = ({search}: {search?: SearchProps}) => {
   const auth = useLoggedInAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const isSearching = !!search && (isSearchFocused || search.value !== "");
+
+  function closeSearch() {
+    search?.onChange("");
+    searchInputRef.current?.blur();
+  }
 
   return (
     <>
       <Header>
-        <Brand to={ROUTES.ITEMS()}>
-          <img src="/favicon.svg" alt="" width={32} height={32} />
-          HomeVentory
-        </Brand>
-        <HeaderLink to={ROUTES.QR_SCANNER} aria-label="Scan a box">
-          <ScanLine size={22} />
-        </HeaderLink>
-        <HeaderButton
-          onClick={() => setIsOpen(!isOpen)}
-          aria-expanded={isOpen}
-          aria-label={isOpen ? "Close menu" : "Open menu"}>
-          {isOpen ? <X size={22} /> : <Menu size={22} />}
-        </HeaderButton>
+        {!isSearching && (
+          <Brand to={ROUTES.ITEMS()} aria-label="HomeVentory">
+            <BrandSticker />
+          </Brand>
+        )}
+        {search && (
+          <SearchField
+            ref={searchInputRef}
+            aria-label="Search everything"
+            placeholder={isSearching ? "Search everything" : "Search"}
+            enterKeyHint="search"
+            value={search.value}
+            onChange={e => search.onChange(e.target.value)}
+            onFocus={() => setIsSearchFocused(true)}
+            onBlur={() => setIsSearchFocused(false)}
+            onKeyDown={e => {
+              if (e.key === "Escape") closeSearch();
+            }}
+            startAdornment={<Search size={18} />}
+            endAdornment={
+              isSearching && (
+                <IconButton
+                  // Keep the focus, or the button disappears before it's clicked.
+                  onMouseDown={e => e.preventDefault()}
+                  onClick={closeSearch}
+                  aria-label="Close search">
+                  <X size={18} />
+                </IconButton>
+              )
+            }
+          />
+        )}
+        {!isSearching && (
+          <>
+            <HeaderLink to={ROUTES.QR_SCANNER} aria-label="Scan a box">
+              <ScanLine size={22} />
+            </HeaderLink>
+            <HeaderButton
+              onClick={() => setIsOpen(!isOpen)}
+              aria-expanded={isOpen}
+              aria-label={isOpen ? "Close menu" : "Open menu"}>
+              {isOpen ? <X size={22} /> : <Menu size={22} />}
+            </HeaderButton>
+          </>
+        )}
       </Header>
       <Backdrop data-open={isOpen} onClick={() => setIsOpen(false)} />
       <Drawer data-open={isOpen} aria-hidden={!isOpen}>
@@ -69,12 +118,35 @@ const Brand = styled(Link, {
     display: "flex",
     alignItems: "center",
     gap: "10px",
+    flexShrink: 0,
     marginRight: "auto",
-    fontSize: "18px",
-    fontWeight: 700,
-    color: "text.primary",
     textDecoration: "none",
     borderRadius: "8px",
+  },
+});
+
+/** Borderless like the header's buttons, so it reads as part of the bar. */
+const SearchField = styled(TextField, {
+  base: {
+    flex: 1,
+    // Evens out the bar's padding, which is narrower on the buttons' side.
+    margin: "0 8px 0 4px",
+    // The field's box.
+    "& > div": {
+      backgroundColor: "transparent",
+      borderColor: "transparent",
+      color: "text.secondary",
+      transition: "background-color 0.15s",
+      _hover: {backgroundColor: "hover"},
+      "&:focus-within": {
+        borderColor: "transparent",
+        backgroundColor: "transparent",
+      },
+    },
+    "& input": {
+      // 16px keeps iOS from zooming in on focus.
+      fontSize: "16px",
+    },
   },
 });
 

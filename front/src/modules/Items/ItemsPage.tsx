@@ -1,18 +1,16 @@
 import {styled} from "styled-system/jsx";
-import {useEffect, useState} from "react";
+import {RefObject, useEffect, useLayoutEffect, useRef, useState} from "react";
 import {useAuthedApi} from "services/useApi";
-import {Search, X} from "lucide-react";
 import {fetchCuple} from "@cuple/client";
 import {Boundary, useAction, useGetWrapped} from "@cuple/react";
 import {useParams} from "react-router-dom";
 import {WarehouseEntryWithPath} from "../../../../back/src/modules/warehouse";
-import {useNavigation} from "./useNavigation";
+import {PathSegment, useNavigation} from "./useNavigation";
 import {CuttingBar} from "./components/CuttingBar";
 import {BreadcrumbsBar, displayName} from "./components/BreadcrumbsBar";
 import {ItemList} from "./ItemList";
 import {Navigation} from "modules/Common/Navigation";
-import {TextField} from "@ui/Input";
-import {Button, IconButton} from "@ui/Button";
+import {Button} from "@ui/Button";
 import {Spinner} from "@ui/Spinner";
 import {Alert} from "@ui/Alert";
 
@@ -24,6 +22,7 @@ type EntryUpdate = Pick<
 export default function ItemsScreen() {
   const {api} = useAuthedApi();
   const nav = useNavigation();
+  const scrollerRef = useRef<HTMLDivElement>(null);
   const [cutting, setCutting] = useState<null | {item: WarehouseEntryWithPath}>(
     null,
   );
@@ -75,7 +74,7 @@ export default function ItemsScreen() {
   );
 
   const handlePaste = async () => {
-    if (!cutting || !nav.parent.id) return;
+    if (!cutting) return;
     const state = await updateItem.run({
       id: cutting.item.id,
       name: cutting.item.name,
@@ -86,8 +85,8 @@ export default function ItemsScreen() {
   };
 
   return (
-    <Container>
-      <Navigation />
+    <Container ref={scrollerRef}>
+      <Navigation search={{value: nav.keyword, onChange: nav.setKeyword}} />
       {cutting && (
         <CuttingBar
           item={cutting.item}
@@ -95,29 +94,6 @@ export default function ItemsScreen() {
           onCancel={() => setCutting(null)}
         />
       )}
-
-      <BreadcrumbsBar nav={nav} />
-
-      <SearchField
-        aria-label="Search"
-        placeholder={
-          nav.parent.id === null
-            ? "Search everything"
-            : `Search in ${displayName(nav.parent)}`
-        }
-        value={nav.keyword}
-        onChange={e => nav.setKeyword(e.target.value)}
-        startAdornment={<Search size={18} />}
-        endAdornment={
-          nav.keyword && (
-            <IconButton
-              onClick={() => nav.setKeyword("")}
-              aria-label="Clear search">
-              <X size={18} />
-            </IconButton>
-          )
-        }
-      />
 
       <Boundary
         fallback={
@@ -132,7 +108,9 @@ export default function ItemsScreen() {
         )}>
         <Contents
           keyword={nav.keyword}
-          parentId={nav.parent.id}
+          path={nav.path}
+          onGoBack={nav.goBack}
+          scrollerRef={scrollerRef}
           cutting={cutting}
           onCreateItem={createItem.run}
           onDeleteItem={item => deleteItem.run(item.id)}
@@ -147,42 +125,89 @@ export default function ItemsScreen() {
 
 type ContentsProps = Omit<
   Parameters<typeof ItemList>[0],
-  "list" | "isSearch"
+  "list" | "isSearch" | "parentName"
 > & {
   keyword: string;
-  parentId: string | null;
+  path: PathSegment[];
+  onGoBack: (id: string) => void;
+  scrollerRef: RefObject<HTMLDivElement | null>;
 };
 
-/** The listed items. While the next folder or search loads, the current one stays, dimmed. */
-function Contents({keyword, parentId, ...props}: ContentsProps) {
+/** What's on screen: the title and list change together, once the new list has loaded. */
+type Shown = {path: PathSegment[]; keyword: string};
+
+/** Typing a search doesn't replay the animation, only switching what's shown does. */
+function keyOf({path, keyword}: Shown) {
+  return keyword ? "search" : path[path.length - 1].id;
+}
+
+/** Deeper slides in from the right, up from the left; searches just fade. */
+function directionOf(from: Shown, to: Shown) {
+  if (from.keyword || to.keyword) return "fade";
+  return to.path.length >= from.path.length ? "forward" : "back";
+}
+
+/** The open box's title and items. While the next box or search loads, the current one stays,
+ * then the new one slides in. A search always looks through every box, not just the open one. */
+function Contents({
+  keyword,
+  path,
+  onGoBack,
+  scrollerRef,
+  ...props
+}: ContentsProps) {
   const {api} = useAuthedApi();
+  const parentId = path[path.length - 1].id;
   const found = useGetWrapped(
     api.warehouse.list,
-    {query: {keyword, parentId}},
-    {config: {loading: {debounceMs: 150}}},
+    {query: keyword ? {keyword, parentId: null} : {keyword, parentId}},
+    // Waits for typing to pause, but opens a box at once (with 0 the old list wouldn't stay).
+    {config: {loading: {debounceMs: keyword ? 150 : 1}}},
   );
+
+  const [shown, setShown] = useState<Shown>({path, keyword});
+  const [direction, setDirection] =
+    useState<ReturnType<typeof directionOf>>("fade");
+  const shownKey = keyOf(shown);
+  if (!found.isPending && (shown.path !== path || shown.keyword !== keyword)) {
+    setShown({path, keyword});
+    if (keyOf({path, keyword}) !== shownKey)
+      setDirection(directionOf(shown, {path, keyword}));
+  }
+  useLayoutEffect(() => {
+    scrollerRef.current?.scrollTo({top: 0});
+  }, [shownKey]);
 
   return (
     <Dimmed data-pending={found.isPending || undefined}>
-      <ItemList {...props} list={found.data.list} isSearch={!!keyword} />
+      <Page key={shownKey} data-direction={direction}>
+        {/* Search results come from every box, not the open one. */}
+        {shown.keyword ? (
+          <SearchSpacer />
+        ) : (
+          <BreadcrumbsBar path={shown.path} onGoBack={onGoBack} />
+        )}
+        <ItemList
+          {...props}
+          list={found.data.list}
+          isSearch={!!shown.keyword}
+          parentName={displayName(shown.path[shown.path.length - 1])}
+        />
+      </Page>
     </Dimmed>
   );
 }
 
 const Container = styled("div", {
   base: {
+    display: "flex",
+    flexDirection: "column",
     overflow: "auto",
-    height: "100vh",
+    height: "100dvh",
     maxWidth: "720px",
     margin: "0 auto",
-    padding: "0 16px 96px",
+    padding: "0 16px",
     width: "100%",
-  },
-});
-
-const SearchField = styled(TextField, {
-  base: {
-    marginBottom: "12px",
   },
 });
 
@@ -194,11 +219,35 @@ const Centered = styled("div", {
   },
 });
 
+/** Fills the rest of the screen, so the add field can sit at its bottom. */
 const Dimmed = styled("div", {
   base: {
+    flex: "1 0 auto",
+    display: "flex",
+    flexDirection: "column",
     transition: "opacity 0.15s",
     "&[data-pending]": {
       opacity: 0.6,
+      // A quick load swaps without dimming first.
+      transitionDelay: "0.2s",
     },
   },
+});
+
+const Page = styled("div", {
+  base: {
+    flex: "1 0 auto",
+    display: "flex",
+    flexDirection: "column",
+    animationDuration: "0.22s",
+    animationTimingFunction: "cubic-bezier(0.2, 0.8, 0.2, 1)",
+    "&[data-direction='forward']": {animationName: "enterForward"},
+    "&[data-direction='back']": {animationName: "enterBack"},
+    "&[data-direction='fade']": {animationName: "enterFade"},
+  },
+});
+
+/** Without breadcrumbs above, the results need room from the header. */
+const SearchSpacer = styled("div", {
+  base: {height: "12px"},
 });
